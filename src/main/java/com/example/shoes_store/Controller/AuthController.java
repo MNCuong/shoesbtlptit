@@ -1,7 +1,6 @@
 package com.example.shoes_store.Controller;
 
 import com.example.shoes_store.Entity.User;
-import com.example.shoes_store.Service.CartItemService;
 import com.example.shoes_store.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AuthController {
     private final UserService userService;
-
-    @Autowired
-    CartItemService cartItemService;
 
     public AuthController(UserService userService) {
         this.userService = userService;
@@ -48,16 +44,6 @@ public class AuthController {
         }
         redirectAttributes.addFlashAttribute("error", "Sai tên đăng nhập hoặc mật khẩu!");
         return "redirect:login";
-    }
-
-    @GetMapping({"/", "/home"})
-    public String homePage(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        model.addAttribute("user", loggedInUser);
-        int cartItemQuantity = cartItemService.getQuantity(loggedInUser);
-        log.info("cartItemQuantity {}", cartItemQuantity);
-        model.addAttribute("cartItemQuantity", cartItemQuantity);
-        return "/user/home";
     }
 
     @GetMapping("/register")

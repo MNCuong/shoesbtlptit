@@ -25,8 +25,6 @@ public class User {
     private String role; // ADMIN, CUSTOMER
     private String fullname;
     private String address;
-    @OneToMany(mappedBy = "user")
-    private List<Order> orders;
 
     public User() {
     }

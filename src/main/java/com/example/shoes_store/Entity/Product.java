@@ -24,6 +24,8 @@ public class Product {
     private String brand;
     private BigDecimal price;
     private Integer stockQuantity;
+    private String gender; // BOY, GIRL, UNISEX
+    private String ageGroup; // 0-2, 3-5, 6-10
     private boolean active;
     @ManyToOne
     @JoinColumn(name = "category_id")

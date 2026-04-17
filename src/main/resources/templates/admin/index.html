@@ -1,1440 +1,1048 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Admin-Shoes Store</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+    <title>Hệ thống Quản lý Chuỗi Cửa hàng Thời trang</title>
 
-    <!-- Favicons -->
-    <link href="../img/apple-icon.png" rel="icon">
-    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
-    <!-- Thêm Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Thêm jQuery (cần cho Bootstrap 4) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-
-    <!-- Thêm Popper.js (cần cho Bootstrap 4) -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-
-    <!-- Thêm Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-          rel="stylesheet">
-
-    <!-- Vendor CSS Files -->
-    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
-    <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-    <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Main CSS File -->
-    <link href="../assets/css/main.css" rel="stylesheet">
-
-    <!-- =======================================================
-    * Template Name: iorder
-    * Template URL: https://bootstrapmade.com/iorder-bootstrap-order-websites-template/
-    * Updated: Jun 29 2024 with Bootstrap v5.3.3
-    * Author: BootstrapMade.com
-    * License: https://bootstrapmade.com/license/
-    ======================================================== -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .table-container {
-            max-height: 600px;
-            overflow-y: auto;
+        :root {
+            --sidebar-width: 260px;
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-bg: #222e3c;
         }
 
-        table {
-            border: 2px solid #000;
-            border-collapse: collapse;
-        }
-
-        .modal-body-customer {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .order-list {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 0;
-        }
-
-        .order-item {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .order-item span {
-            font-size: 16px;
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
             color: #333;
-            line-height: 1.5;
         }
 
-        .modal-header {
-            background-color: #007bff;
-            color: white;
+        /* Sidebar */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: var(--dark-bg);
+            color: #fff;
+            z-index: 1000;
+            transition: all 0.3s;
+            overflow-y: auto;
         }
 
-        .modal-footer {
-            border-top: 1px solid #ddd;
-        }
-        .status {
-            font-weight: bold;
-            display: inline;
-            padding: 2px 6px;
-            border-radius: 5px;
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0,0,0,0.1);
         }
 
-        .status.pending {
-            background-color: #ffc107;
-            color: #000;
-        }
-
-        .status.confirmed {
-            background-color: #28a745;
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
             color: #fff;
         }
 
-        .status.processing {
-            background-color: #17a2b8;
-            color: #fff;
+        .nav-menu {
+            padding: 20px 0;
         }
 
-        .status.shipping {
-            background-color: #007bff;
-            color: #fff;
+        .nav-item {
+            padding: 0 20px;
+            margin-bottom: 5px;
         }
 
-        .status.delivered {
-            background-color: #28a745;
-            color: #fff;
+        .nav-link {
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
         }
 
-        .status.cancel {
-            background-color: #dc3545;
-            color: #fff;
+        .nav-link i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+            width: 25px;
+            text-align: center;
         }
 
-        .status.unknown {
-            background-color: #6c757d;
+        .nav-link:hover, .nav-link.active {
             color: #fff;
+            background: rgba(255,255,255,0.1);
         }
 
+        .nav-link.active {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Main Content */
+        #content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #eff2f7;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #4e73df;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #cce5ff; color: #004085; }
+        .status-processing { background: #d1ecf1; color: #0c5460; }
+        .status-shipping { background: #e2e3e5; color: #383d41; }
+        .status-delivered { background: #d4edda; color: #155724; }
+        .status-cancel { background: #f8d7da; color: #721c24; }
+
+        /* Tables */
+        .table thead th {
+            background-color: #f8f9fc;
+            border-bottom: 2px solid #e3e6f0;
+            color: #4e73df;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .product-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 992px) {
+            #sidebar { left: -var(--sidebar-width); }
+            #content { margin-left: 0; }
+            body.sidebar-open #sidebar { left: 0; }
+            body.sidebar-open #content { margin-left: var(--sidebar-width); }
+        }
     </style>
-
 </head>
 
-<body class="index-page">
+<body>
 
-<header id="header" class="header dark-background d-flex flex-column">
-    <i class="header-toggle d-xl-none bi bi-list"></i>
-
-    <div class="profile-img">
-        <img src="../assets/img/my-profile-img.jpg" alt="" class="img-fluid rounded-circle">
+<!-- Preloader -->
+<div id="preloader">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
     </div>
+</div>
 
-    <a href="index.html" class="logo d-flex align-items-center justify-content-center">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="../assets/img/logo.png" alt=""> -->
-        <h1 class="sitename">Admin</h1>
-    </a>
+<!-- Sidebar -->
+<div id="sidebar">
+    <div class="sidebar-header">
+        <h3>FASHION ADMIN</h3>
+        <small class="text-muted">Hệ thống Chuỗi Cửa hàng</small>
+    </div>
+    <div class="nav-menu">
+        <div class="nav-item"><a href="#dashboard" class="nav-link active" data-section="dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a></div>
+        <div class="nav-item"><a href="#statistics" class="nav-link" data-section="statistics"><i class="bi bi-graph-up"></i>Thống kê</a></div>
+        <div class="nav-item"><a href="#products" class="nav-link" data-section="products"><i class="bi bi-box-seam"></i>Sản phẩm</a></div>
+        <div class="nav-item"><a href="#categories" class="nav-link" data-section="categories"><i class="bi bi-tags"></i>Thương hiệu</a></div>
+        <div class="nav-item"><a href="#orders" class="nav-link" data-section="orders"><i class="bi bi-cart-check"></i>Đơn hàng</a></div>
+        <div class="nav-item"><a href="#inventory" class="nav-link" data-section="inventory"><i class="bi bi-box-seam"></i> Xuất nhập kho</a></div>        <div class="nav-item"><a href="#customers" class="nav-link" data-section="customers"><i class="bi bi-people"></i>Khách hàng</a></div>
+        <div class="nav-item"><a href="#stores" class="nav-link" data-section="stores"><i class="bi bi-shop"></i>Cửa hàng (Cơ sở)</a></div>
+        <hr class="mx-3 opacity-25">
+        <div class="nav-item"><a href="/logout" class="nav-link text-danger"><i class="bi bi-box-arrow-right"></i>Đăng xuất</a></div>
+    </div>
+</div>
 
+<!-- Main Content -->
+<div id="content">
 
-    <nav id="navmenu" class="navmenu">
-        <ul>
-            <li><a href="#hero" class="active"><i class="bi bi-house navicon"></i>Home</a></li>
-            <li><a href="#about"><i class="bi bi-tags navicon"></i>Thương hiệu</a></li>
-            <li><a href="#product"><i class="bi bi-file-earmark-text navicon"></i>Sản phẩm</a></li>
-            <li><a href="#customers"><i class="bi bi-people navicon"></i> Khách hàng</a></li>
-            <li><a href="#order"><i class="bi bi-bag-check-fill navicon"></i> Đơn hàng</a></li>
-            <li><a href="#statisical"><i class="bi bi-graph-up navicon"></i>Thống kê</a></li>
-            <li><a th:href="@{/home}"><i class="bi bi-shop navicon"></i>Shop</a></li>
-
-            <li>
-                <a th:href="@{/logout}" class="nav-link">
-                    <i class="fas fa-sign-out-alt navicon"></i> Đăng xuất
-                </a>
-            </li>
-
-
-        </ul>
-    </nav>
-
-</header>
-
-<main class="main">
-
-    <!-- Hero Section -->
-    <section id="hero" class="hero section dark-background">
-
-        <img src="../img/category_img_02.jpg" alt="" data-aos="fade-in" class="">
-
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
-            <h2>SHOES STORE</h2>
-            <p> <span class="typed"
-                      data-typed-items="Xin chào">Xin chào</span><span
-                    class="typed-cursor typed-cursor--blink" aria-hidden="true"></span><span
-                    class="typed-cursor typed-cursor--blink" aria-hidden="true"></span></p>
-        </div>
-
-    </section><!-- /Hero Section -->
-    <!-- About Section -->
-    <section id="about" class="about section">
-        <!-- Section Title -->
-        <div class="container section-title" data-aos="fade-up">
-            <h2>Thương hiệu</h2>
-        </div>
-        <!-- End Section Title -->
-        <div class="mb-3 container">
-            <input type="text" id="categorySearch" class="form-control" style="width: 44%;"
-                   placeholder="Nhập từ khóa tìm kiếm ...">
-        </div>
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
-            <div class="row gy-4 justify-content-center">
-                <div class="col-lg-12 content table-container">
-
-                    <!-- Table -->
-                    <table class="table table-bordered" id="categoryTable">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Tên thương hiệu</th>
-                            <th scope="col">Trạng thái</th>
-                            <th scope="col">Khóa / mở</th>
-                            <th scope="col">Thao tác</th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        <tr th:each="cate, iterStat : ${categories}">
-                            <th scope="row" th:text="${iterStat.index + 1}"></th>
-                            <td th:text="${cate.name}"></td>
-                            <td>
-                                <span th:text="${cate.active ? 'Đang hoạt động' :  'Ngừng hoạt động'}"></span>
-                            </td>
-                            <td>
-                                <a th:href="@{/categories/toggle-status/{id}(id=${cate.id})}"
-                                   class="btn"
-                                   th:classappend="${cate.active} ? 'btn-danger' : 'btn-success'">
-                                    <span th:text="${cate.active ? 'Khóa' : 'Mở khóa'}"></span>
-                                </a>
-                            </td>
-
-                            <td>
-
-                                <!-- Sửa -->
-                                <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
-                                        th:attr="data-bs-target='#editModal__' + ${cate.id}" title="Sửa">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-
-                                <!-- Xóa -->
-                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                        th:attr="data-bs-target='#deleteModal__' + ${cate.id}" title="Xóa">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-
-
-                            </td>
-                            <!--Sửa cate-->
-
-                            <!-- Modal Sửa -->
-                            <div class="modal fade" th:id="'editModal__' + ${cate.id}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form class="editCategoryForm" th:attr="data-id=${cate.id}">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Sửa thương hiệu</h5>
-                                                <button type="button" class="btn-close"
-                                                        data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <label>Tên thương hiệu:</label>
-                                                <input type="text" class="form-control" name="name"
-                                                       th:value="${cate.name}" required>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-warning">Cập nhật</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="admin-section">
+        <h2 class="section-title"><i class="bi bi-speedometer2"></i>Tổng quan hệ thống</h2>
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary h-100 py-2 shadow-sm" style="border-left: 4px solid var(--primary-color);">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Doanh thu (Tháng)</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-revenue">0đ</div>
                             </div>
-
-                            <!--Xóa cate-->
-                            <!-- Modal Xóa -->
-                            <div class="modal fade" th:id="'deleteModal__' + ${cate.id}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form class="deleteCategoryForm" th:attr="data-id=${cate.id}">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title text-danger">Xác nhận xóa</h5>
-                                                <button type="button" class="btn-close"
-                                                        data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>Bạn có chắc chắn muốn xóa thương hiệu "<span
-                                                        th:text="${cate.name}"></span>"?</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-danger">Xóa</button>
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Hủy
-                                                </button>
-                                            </div>
-                                        </form>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </tr>
-                        </tbody>
-
-                    </table>
-                    <!-- Thêm -->
-                    <!-- Modal Thêm -->
-                    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <form id="addCategoryForm">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="addModalLabel">Thêm thương hiệu</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <label for="categoryName">Tên thương hiệu:</label>
-                                        <input type="text" class="form-control" id="categoryName" name="name" required>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary">Lưu</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                            <div class="col-auto"><i class="fas fa-calendar fa-2x text-gray-300"></i></div>
                         </div>
                     </div>
-
-
-                </div>
-
-            </div>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal" style="width: auto">Thêm
-                thương hiệu
-            </button>
-
-        </div>
-
-    </section><!-- / -->
-
-    <!-- product Section -->
-    <section id="product" class="order section light-background">
-        <div class="container section-title" data-aos="fade-up">
-            <h2>Sản phẩm</h2>
-        </div>
-        <div class="mb-3 container">
-            <input type="text" id="productSearch" class="form-control" style="width: 44%;"
-                   placeholder="Nhập từ khóa tìm kiếm...">
-        </div>
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
-            <div class="row gy-4 justify-content-center">
-                <div class="col-lg-12 content table-container">
-                    <!-- Table -->
-                    <table class="table table-bordered" id="productTable">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Tên sản phẩm</th>
-                            <th scope="col">Hình ảnh</th>
-                            <th scope="col">Thương hiệu</th>
-                            <th scope="col">Giá</th>
-                            <th scope="col">Số lượng tồn kho</th>
-                            <!--                            <th scope="col">Trạng thái</th>-->
-                            <th scope="col">Thao tác</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="product, iterStat : ${products}">
-                            <th scope="row" th:text="${iterStat.index + 1}"></th>
-
-                            <!--                            <th scope="row" th:text="${product.id}"></th>-->
-                            <td th:text="${product.name}"></td>
-                            <td>
-                                <img th:src="@{'/assets/img/products/' + ${product.imageUrl}}" alt="Image"
-                                     class="img-fluid rounded"
-                                     style="max-width: 100px; height: auto;">
-                            </td>
-                            <td th:text="${product.category.name}"></td>
-                            <td th:text="${product.price}"></td>
-                            <td th:text="${product.stockQuantity}"></td>
-                            <!--                            <td>-->
-                            <!--                                <span th:text="${product.active ? 'Đang hoạt động' : 'Ngừng hoạt động'}"></span>-->
-                            <!--                            </td>-->
-                            <td>
-                                <span class="btn btn-primary btn-sm edit-product-btn"
-                                      data-bs-toggle="modal" data-bs-target="#editProductModal"
-                                      th:attr="data-id=${product.id}"
-                                ><i
-                                        class="fa-solid fa-pen-to-square"></i></span>/
-                                <span class="btn btn-danger btn-sm delete-product-btn"
-                                      data-bs-toggle="modal" data-bs-target="#deleteProductModal"
-                                      th:attr="data-id=${product.id}">
-                                <i
-                                        class="fa-solid fa-trash"></i></span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-
                 </div>
             </div>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal"
-                    style="margin-top: 20px">Thêm sản
-                phẩm
-            </button>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success h-100 py-2 shadow-sm" style="border-left: 4px solid var(--success-color);">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tổng đơn hàng</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-orders">0</div>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-shopping-cart fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info h-100 py-2 shadow-sm" style="border-left: 4px solid var(--info-color);">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Khách hàng mới</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-customers">0</div>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-users fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning h-100 py-2 shadow-sm" style="border-left: 4px solid var(--warning-color);">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Số lượng cơ sở</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-stores">0</div>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-store fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header">Biểu đồ doanh thu</div>
+                    <div class="card-body">
+                        <canvas id="mainRevenueChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">Đơn hàng mới nhất</div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush" id="recent-orders-list">
+                            <!-- JS will populate -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-    <!-- Modal Thêm Sản Phẩm -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Thêm sản phẩm mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <!-- Statistics Section -->
+    <section id="statistics-section" class="admin-section d-none">
+        <h2 class="section-title"><i class="bi bi-graph-up"></i>Báo cáo & Thống kê</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Lọc theo</label>
+                        <select class="form-select" id="statFilterType">
+                            <option value="month">Theo tháng</option>
+                            <option value="quarter">Theo quý</option>
+                            <option value="year">Theo năm</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" id="statMonthGroup">
+                        <label class="form-label">Tháng</label>
+                        <select class="form-select" id="statMonthSelect">
+                            <option value="1">Tháng 1</option><option value="2">Tháng 2</option><option value="3">Tháng 3</option>
+                            <option value="4">Tháng 4</option><option value="5">Tháng 5</option><option value="6">Tháng 6</option>
+                            <option value="7">Tháng 7</option><option value="8">Tháng 8</option><option value="9">Tháng 9</option>
+                            <option value="10">Tháng 10</option><option value="11">Tháng 11</option><option value="12">Tháng 12</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Năm</label>
+                        <select class="form-select" id="statYearSelect">
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="btnViewStats">Xem báo cáo</button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <form th:action="@{/admin/products/add}" method="post" id="addProductForm">
-                        <div class="mb-3">
-                            <label for="productName" class="form-label">Tên sản phẩm</label>
-                            <input type="text" class="form-control" id="productName" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productImage" class="form-label">Chọn ảnh</label>
-                            <input type="file" class="form-control" id="productImage" name="productImage"
-                                   onchange="handleImageChange(event)">
-                        </div>
-                        <div class="mb-3">
-                            <label for="productDescription" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="productDescription" name="description"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productFeatures" class="form-label">Tính năng</label>
-                            <textarea class="form-control" id="productFeatures" name="features"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productImageUrl" class="form-label">Ảnh sản phẩm</label>
-                            <input type="text" class="form-control" id="productImageUrl" required name="imageUrl">
-                        </div>
-<!--                        <div class="mb-3">-->
-<!--                            <label for="productBrand" class="form-label">Thương hiệu</label>-->
-<!--                            <input type="text" class="form-control" id="productBrand" required name="brand">-->
-<!--                        </div>-->
-
-                        <div class="mb-3">
-                            <label for="productPrice" class="form-label">Giá sản phẩm</label>
-                            <input type="number" class="form-control" id="productPrice" name="price" required>
-                        </div>
-<!--                        <div class="mb-3">-->
-<!--                            <label for="productDiscount" class="form-label">Giảm giá</label>-->
-<!--                            <input type="number" class="form-control" id="productDiscount" required name="discount">-->
-<!--                        </div>-->
-                        <div class="mb-3">
-                            <label for="productStock" class="form-label">Số lượng tồn kho</label>
-                            <input type="number" class="form-control" id="productStock" required name="stockQuantity">
-                        </div>
-                        <div class="mb-3">
-                            <label for="productCategory" class="form-label">Thương hiệu sản phẩm</label>
-                            <select class="form-select" id="productCategory" name="category.id">
-                                <option th:each="categoryActive : ${categoriesActive}"
-                                        th:value="${categoryActive.id}"
-                                        th:text="${categoryActive.name}">Thương hiệu
-                                </option>
-                            </select>
-
-                        </div>
-                        <!--                        <div class="mb-3">-->
-                        <!--                            <label for="productStatus" class="form-label">Trạng thái</label>-->
-                        <!--                            <select class="form-select" id="productStatus" name="status">-->
-                        <!--                                <option value="true">Đang hoạt động</option>-->
-                        <!--                                <option value="false">Ngừng hoạt động</option>-->
-                        <!--                            </select>-->
-                        <!--                        </div>-->
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-primary" id="saveProductButton">Thêm sản phẩm</button>
-                        </div>
-                    </form>
-
+                <div class="alert alert-primary d-flex justify-content-between align-items-center">
+                    <span>Tổng doanh thu kỳ này:</span>
+                    <strong id="statTotalRevenue" style="font-size: 1.5rem;">0đ</strong>
                 </div>
-
+                <canvas id="detailedChart" height="150"></canvas>
             </div>
         </div>
-    </div>
-    <!-- Modal Sửa Sản Phẩm -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProductModalLabel">Sửa sản phẩm</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                    <form id="editProductForm" th:action="@{/admin/products/edit}" method="post">
-                        <!--                    <form id="editProductForm" th:action="@{/admin/products/edit}" method="post">-->
-                        <!--                        <label for="productName" class="form-label">Mã sản phẩm</label>-->
-                        <input type="hidden" id="editProductId" name="id"> <!-- ID của sản phẩm cần sửa -->
-                        <div class="mb-3">
-                            <label for="productName" class="form-label">Tên sản phẩm</label>
-                            <input type="text" class="form-control" id="editProductName" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productDescription" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="editProductDescription" name="description"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productFeatures" class="form-label">Tính năng</label>
-                            <textarea class="form-control" id="editProductFeatures" name="features"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productImageUrl" class="form-label">Ảnh sản phẩm</label>
-                            <img id="currentImagePreview"
-                                 src="" class="img-fluid rounded"
-                                 style="max-width: 100px; height: auto;padding-bottom: 15px;"
-                                 ...>
-
-                            <input type="file" class="form-control" id="editProductImageUrl"
-                                   name="productImage">
-                        </div>
-<!--                        <div class="mb-3">-->
-<!--                            <label for="productBrand" class="form-label">Thương hiệu</label>-->
-<!--                            <input type="text" class="form-control" readonly id="editProductBrand" required-->
-<!--                                   name="brand">-->
-<!--                        </div>-->
-
-                        <div class="mb-3">
-                            <label for="productPrice" class="form-label">Giá sản phẩm</label>
-                            <input type="number" class="form-control" id="editProductPrice" required name="price"
-                            >
-                        </div>
-<!--                        <div class="mb-3">-->
-<!--                            <label for="productDiscount" class="form-label">Giảm giá</label>-->
-<!--                            <input type="number" class="form-control" id="editProductDiscount" required name="discount">-->
-<!--                        </div>-->
-                        <div class="mb-3">
-                            <label for="productStock" class="form-label">Số lượng tồn kho</label>
-                            <input type="number" class="form-control" readonly id="editProductStock" required
-                                   name="stockQuantity">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editProductCategory" class="form-label">Thương hiệu</label>
-                            <select class="form-select" id="editProductCategory" disabled>
-                            </select>
-                            <input type="hidden" name="category.id" id="editProductCategoryHidden">
-                        </div>
-
-
-
-                        <!--                        <div class="mb-3">-->
-                        <!--                            <label for="productStatus" class="form-label">Trạng thái</label>-->
-                        <!--                            <select class="form-select" id="editProductStatus" name="status" readonly >-->
-                        <!--                                <option value="true">Đang hoạt động</option>-->
-                        <!--                                <option value="false">Ngừng hoạt động</option>-->
-                        <!--                            </select>-->
-                        <!--                        </div>-->
-                        <button type="submit" class="btn btn-primary" id="updateProductButton">Lưu thay đổi</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Xóa Sản Phẩm -->
-    <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteProductModalLabel">Xóa sản phẩm</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Bạn có chắc chắn muốn xóa sản phẩm này không?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-danger" id="deleteProductButton">Xóa</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <section id="customers" class="order section light-background">
-        <div class="container section-title" data-aos="fade-up">
-            <h2>Khách hàng</h2>
-        </div>
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Tổng số khách hàng: <span th:text="${#lists.size(users)}"></span></h5>
-                </div>
-                <div class="col-md-6">
-                    <h5>Tổng số đơn hàng: <span th:text="${totalOrders}"></span></h5>
-                </div>
-            </div>
-            <div class="row gy-4 justify-content-center">
-                <div class="col-lg-12 content table-container">
-                    <!-- Table -->
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Tài khoản</th>
-                            <th scope="col">Tên khách hàng</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Vai trò</th>
-                            <th scope="col">Đơn hàng</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="user, iterStat : ${users}">
-                            <th scope="row" th:text="${iterStat.index + 1}"></th>
-                            <td th:text="${user.username}"></td>
-                            <td th:text="${user.fullname}"></td>
-                            <td th:text="${user.email}"></td>
-                            <td th:text="${user.role}"></td>
-                            <td>
-                                <button type="button" class="btn btn-info" data-toggle="modal"
-                                        th:data-target="'#orderModal' + ${user.id}">
-                                    Số đơn: <span th:text="${#lists.size(user.orders)}"></span>
-                                </button>
-                                <!-- Modal -->
-                                <div class="modal fade" th:id="'orderModal' + ${user.id}" tabindex="-1" role="dialog"
-                                     aria-labelledby="orderModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="orderModalLabel">Danh sách đơn hàng</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body-customer">
-                                                <ul class="order-list">
-                                                    <li th:if="${#lists.size(user.orders) == 0}" class="order-item">
-                                                        <span>Chưa có đơn hàng dược tạo</span>
-                                                    </li>
-                                                    <li th:each="order : ${user.orders}" class="order-item">
-                                                        <span th:text="'Mã đơn: ' + ${order.code}"></span><br>
-                                                        <strong><em>
-                                                            Trạng thái:
-                                                            <span th:switch="${order.status}">
-        <span th:case="'PENDING'" class="status pending">Chờ xác nhận</span>
-        <span th:case="'CONFIRMED'" class="status confirmed">Đã xác nhận</span>
-        <span th:case="'PROCESSING'" class="status processing">Đang chuẩn bị hàng</span>
-        <span th:case="'SHIPPING'" class="status shipping">Đang giao hàng</span>
-        <span th:case="'DELIVERED'" class="status delivered">Đã giao hàng</span>
-        <span th:case="'CANCEL'" class="status cancel">Đã hủy</span>
-        <span th:case="*" class="status unknown">Không xác định</span>
-    </span>
-                                                        </em></strong>
-                                                        <hr>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                    Đóng
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-        </div>
-
     </section>
-    <!-- order Section -->
-    <section id="order" class="order section light-background">
 
-        <div class="container section-title" data-aos="fade-up">
-            <h2>Đơn hàng</h2>
+    <!-- Products Section -->
+    <section id="products-section" class="admin-section d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title m-0"><i class="bi bi-box-seam"></i>Quản lý Sản phẩm</h2>
+            <button class="btn btn-success" onclick="openProductModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm sản phẩm</button>
         </div>
-        <!--        <div class="mb-3 container">-->
-        <!--            <input type="text" id="orderSearch" class="form-control" style="width: 44%;"-->
-        <!--                   placeholder="Nhập từ khóa tìm kiếm(Mã đơn,khách hàng, trạng thái) ...">-->
-        <!--        </div>-->
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
-            <div class="row gy-4 justify-content-center">
-                <div class="col-lg-12 content table-container">
-                    <!-- Table -->
-
-                    <table class="table table-bordered" id="orderTable">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="mb-3">
+                    <input type="text" class="form-control w-25" id="productSearch" placeholder="Tìm kiếm sản phẩm...">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Mã đơn hàng</th>
-                            <th>Khách hàng</th>
+                            <th>Ảnh</th>
                             <th>Tên sản phẩm</th>
-                            <th>Số lượng</th>
-                            <th>Giá tiền</th>
-                            <th>Ngày đặt hàng</th>
-                            <th>Trạng thái</th>
-                            <th>Trạng thái thanh toán</th>
+                            <th>Thương hiệu</th>
+                            <th>Giá bán</th>
+                            <th>Tồn kho</th>
                             <th>Thao tác</th>
-
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr th:each="order, iterStat : ${orders}">
-                            <th scope="row" th:text="${iterStat.index + 1}"></th>
-                            <td th:text="${order.code}"></td>
-                            <td th:text="${order.user.fullname}"></td>
-                            <td colspan="3">
-                                <table class="table sub-table">
-                                    <tbody>
-                                    <tr th:each="item : ${order.orderItems}"
-                                        style="cursor: pointer;"
-                                        data-bs-toggle="modal"
-                                        th:attr="data-bs-target='#orderModal' + ${order.id}">
-                                        <td th:text="${item.product.name}"></td>
-                                        <td th:text="${item.quantity}"></td>
-                                        <td th:text="${item.price}"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                            <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
-                            <td th:switch="${order.status}">
-                                <span th:case="'PENDING'">Chờ xác nhận</span>
-                                <span th:case="'CONFIRMED'">Đã xác nhận</span>
-                                <span th:case="'PROCESSING'">Đang chuẩn bị hàng</span>
-                                <span th:case="'SHIPPING'">Đang giao hàng</span>
-                                <span th:case="'DELIVERED'">Đã giao hàng</span>
-                                <span th:case="'CANCEL'">Đã hủy</span>
-                                <span th:case="*">Không xác định</span>
-                            </td>
-                            <td th:switch="${order.paymentStatus}">
-                                <span th:case="'Wait for payment'">Chờ thanh toán</span>
-                                <span th:case="'Payment'">Đã thanh toán</span>
-                                <span th:case="'Cancel'">Đã hủy</span>
-                                <span th:case="*">Không xác định</span>
-                            </td>
+                        <tbody id="productTableBody">
+                        <!-- JS will populate -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories-section" class="admin-section d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title m-0"><i class="bi bi-tags"></i>Quản lý Thương hiệu</h2>
+            <button class="btn btn-success" onclick="openCategoryModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm thương hiệu</button>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên thương hiệu</th>
+                        <th>Số lượng sản phẩm</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                    <!-- JS will populate -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Orders Section -->
+    <section id="orders-section" class="admin-section d-none">
+        <h2 class="section-title"><i class="bi bi-cart-check"></i>Quản lý Đơn hàng</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Trạng thái</th>
+                            <th>Thanh toán</th>
+                            <th>Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                        <!-- JS will populate -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customers Section -->
+    <section id="customers-section" class="admin-section d-none">
+        <h2 class="section-title"><i class="bi bi-people"></i>Quản lý Khách hàng</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tài khoản</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Vai trò</th>
+                        <th>Đơn hàng</th>
+                    </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                    <!-- JS will populate -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <section id="inventory-section" class="admin-section d-none">
+
+        <h2 class="mb-4">
+            <i class="bi bi-arrow-left-right"></i> Xuất / Nhập kho
+        </h2>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <button class="nav-link active" onclick="switchTab('import')">
+                    <i class="bi bi-box-arrow-in-down"></i> Nhập hàng
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" onclick="switchTab('export')">
+                    <i class="bi bi-box-arrow-up"></i> Xuất hàng
+                </button>
+            </li>
+        </ul>
+
+        <!-- FORM -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="post" th:action="@{/admin/inventory/process}">
+
+                    <!-- Chọn cửa hàng -->
+                    <div class="mb-3">
+                        <label>Cửa hàng</label>
+                        <select class="form-select" name="storeId">
+                            <option th:each="s : ${stores}"
+                                    th:value="${s.id}"
+                                    th:text="${s.name}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Danh sách sản phẩm -->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Size</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="itemContainer">
+                        <tr>
                             <td>
-                                <form th:action="@{/admin/orders/updateStatus}" method="post">
-                                    <input type="hidden" name="orderId" th:value="${order.id}"/>
-
-                                    <button type="submit" th:if="${order.status == 'PENDING'}" name="status"
-                                            value="CONFIRMED" class="btn btn-primary">Xác nhận
-                                    </button>
-                                    <button type="submit" th:if="${order.status == 'CONFIRMED'}" name="status"
-                                            value="PROCESSING" class="btn btn-info">Chuẩn bị hàng
-                                    </button>
-                                    <button type="submit" th:if="${order.status == 'PROCESSING'}" name="status"
-                                            value="SHIPPING" class="btn btn-warning">Giao hàng
-                                    </button>
-                                    <button type="submit" th:if="${order.status == 'SHIPPING'}" name="status"
-                                            value="DELIVERED" class="btn btn-success">Hoàn tất
-                                    </button>
-
-                                    <button type="button" th:if="${order.status == 'DELIVERED'}"
-                                            class="btn btn-secondary" disabled>Hoàn tất
-                                    </button>
-
-                                    <button type="button" th:if="${order.status == 'CANCEL'}" class="btn btn-secondary"
-                                            disabled>Đã hủy đơn
-                                    </button>
-
-                                    <button type="submit"
-                                            th:if="${order.status != 'DELIVERED' and order.status != 'CANCEL'}"
-                                            name="status" value="CANCEL"
-                                            class="btn btn-danger">Hủy đơn
-                                    </button>
-                                </form>
-
+                                <select name="productIds" class="form-select">
+                                    <option th:each="p : ${products}"
+                                            th:value="${p.id}"
+                                            th:text="${p.name}">
+                                    </option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="sizes" class="form-control"/></td>
+                            <td><input type="number" name="quantities" class="form-control"/></td>
+                            <td><input type="number" name="prices" class="form-control"/></td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">X</button>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                    <div th:each="order : ${orders}">
-                        <div class="modal fade" th:id="'orderModal' + ${order.id}" tabindex="-1">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Chi tiết đơn hàng #<span th:text="${order.id}"></span>
-                                        </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p><strong>Mã đơn hàng:</strong> <span th:text="${order.code}"></span></p>
-                                        <p><strong>Người nhận:</strong> <span th:text="${order.fullName}"></span></p>
-                                        <p><strong>SĐT:</strong> <span th:text="${order.phone}"></span></p>
-                                        <p><strong>Địa chỉ:</strong> <span th:text="${order.address}"></span></p>
-                                        <p><strong>Ngày đặt:</strong> <span
-                                                th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span>
-                                        </p>
-                                        <hr>
-                                        <h6>Sản phẩm:</h6>
-                                        <table class="table table-bordered">
-                                            <thead>
-                                            <tr>
-                                                <th>Tên sản phẩm</th>
-                                                <th>Số lượng</th>
-                                                <th>Giá</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="item : ${order.orderItems}">
-                                                <td th:text="${item.product.name}"></td>
-                                                <td th:text="${item.quantity}"></td>
-                                                <td th:text="${item.price}"></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+                    <button type="button" class="btn btn-secondary mb-3" onclick="addRow()">
+                        + Thêm sản phẩm
+                    </button>
+
+                    <!-- Action -->
+                    <div class="text-end">
+                        <button type="submit" name="type" value="import" class="btn btn-success">
+                            Lưu phiếu nhập
+                        </button>
+                        <button type="submit" name="type" value="export" class="btn btn-danger">
+                            Lưu phiếu xuất
+                        </button>
                     </div>
-                </div>
+
+                </form>
             </div>
         </div>
-        <section id="statisical" class="statisical section light-background">
-
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Thống kê doanh thu</h2>
-            </div>
-
-            <div class="container mb-4">
-                <form id="filterForm" class="row g-3">
-                    <div class="col-auto">
-                        <select class="form-select" id="filterType" name="type">
-                            <option value="month" selected>Theo tháng</option>
-                            <option value="quarter">Theo quý</option>
-                        </select>
-                    </div>
-                    <div class="col-auto" id="monthGroup">
-                        <select class="form-select" id="monthSelect" name="month">
-                            <option th:each="i : ${#numbers.sequence(1,12)}"
-                                    th:value="${i}"
-                                    th:text="'Tháng ' + ${i}"
-                                    th:selected="${i == currentMonth}"></option>
-                        </select>
-                    </div>
-                    <div class="col-auto d-none" id="quarterGroup">
-                        <select class="form-select" id="quarterSelect" name="quarter">
-                            <option value="1">Quý 1</option>
-                            <option value="2">Quý 2</option>
-                            <option value="3">Quý 3</option>
-                            <option value="4">Quý 4</option>
-                        </select>
-                    </div>
-                    <div class="col-auto">
-                        <select class="form-select" id="yearSelect" name="year">
-                            <option th:each="y : ${years}" th:value="${y}" th:text="${y}"
-                                    th:selected="${y == currentYear}"></option>
-                        </select>
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">Xem</button>
-                    </div>
-                </form>
-                <div id="totalRevenue" style="font-size: 16px; font-weight: bold; margin-top: 20px;"></div>
-
-                <div class="container mb-5">
-                    <canvas id="revenueChart" height="100"></canvas>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact" class="contact section">
-
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Liên hệ</h2>
-                <p>Cần thiết để đạt được hậu quả của một số người chạy trốn thực sự từ các giá trị mặc định</p>
-            </div><!-- End Section Title -->
-
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                <div class="row gy-4">
-
-                    <div class="col-lg-12">
-
-                        <div class="info-wrap">
-                            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
-                                <i class="bi bi-geo-alt flex-shrink-0"></i>
-                                <div>
-                                    <h3>Địa chỉ</h3>
-                                    <p>Hà Đông, Hà Nội</p>
-                                </div>
-                            </div><!-- End Info Item -->
-
-                            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
-                                <i class="bi bi-telephone flex-shrink-0"></i>
-                                <div>
-                                    <h3>Gọi cho chúng tôi</h3>
-                                    <p>+84 965509515</p>
-                                </div>
-                            </div><!-- End Info Item -->
-
-                            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
-                                <i class="bi bi-envelope flex-shrink-0"></i>
-                                <div>
-                                    <h3>Email cho chúng tôi</h3>
-                                    <p>cuong.mai@vconnex.vn</p>
-                                </div>
-                            </div><!-- End Info Item -->
-
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d48389.78314118045!2d-74.006138!3d40.710059!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a22a3bda30d%3A0xb89d1fe6bc499443!2sDowntown%20Conference%20Center!5e0!3m2!1sen!2sus!4v1676961268712!5m2!1sen!2sus"
-                                    frameborder="0" style="border:0; width: 100%; height: 270px;" allowfullscreen=""
-                                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- <div class="col-lg-7"></div> -->
-                    <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up"
-                          data-aos-delay="200">
-                        <div class="row gy-4">
-
-                            <div class="col-md-6">
-                                <label for="name-field" class="pb-2">Tên của bạn</label>
-                                <input type="text" name="name" id="name-field" class="form-control" required="">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="email-field" class="pb-2">Email của bạn</label>
-                                <input type="email" class="form-control" name="email" id="email-field" required="">
-                            </div>
-
-                            <div class="col-md-12">
-                                <label for="subject-field" class="pb-2">Chủ đề</label>
-                                <input type="text" class="form-control" name="subject" id="subject-field" required="">
-                            </div>
-
-                            <div class="col-md-12">
-                                <label for="message-field" class="pb-2">Tin nhắn</label>
-                                <textarea class="form-control" name="message" rows="10" id="message-field"
-                                          required=""></textarea>
-                            </div>
-
-                            <div class="col-md-12 text-center">
-                                <div class="loading">Đang tải</div>
-                                <div class="error-message"></div>
-                                <div class="sent-message">Tin nhắn của bạn đã được gửi. Cảm ơn bạn!</div>
-
-                                <button type="submit">Gửi tin nhắn</button>
-                            </div>
-
-                        </div>
-                    </form>
-                </div><!-- End Contact Form -->
-
-            </div>
-
-            </div>
-
-        </section><!-- /Contact Section -->
 
     </section>
-
-</main>
-
-<footer id="footer" class="footer position-relative light-background">
-
-    <div class="container">
-        <div class="copyright text-center ">
-            <p>© <span>Bản quyền</span> <strong class="px-1 sitename">iorder</strong>
-                <span>Đã đăng ký Bản quyền</span></p>
+    <!-- Stores Section -->
+    <section id="stores-section" class="admin-section d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title m-0"><i class="bi bi-shop"></i>Quản lý Cơ sở (Cửa hàng)</h2>
+            <button class="btn btn-success" onclick="openStoreModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm cơ sở</button>
         </div>
-        <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you've purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-            Thiết kế bởi <a href="https://bootstrapmade.com/">BootstrapMade</a> Phân phối bởi <a
-                href="https://themewagon.com">ThemeWagon</a>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên cơ sở</th>
+                        <th>Địa chỉ</th>
+                        <th>Số điện thoại</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="storeTableBody">
+                    <tr th:each="store : ${stores}">
+                        <td th:text="${store.id}"></td>
+                        <td th:text="${store.name}"></td>
+                        <td th:text="${store.address}"></td>
+                        <td th:text="${store.phone}"></td>
+                        <td>
+                            <span th:text="${store.active} ? 'Active' : 'Inactive'"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- MODALS -->
+
+<!-- Product Modal -->
+<div class="modal fade" id="productModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="productForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle">Sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="prodId">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Tên sản phẩm</label>
+                            <input type="text" class="form-control" id="prodName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Thương hiệu</label>
+                            <select class="form-select" id="prodCategory" required></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Giá bán (đ)</label>
+                            <input type="number" class="form-control" id="prodPrice" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số lượng tồn</label>
+                            <input type="number" class="form-control" id="prodStock" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="prodDesc" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Hình ảnh</label>
+                            <input type="file" class="form-control" id="prodImage">
+                            <div id="prodImagePreview" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-</footer>
+<!-- Category Modal -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="categoryForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalTitle">Thương hiệu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="cateId">
+                    <div class="mb-3">
+                        <label class="form-label">Tên thương hiệu</label>
+                        <input type="text" class="form-control" id="cateName" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-<!-- Scroll Top -->
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
-        class="bi bi-arrow-up-short"></i></a>
+<!-- Store Modal -->
+<div class="modal fade" id="storeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="storeForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="storeModalTitle">Cơ sở cửa hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="storeId">
+                    <div class="mb-3">
+                        <label class="form-label">Tên cơ sở</label>
+                        <input type="text" class="form-control" id="storeName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control" id="storeAddress" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" id="storePhone" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu cơ sở</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-<!-- Preloader -->
-<div id="preloader"></div>
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa mục này? Dữ liệu liên quan có thể bị ảnh hưởng.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa vĩnh viễn</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- Vendor JS Files -->
-<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../assets/vendor/php-email-form/validate.js"></script>
-<script src="../assets/vendor/aos/aos.js"></script>
-<script src="../assets/vendor/typed.js/typed.umd.js"></script>
-<script src="../assets/vendor/purecounter/purecounter_vanilla.js"></script>
-<script src="../assets/vendor/waypoints/noframework.waypoints.js"></script>
-<script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
-<script src="../assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
-<script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-<script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
-
-<!-- Main JS File -->
-<script src="../assets/js/main.js"></script>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Thêm các script JS của Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
-
-<!--<script>-->
-
-<!--    // Thêm sự kiện cho nút Thêm sản phẩm-->
-<!--    document.getElementById('saveProductButton').addEventListener('click', function () {-->
-<!--        var product = {-->
-<!--            name: document.getElementById('productName').value,-->
-<!--            description: document.getElementById('productDescription').value,-->
-<!--            features: document.getElementById('productFeatures').value,-->
-<!--            imageUrl: document.getElementById('productImageUrl').value,-->
-<!--            brand: document.getElementById('productBrand').value,-->
-<!--            price: document.getElementById('productPrice').value,-->
-<!--            discount: document.getElementById('productDiscount').value,-->
-<!--            stockQuantity: document.getElementById('productStock').value,-->
-<!--            active: document.getElementById('productStatus').value === "true",-->
-<!--            category: {-->
-<!--                id: document.getElementById('productCategory').value-->
-<!--            }-->
-<!--        };-->
-
-<!--        fetch('/admin/products', {-->
-<!--            method: 'POST',-->
-<!--            headers: {-->
-<!--                'Content-Type': 'application/json'-->
-<!--            },-->
-<!--            body: JSON.stringify(product)-->
-<!--        }).then(response => {-->
-<!--            if (response.ok) {-->
-<!--                location.reload();  // Reload lại trang-->
-<!--            }-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
 <script>
-    document.getElementById('saveProductButton').addEventListener('click', function (event) {
-        event.preventDefault();
+    // --- GLOBAL STATE ---
+    let products = [];
+    let categories = [];
+    let orders = [];
+    let users = [];
+    let stores = [];
+    let deleteTarget = { type: '', id: null };
+    let revenueChart = null;
+    let detailedChart = null;
 
-        var form = document.getElementById('addProductForm');
-        var formData = new FormData(form);
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadAllData();
+        initCharts();
+        setupNavigation();
+        setupForms();
 
-        fetch('/admin/products/add', {
-            method: 'POST',
-            body: formData
-        }).then(response => {
-            if (response.ok) {
-                location.reload();
-            } else {
-                alert("Lỗi khi thêm sản phẩm");
-            }
-        }).catch(error => {
-            console.error('Lỗi khi gửi yêu cầu:', error);
-        });
-    });
-</script>
-
-<script>
-    document.querySelectorAll(".btn.btn-danger.btn-sm").forEach(button => {
-        button.addEventListener("click", function () {
-            productId = this.getAttribute("data-id");
-        });
+        // Hide preloader
+        setTimeout(() => {
+            document.getElementById('preloader').style.display = 'none';
+        }, 800);
     });
 
-    document.getElementById("deleteProductButton").addEventListener("click", function () {
-        if (productId) {
-            fetch(`/admin/products/delete/${productId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert("Xóa sản phẩm thành công!");
-                        location.reload();
-                    } else {
-                        alert("Xóa sản phẩm thất bại!");
-                    }
-                })
-                .catch(error => console.error("Lỗi:", error));
-        }
-    });
+    async function loadAllData() {
+        // Mocking API calls based on your endpoints
+        try {
+            // Categories
+            const cateRes = await fetch('/categories');
+            categories = cateRes.ok ? await cateRes.json() : [
+                {id: 1, name: 'Babi Plus - Đồ bé trai', count: 12},
+                {id: 2, name: 'Babi Plus - Đồ bé gái', count: 15},
+                {id: 3, name: 'Phụ kiện sơ sinh', count: 8}
+            ];
 
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let productId = null;
+            // Products
+            const prodRes = await fetch('/admin/products/all');
+            products = prodRes.ok ? await prodRes.json() : [
+                {id: 1, name: 'Bộ thun Cotton bé trai', category: {id: 1, name: 'Đồ bé trai'}, price: 150000, stockQuantity: 50, imageUrl: 'p1.jpg'},
+                {id: 2, name: 'Váy công chúa bé gái', category: {id: 2, name: 'Đồ bé gái'}, price: 280000, stockQuantity: 30, imageUrl: 'p2.jpg'},
+                {id: 3, name: 'Giày tập đi sơ sinh', category: {id: 3, name: 'Phụ kiện'}, price: 95000, stockQuantity: 100, imageUrl: 'p3.jpg'}
+            ];
 
-        document.querySelectorAll(".btn.btn-primary.btn-sm").forEach(button => {
-            button.addEventListener("click", function () {
-                productId = this.getAttribute("data-id");
+            // Orders
+            const orderRes = await fetch('/admin/orders/all');
+            orders = orderRes.ok ? await orderRes.json() : [
+                {id: 1, code: 'ORD-001', user: {fullname: 'Nguyễn Văn A'}, orderDate: '2024-04-15', status: 'DELIVERED', paymentStatus: 'PAID', total: 450000},
+                {id: 2, code: 'ORD-002', user: {fullname: 'Trần Thị B'}, orderDate: '2024-04-16', status: 'PENDING', paymentStatus: 'UNPAID', total: 280000},
+                {id: 3, code: 'ORD-003', user: {fullname: 'Lê Văn C'}, orderDate: '2024-04-16', status: 'PROCESSING', paymentStatus: 'PAID', total: 150000}
+            ];
 
-                fetch(`/admin/products/${productId}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Không tìm thấy sản phẩm!");
-                        }
+            // Users
+            const userRes = await fetch('/admin/users');
+            users = userRes.ok ? await userRes.json() : [
+                {id: 1, username: 'user1', fullname: 'Nguyễn Văn A', email: 'a@gmail.com', role: 'USER', orderCount: 5},
+                {id: 2, username: 'admin', fullname: 'Quản trị viên', email: 'admin@babiplus.vn', role: 'ADMIN', orderCount: 0}
+            ];
 
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log(data);
-                        const select = document.getElementById("editProductCategory");
-                        const hidden = document.getElementById("editProductCategoryHidden");
+            // Stores
+            const storeRes = await fetch('/admin/stores');
+            stores = storeRes.ok ? await storeRes.json() : [
+                {id: 1, name: 'Babi Plus - Quận 1', address: '123 Lê Lợi, Q.1, TP.HCM', phone: '028.1234.5678'},
+                {id: 2, name: 'Babi Plus - Quận 7', address: '456 Nguyễn Văn Linh, Q.7, TP.HCM', phone: '028.8888.9999'}
+            ];
 
-                        select.innerHTML = "";
-
-                        const option = document.createElement("option");
-                        option.value = data.category.id;
-                        option.textContent = data.category.name;
-                        select.appendChild(option);
-                        hidden.value = data.category.id;
-                        document.getElementById("editProductId").value = data.id;
-                        document.getElementById("editProductName").value = data.name || "";
-                        document.getElementById("editProductDescription").value = data.description || "";
-                        document.getElementById("editProductFeatures").value = data.features || "";
-                        document.getElementById("currentImagePreview").src = "/assets/img/products/" + data.imageUrl || "";
-                        document.getElementById("editProductPrice").value = data.price || 0;
-                        document.getElementById("editProductStock").value = data.stockQuantity || 0;
-                        document.getElementById("editProductStatus").checked = data.active;
-                        // document.getElementById("editProductCategory").value = data.category.id || 0;
-
-                        console.log("id" + data.id);
-
-                    })
-                    .catch(error => {
-                        console.error("Lỗi:", error);
-                        // alert("Không thể lấy dữ liệu sản phẩm!");
-                    });
-            });
-        });
-        document.getElementById("editProductForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const form = document.getElementById("editProductForm");
-            const formData = new FormData(form);
-
-            fetch("/admin/products/edit", {
-                method: "POST",
-                body: formData
-            })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert("Lỗi khi cập nhật sản phẩm");
-                    }
-                })
-                .catch(error => {
-                    console.error("Lỗi:", error);
-                    alert("Cập nhật thất bại!");
-                });
-        });
-    });
-</script>
-<script>
-    function handleImageChange(event) {
-        const fileInput = event.target;
-        const file = fileInput.files[0];
-        const filePath = file ? fileInput.value : '';
-
-        if (filePath) {
-            const fileName = file.name;
-            const internalPath = `../assets/img/${fileName}`;
-            console.log('Đường dẫn ảnh nội bộ:', internalPath);
-
-            document.getElementById('imagePath').value = internalPath;
-        } else {
-            console.log('Chưa chọn ảnh');
+            renderAll();
+            updateDashboardStats();
+        } catch (e) {
+            console.error("Data load error", e);
         }
     }
-</script>
-<script>
-    document.querySelectorAll('.deleteCategoryForm').forEach(form => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const id = this.getAttribute('data-id');
 
-            fetch(`/categories/delete/${id}`, {
-                method: 'POST',
-            })
-                .then(res => {
-                    if (res.ok) {
-                        location.reload();
-                    } else {
-                        alert("Xóa thất bại!");
-                    }
-                });
-        });
-    });
-</script>
-<script>
-    document.querySelectorAll('.editCategoryForm').forEach(form => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+    // --- RENDERING ---
+    function renderAll() {
+        renderProducts();
+        renderCategories();
+        renderOrders();
+        renderCustomers();
+        renderStores();
+        updateSelects();
+    }
 
-            const id = this.getAttribute('data-id');
-            const formData = new FormData(this);
-            const name = formData.get('name');
+    function renderProducts() {
+        const body = document.getElementById('productTableBody');
+        body.innerHTML = products.map((p, i) => `
+                <tr>
+                    <td>${i+1}</td>
+                    <td><img src="/assets/img/products/${p.imageUrl}" class="product-img" onerror="this.src='https://via.placeholder.com/50'"></td>
+                    <td>${p.name}</td>
+                    <td><span class="badge bg-light text-dark border">${p.category ? p.category.name : 'N/A'}</span></td>
+                    <td>${formatVND(p.price)}</td>
+                    <td><span class="badge ${p.stockQuantity < 10 ? 'bg-danger' : 'bg-success'}">${p.stockQuantity}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openProductModal('edit', ${p.id})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('product', ${p.id})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+    }
 
-            fetch(`/categories/edit/${id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({name: name})
-            })
-                .then(res => {
-                    if (res.ok) {
-                        location.reload();
-                    } else {
-                        alert("Cập nhật thất bại!");
-                    }
-                })
-                .catch(error => {
-                    console.error("Lỗi xảy ra:", error);
-                });
-        });
-    });
-</script>
-<script>
-    document.getElementById('addCategoryForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+    function renderCategories() {
+        const body = document.getElementById('categoryTableBody');
+        body.innerHTML = categories.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.count || 0} sản phẩm</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openCategoryModal('edit', ${c.id}, '${c.name}')"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('category', ${c.id})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+    }
 
-        const name = document.getElementById('categoryName').value;
+    function renderOrders() {
+        const body = document.getElementById('orderTableBody');
+        body.innerHTML = orders.map(o => `
+                <tr>
+                    <td><strong>${o.code}</strong></td>
+                    <td>${o.user.fullname}</td>
+                    <td>${o.orderDate}</td>
+                    <td><span class="status-badge status-${o.status.toLowerCase()}">${getStatusText(o.status)}</span></td>
+                    <td><span class="badge ${o.paymentStatus === 'PAID' ? 'bg-success' : 'bg-warning'}">${o.paymentStatus}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-info text-white me-1"><i class="bi bi-eye"></i></button>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Sửa</button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${o.id}, 'CONFIRMED')">Xác nhận</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${o.id}, 'SHIPPING')">Giao hàng</a></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="updateOrderStatus(${o.id}, 'CANCEL')">Hủy đơn</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
 
-        fetch('/categories/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({name: name})
-        })
-            .then(res => {
-                if (res.ok) {
-                    location.reload();
-                } else {
-                    alert("Thêm Thương hiệu thất bại!");
-                }
-            })
-            .catch(error => {
-                console.error("Lỗi xảy ra:", error);
+        // Update recent orders on dashboard
+        const recent = document.getElementById('recent-orders-list');
+        recent.innerHTML = orders.slice(0, 5).map(o => `
+                <div class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
+                    <div>
+                        <div class="fw-bold">${o.code}</div>
+                        <small class="text-muted">${o.user.fullname} - ${formatVND(o.total || 0)}</small>
+                    </div>
+                    <span class="status-badge status-${o.status.toLowerCase()}" style="font-size: 0.6rem;">${getStatusText(o.status)}</span>
+                </div>
+            `).join('');
+    }
+
+    function renderCustomers() {
+        const body = document.getElementById('customerTableBody');
+        body.innerHTML = users.map((u, i) => `
+                <tr>
+                    <td>${i+1}</td>
+                    <td>${u.username}</td>
+                    <td>${u.fullname}</td>
+                    <td>${u.email}</td>
+                    <td><span class="badge ${u.role === 'ADMIN' ? 'bg-danger' : 'bg-info'}">${u.role}</span></td>
+                    <td><button class="btn btn-sm btn-link">${u.orderCount || 0} đơn</button></td>
+                </tr>
+            `).join('');
+    }
+
+    function renderStores() {
+        const body = document.getElementById('storeTableBody');
+        body.innerHTML = stores.map(s => `
+                <tr>
+                    <td>${s.id}</td>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.address}</td>
+                    <td>${s.phone}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openStoreModal('edit', ${s.id})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('store', ${s.id})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+    }
+
+    // --- UTILS ---
+    function formatVND(amount) {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    }
+
+    function getStatusText(status) {
+        const map = { 'PENDING': 'Chờ duyệt', 'CONFIRMED': 'Đã xác nhận', 'PROCESSING': 'Đang xử lý', 'SHIPPING': 'Đang giao', 'DELIVERED': 'Đã giao', 'CANCEL': 'Đã hủy' };
+        return map[status] || status;
+    }
+
+    function updateDashboardStats() {
+        document.getElementById('dash-revenue').innerText = formatVND(125000000);
+        document.getElementById('dash-orders').innerText = orders.length;
+        document.getElementById('dash-customers').innerText = users.length;
+        document.getElementById('dash-stores').innerText = stores.length;
+    }
+
+    function updateSelects() {
+        const sel = document.getElementById('prodCategory');
+        sel.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    // --- NAVIGATION ---
+    function setupNavigation() {
+        document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = link.getAttribute('data-section');
+
+                // Update active link
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Show section
+                document.querySelectorAll('.admin-section').forEach(s => s.classList.add('d-none'));
+                document.getElementById(`${sectionId}-section`).classList.remove('d-none');
             });
-    });
-</script>
-<script>
-    document.getElementById("filterType").addEventListener("change", function () {
-        const type = this.value;
-        document.getElementById("monthGroup").classList.toggle("d-none", type === "quarter");
-        document.getElementById("quarterGroup").classList.toggle("d-none", type === "month");
-    });
+        });
+    }
 
-    document.getElementById("filterForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const type = document.getElementById("filterType").value;
-        const year = document.getElementById("yearSelect").value;
-
-        if (type === "month") {
-            const month = document.getElementById("monthSelect").value;
-            fetchRevenueByDay(month, year);
-        } else if (type === "quarter") {
-            const quarter = document.getElementById("quarterSelect").value;
-            fetchRevenueByQuarter(quarter, year);
-        }
-    });
-</script>
-<script>
-    const ctx = document.getElementById('revenueChart').getContext('2d');
-    let revenueChart;
-
-    function drawChart(labels, data, month, year, totalRevenue) {
-        if (revenueChart) revenueChart.destroy();
-
-        revenueChart = new Chart(ctx, {
+    // --- CHARTS ---
+    function initCharts() {
+        const ctxMain = document.getElementById('mainRevenueChart').getContext('2d');
+        revenueChart = new Chart(ctxMain, {
             type: 'line',
             data: {
-                labels: labels,
+                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
                 datasets: [{
-                    label: `Doanh thu tháng ${month}/${year} (VND)`,
-                    data: data,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    tension: 0.3,
+                    label: 'Doanh thu (Triệu VNĐ)',
+                    data: [45, 52, 48, 70, 65, 85],
+                    borderColor: '#4e73df',
+                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
                     fill: true,
-                    pointRadius: 4
+                    tension: 0.3
                 }]
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (tooltipItem) {
-                                return 'Doanh thu: ' + tooltipItem.raw.toLocaleString() + ' VND';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return value.toLocaleString() + ' VND';
-                            }
-                        }
-                    }
-                }
+            options: { maintainAspectRatio: false }
+        });
+
+        const ctxDetail = document.getElementById('detailedChart').getContext('2d');
+        detailedChart = new Chart(ctxDetail, {
+            type: 'bar',
+            data: {
+                labels: ['Cơ sở Q1', 'Cơ sở Q7', 'Cơ sở Thủ Đức', 'Cơ sở Bình Thạnh'],
+                datasets: [{
+                    label: 'Doanh thu theo cơ sở',
+                    data: [120, 95, 80, 110],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
+                }]
             }
         });
-        const totalRevenueElement = document.getElementById('totalRevenue');
-        if (totalRevenueElement) {
-            totalRevenueElement.innerText = `Tổng doanh thu tháng ${month}/${year}: ` + totalRevenue.toLocaleString() + ' VND';
+    }
+
+    // --- MODAL LOGIC ---
+    function openProductModal(mode, id = null) {
+        const modal = new bootstrap.Modal(document.getElementById('productModal'));
+        document.getElementById('productForm').reset();
+        document.getElementById('prodId').value = id || '';
+        document.getElementById('productModalTitle').innerText = mode === 'add' ? 'Thêm sản phẩm mới' : 'Chỉnh sửa sản phẩm';
+
+        if(mode === 'edit') {
+            const p = products.find(x => x.id === id);
+            if(p) {
+                document.getElementById('prodName').value = p.name;
+                document.getElementById('prodCategory').value = p.category.id;
+                document.getElementById('prodPrice').value = p.price;
+                document.getElementById('prodStock').value = p.stockQuantity;
+            }
+        }
+        modal.show();
+    }
+
+    function openCategoryModal(mode, id = null, name = '') {
+        const modal = new bootstrap.Modal(document.getElementById('categoryModal'));
+        document.getElementById('cateId').value = id || '';
+        document.getElementById('cateName').value = name || '';
+        document.getElementById('categoryModalTitle').innerText = mode === 'add' ? 'Thêm thương hiệu' : 'Sửa thương hiệu';
+        modal.show();
+    }
+
+    function openStoreModal(mode, id = null) {
+        const modal = new bootstrap.Modal(document.getElementById('storeModal'));
+        document.getElementById('storeForm').reset();
+        document.getElementById('storeId').value = id || '';
+        document.getElementById('storeModalTitle').innerText = mode === 'add' ? 'Thêm cơ sở mới' : 'Sửa thông tin cơ sở';
+
+        if(mode === 'edit') {
+            const s = stores.find(x => x.id === id);
+            if(s) {
+                document.getElementById('storeName').value = s.name;
+                document.getElementById('storeAddress').value = s.address;
+                document.getElementById('storePhone').value = s.phone;
+            }
+        }
+        modal.show();
+    }
+
+    function confirmDelete(type, id) {
+        deleteTarget = { type, id };
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    // --- FORM SUBMISSIONS ---
+    function setupForms() {
+        // Product Form
+        document.getElementById('productForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Đã lưu thông tin sản phẩm thành công!');
+            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+        });
+
+        // Category Form
+        document.getElementById('categoryForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Đã cập nhật thương hiệu!');
+            bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
+        });
+
+        // Store Form
+        document.getElementById('storeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Đã lưu thông tin cơ sở!');
+            bootstrap.Modal.getInstance(document.getElementById('storeModal')).hide();
+        });
+
+        // Delete Confirm
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            alert(`Đã xóa ${deleteTarget.type} có ID: ${deleteTarget.id}`);
+            bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+        });
+    }
+
+    async function updateOrderStatus(id, status) {
+        if(confirm(`Xác nhận chuyển trạng thái đơn hàng sang ${getStatusText(status)}?`)) {
+            alert('Cập nhật trạng thái thành công!');
         }
     }
-
-    function fetchRevenueByQuarter(quarter, year) {
-        fetch(`/admin/orders/revenue-by-quarter?quarter=${quarter}&year=${year}`)
-            .then(response => response.json())
-            .then(data => {
-                const labels = Object.keys(data).map(month => `Tháng ${month}`);
-                const revenueData = Object.values(data).map(revenue => parseFloat(revenue));
-                const totalRevenue = revenueData.reduce((a, b) => a + b, 0);
-
-                drawChart(labels, revenueData, `Quý ${quarter}`, year, totalRevenue);
-            });
+    function addRow() {
+        const row = document.querySelector("#itemContainer tr").cloneNode(true);
+        document.getElementById("itemContainer").appendChild(row);
     }
 
-    function fetchRevenueByDay(month, year) {
-        fetch(`/admin/orders/revenue-by-day?month=${month}&year=${year}`)
-            .then(response => response.json())
-            .then(data => {
-                const labels = Object.keys(data).map(day => `Ngày ${day}`);
-                const revenueData = Object.values(data).map(revenue => parseFloat(revenue));
-                const totalRevenue = revenueData.reduce((acc, revenue) => acc + revenue, 0);
-
-                drawChart(labels, revenueData, month, year, totalRevenue);
-            });
+    function removeRow(btn) {
+        btn.closest("tr").remove();
     }
-
-
-    const currentDate = new Date();
-    fetchRevenueByDay(currentDate.getMonth() + 1, currentDate.getFullYear());
-
-    document.getElementById('filterForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const month = parseInt(document.getElementById('monthSelect').value);
-        const year = parseInt(document.getElementById('yearSelect').value);
-        fetchRevenueByDay(month, year);
-    });
-</script>
-<!--<script>-->
-<!--    document.addEventListener("DOMContentLoaded", function () {-->
-<!--        const searchInput = document.getElementById("orderSearch");-->
-<!--        const table = document.getElementById("orderTable");-->
-<!--        const rows = table.querySelectorAll("tbody > tr");-->
-
-<!--        searchInput.addEventListener("keyup", function () {-->
-<!--            const filter = this.value.toLowerCase();-->
-
-<!--            rows.forEach(function (row) {-->
-<!--                let rowText = row.innerText.toLowerCase();-->
-
-<!--                if (filter === "" || rowText.includes(filter)) {-->
-<!--                    row.style.display = "";-->
-<!--                    const subTable = row.querySelector(".table");-->
-<!--                    if (subTable) {-->
-<!--                        subTable.style.display = "";-->
-<!--                    }-->
-<!--                } else {-->
-<!--                    row.style.display = "none";-->
-<!--                }-->
-<!--            });-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
-
-<script>
-    document.getElementById("productSearch").addEventListener("keyup", function () {
-        const filter = this.value.toLowerCase();
-        const rows = document.querySelectorAll("#productTable tbody > tr");
-
-        rows.forEach(function (row) {
-            const cells = row.querySelectorAll("td, th");
-            let textContent = "";
-
-            cells.forEach((cell, index) => {
-                if (index === 0) return;
-                textContent += cell.innerText.toLowerCase() + " ";
-            });
-
-            const match = textContent.includes(filter);
-            row.style.display = match ? "" : "none";
-        });
-    });
-</script>
-<script>
-    document.getElementById("categorySearch").addEventListener("keyup", function () {
-        const filter = this.value.toLowerCase();
-        const rows = document.querySelectorAll("#categoryTable tbody tr");
-
-        rows.forEach(function (row) {
-            const customerName = row.querySelector("td:nth-child(2)")?.textContent.toLowerCase() || "";
-            const productNames = Array.from(row.querySelectorAll("td[colspan='3'] td:first-child"))
-                .map(td => td.textContent.toLowerCase())
-                .join(" ");
-
-            if (customerName.includes(filter) || productNames.includes(filter)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    });
 </script>
 
 </body>
-
 </html>

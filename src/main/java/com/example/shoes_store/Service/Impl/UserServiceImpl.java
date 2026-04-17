@@ -1,6 +1,5 @@
 package com.example.shoes_store.Service.Impl;
 
-import com.example.shoes_store.Entity.Order;
 import com.example.shoes_store.Entity.User;
 import com.example.shoes_store.Repo.UserRepo;
 import com.example.shoes_store.Service.UserService;
@@ -44,10 +43,7 @@ public class UserServiceImpl implements UserService {
         return userRepo.findById(id).orElse(null);
     }
 
-    @Override
-    public List<Order> getOrdersByUserId(Long UserId) {
-        return userRepo.findById(UserId).map(User -> User.getOrders()).orElse(null);
-    }
+
 
     @Override
     public User registerUser(User user) {

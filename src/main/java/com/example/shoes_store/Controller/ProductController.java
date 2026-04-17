@@ -3,7 +3,6 @@ package com.example.shoes_store.Controller;
 import com.example.shoes_store.Entity.Product;
 import com.example.shoes_store.Entity.User;
 import com.example.shoes_store.Repo.ProductRepo;
-import com.example.shoes_store.Service.Impl.ProductReviewServiceImpl;
 import com.example.shoes_store.Service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +27,7 @@ public class ProductController {
     private ProductService productService;
     @Autowired
     private ProductRepo productRepo;
-    @Autowired
-    private ProductReviewServiceImpl productReviewServiceImpl;
+
 
     @GetMapping
     public String getAllProducts(Model model) {
@@ -90,22 +88,5 @@ public class ProductController {
         return "redirect:/admin/home";
     }
 
-    @PostMapping("/reviews/add-review")
-    public String addReview(@RequestParam Long productId,
-                            @RequestParam int rating,
-                            @RequestParam String comment,
-                            HttpSession session,
-                            RedirectAttributes redirectAttributes) {
-        User user = (User) session.getAttribute("loggedInUser");
-
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("error", "Vui lòng đăng nhập để đánh giá.");
-            return "redirect:/login";
-        }
-
-        productReviewServiceImpl.saveReview(user, productId, rating, comment);
-        redirectAttributes.addFlashAttribute("success", "Đánh giá thành công!");
-        return "redirect:/product/" + productId;
-    }
 
 }

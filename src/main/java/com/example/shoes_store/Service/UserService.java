@@ -1,6 +1,5 @@
 package com.example.shoes_store.Service;
 
-import com.example.shoes_store.Entity.Order;
 import com.example.shoes_store.Entity.User;
 import com.example.shoes_store.dto.ChangePasswordRequest;
 
@@ -22,7 +21,6 @@ public interface UserService {
 
     User getUserById(Long id);
 
-    List<Order> getOrdersByUserId(Long UserId);
 
     User registerUser(User user);
 
