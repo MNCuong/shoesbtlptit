@@ -523,8 +523,8 @@
     <section id="categories-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-tags"></i>Quản lý danh mục</h2>
-            <button class="btn btn-success" onclick="openCategoryModal()"><i class="bi bi-plus-lg me-2"></i>Thêm danh
-                mục
+            <button class="btn btn-success" onclick="openCategoryModal('add')">
+                <i class="bi bi-plus-lg me-2"></i>Thêm danh mục
             </button>
         </div>
         <div class="card shadow-sm">
@@ -561,11 +561,11 @@
                             </button>
 
                             <!-- Delete -->
-                            <a th:href="@{'/admin/category/delete/' + ${categori.id}}"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Xóa thật không?')">
+                            <!-- Delete - chỉ dùng button, không dùng <a> -->
+                            <button class="btn btn-danger btn-sm btn-delete-category"
+                                    th:data-id="${categori.id}">
                                 <i class="bi bi-trash"></i>
-                            </a>
+                            </button>
                         </td>
 
                     </tr>
@@ -1146,7 +1146,8 @@
             </form>
         </div>
     </div>
-</div><!-- Category Modal -->
+</div>
+<<!-- Category Modal -->
 <div class="modal fade" id="categoryModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1157,9 +1158,29 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="cateId">
+                    <input type="hidden" id="categoryMode" value="add">
+
                     <div class="mb-3">
-                        <label class="form-label">Tên danh mục</label>
+                        <label class="form-label">Tên danh mục *</label>
                         <input type="text" class="form-control" id="cateName" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="cateDescription" rows="3" placeholder="Nhập mô tả cho danh mục..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Năm thành lập</label>
+                        <input type="number" class="form-control" id="cateYear" placeholder="VD: 2020" min="1900" max="2030">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" id="cateActive">
+                            <option value="true">Hoạt động</option>
+                            <option value="false">Không hoạt động</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1170,7 +1191,6 @@
         </div>
     </div>
 </div>
-
 <!-- Store Modal -->
 <div class="modal fade" id="storeModal" tabindex="-1">
     <div class="modal-dialog">
@@ -1544,13 +1564,158 @@
             });
     });
 
-    function openCategoryModal(mode, id = null, name = '') {
+    // ==================== CATEGORY MANAGEMENT ====================
+
+    // Mở modal category
+    function openCategoryModal(mode, id = null, name = '', description = '', establishedYear = '', active = true) {
+        // Reset form
+        document.getElementById('categoryForm').reset();
+        document.getElementById('cateId').value = '';
+
+        if (mode === 'add') {
+            document.getElementById('categoryModalTitle').innerText = 'Thêm danh mục';
+            document.getElementById('categoryMode').value = 'add';
+            document.getElementById('cateName').value = '';
+            document.getElementById('cateDescription').value = '';
+            document.getElementById('cateYear').value = '';
+            document.getElementById('cateActive').value = 'true';
+        } else if (mode === 'edit' && id) {
+            document.getElementById('categoryModalTitle').innerText = 'Sửa danh mục';
+            document.getElementById('categoryMode').value = 'edit';
+            document.getElementById('cateId').value = id;
+            document.getElementById('cateName').value = name || '';
+            document.getElementById('cateDescription').value = description || '';
+            document.getElementById('cateYear').value = establishedYear || '';
+            document.getElementById('cateActive').value = active ? 'true' : 'false';
+        }
+
         const modal = new bootstrap.Modal(document.getElementById('categoryModal'));
-        document.getElementById('cateId').value = id || '';
-        document.getElementById('cateName').value = name || '';
-        document.getElementById('categoryModalTitle').innerText = mode === 'add' ? 'Thêm danh mục' : 'Sửa danh mục';
         modal.show();
     }
+
+    // Xử lý submit form category
+    document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const mode = document.getElementById('categoryMode').value;
+        const id = document.getElementById('cateId').value;
+        const name = document.getElementById('cateName').value;
+        const description = document.getElementById('cateDescription').value;
+        const establishedYear = document.getElementById('cateYear').value;
+        const active = document.getElementById('cateActive').value === 'true';
+
+        if (!name.trim()) {
+            alert('Vui lòng nhập tên danh mục!');
+            return;
+        }
+
+        const categoryData = {
+            name: name,
+            description: description,
+            establishedYear: establishedYear ? parseInt(establishedYear) : null,
+            active: active
+        };
+
+        if (mode === 'add') {
+            await addCategory(categoryData);
+        } else {
+            await updateCategory(id, categoryData);
+        }
+    });
+
+    // API thêm danh mục
+    async function addCategory(categoryData) {
+        try {
+            const response = await fetch('/categories/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(categoryData)
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else if (response.ok) {
+                alert('Thêm danh mục thành công!');
+                bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert('Thêm thất bại: ' + error);
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra: ' + error.message);
+        }
+    }
+
+    // API sửa danh mục
+    async function updateCategory(id, categoryData) {
+        try {
+            const response = await fetch(`/categories/update/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(categoryData)
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else if (response.ok) {
+                alert('Sửa danh mục thành công!');
+                bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert('Sửa thất bại: ' + error);
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra: ' + error.message);
+        }
+    }
+
+    // Gán sự kiện cho nút sửa category (lấy thêm dữ liệu mới)
+    document.querySelectorAll('.btn-edit-category').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            const description = this.getAttribute('data-description') || '';
+            const year = this.getAttribute('data-year') || '';
+            const active = this.getAttribute('data-active') === 'true';
+            openCategoryModal('edit', id, name, description, year, active);
+        });
+    });
+
+    // Gán sự kiện cho nút xóa category
+    document.querySelectorAll('.btn-delete-category').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            if (confirm('Bạn có chắc muốn xóa danh mục này không?')) {
+                fetch(`/categories/delete/${id}`, {
+                    method: 'POST'
+                })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            alert('Xóa thành công!');
+                            location.reload();
+                        } else {
+                            throw new Error('Lỗi khi xóa');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                        alert('Có lỗi xảy ra: ' + error.message);
+                    });
+            }
+        });
+    });
 
     // Mở modal: mode = 'add' hoặc 'edit'
     function openStoreModal(mode, id = null) {

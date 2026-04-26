@@ -16,7 +16,7 @@ public interface CategoryService {
 
     List<Category> getAllWithActive();
 
-    void addCategory(Category category);
+    Category addCategory(Category category);
 
     Category updateCategory(Category category);
 
