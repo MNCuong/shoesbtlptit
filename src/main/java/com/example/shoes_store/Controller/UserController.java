@@ -1,8 +1,12 @@
 package com.example.shoes_store.Controller;
 
 import com.example.shoes_store.Entity.*;
+import com.example.shoes_store.Repo.EmployeeRepo;
 import com.example.shoes_store.Repo.StoreRepo;
+import com.example.shoes_store.Repo.SupperlieRepo;
+import com.example.shoes_store.Repo.UserRepo;
 import com.example.shoes_store.Service.*;
+import com.example.shoes_store.dto.AccountDTO;
 import com.example.shoes_store.dto.ChangePasswordRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +29,17 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    private SupperlieRepo supperlieRepo;
+    @Autowired
+    private SupperlieService supperlieService;
+    @Autowired
+    private EmployeeRepo employeeRepo;
+
+    @Autowired
+    private UserRepo userRepo;
     @Autowired
     private CategoryService categoryService;
 
@@ -49,16 +64,22 @@ public class UserController {
             return "redirect:/login";
         }
 
-        if (!loggedInUser.getRole().equals("ADMIN")) {
-            log.info("Người dùng không phải là ADMIN. Chuyển hướng về trang chính.");
-            return "redirect:/home";
-        }
+        if (!loggedInUser.getRole().equals("ADMIN") && !loggedInUser.getRole().equals("STAFF")) {
+
+            log.info("Người dùng {} là {}. Chuyển hướng về trang lỗi.",loggedInUser.getUsername(), loggedInUser.getRole());
+            model.addAttribute("status", 403);
+            model.addAttribute("error", "Access Denied");
+            model.addAttribute("message", "Bạn không có quyền truy cập vào trang admin");
+
+            return "error";        }
 
         List<Category> categories = categoryService.getAll();
         List<Category> categoriesActive = categoryService.getAllWithActive();
         List<Product> products = productService.getAllProducts();
-        List<User> users = userService.getAllUsersByRole("CUSTOMER");
+        List<User> users = userService.getAllUsers();
         List<Store> stores = storeRepo.findAll();
+        List<Employee> employees = employeeRepo.findAll();
+        List<Supplier> suppliers = supperlieRepo.findAll();
 
 
 
@@ -78,6 +99,8 @@ public class UserController {
         model.addAttribute("products", products);
         model.addAttribute("users", users);
         model.addAttribute("stores", stores);
+        model.addAttribute("employees", employees);
+        model.addAttribute("suppliers", suppliers);
         log.info("Người dùng ADMIN: " + loggedInUser.getUsername());
         model.addAttribute("user", loggedInUser);
         return "/admin/index";
@@ -93,31 +116,34 @@ public class UserController {
         return "admin/user-details";
     }
 
-    @GetMapping("/about")
-    public String aboutPage(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        model.addAttribute("user", loggedInUser);
-        return "/user/about";
+    @PostMapping("/api/users/add")
+    public String addUser(@RequestBody AccountDTO accountDTO) {
+        User user = new User();
+        user.setUsername(accountDTO.getUsername());
+        user.setPassword(accountDTO.getPassword());
+        user.setRole(accountDTO.getRole());
+        user.setEmail(accountDTO.getEmail());
+        user.setFullname(accountDTO.getFullname());
+        userRepo.save(user);
+        return "redirect:/admin/home";
+    }
+    @PostMapping("/api/users/update/{id}")
+    public String updateUser(@PathVariable Long id, @RequestBody AccountDTO accountDTO) {
+        User user = userService.getUserById(id);
+        user.setUsername(accountDTO.getUsername());
+        user.setPassword(accountDTO.getPassword());
+        user.setRole(accountDTO.getRole());
+        user.setEmail(accountDTO.getEmail());
+        user.setFullname(accountDTO.getFullname());
+        userRepo.save( user);
+        return "redirect:/admin/home";
     }
 
-    @GetMapping("/update-use")
-    public String updateUserInfoPage(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("user", loggedInUser);
-        return "/user/updateUserInfo";
+    @DeleteMapping("/api/users/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userRepo.deleteById(id);
+        return "redirect:/admin/home";
     }
-
-    @GetMapping("/contact")
-    public String contactPage(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-
-        model.addAttribute("user", loggedInUser);
-        return "/user/contact";
-    }
-
 //
 //    @GetMapping("/shop")
 //    public String shopPage(HttpSession session, Model model) {
@@ -145,13 +171,7 @@ public class UserController {
 //        return "/user/shop-single";
 //    }
 
-    @PostMapping("/user/update")
-    public String updateUserInfo(@ModelAttribute User updatedUser,
-                                 HttpSession session) {
-        userService.updateUser(updatedUser);
-        session.setAttribute("loggedInUser", updatedUser);
-        return "redirect:/update-use";
-    }
+
 
     @PostMapping("/api/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, HttpSession session) {
@@ -165,16 +185,16 @@ public class UserController {
         userService.changePassword(request, loggedInUser);
         return ResponseEntity.ok(Map.of("success", true, "message", "Đổi mật khẩu thành công"));
     }
-
-    @PostMapping("/api/check-email")
-    public ResponseEntity<?> checkEmail(@RequestBody Map<String, String> req) {
-        String email = req.get("email");
-        Optional<User> userOpt = userService.getByEmail(email);
-        if (userOpt.isPresent()) {
-            return ResponseEntity.ok(Map.of("success", true, "message", "Email hợp lệ. Mời bạn nhập mật khẩu mới"));
-        }
-        return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Email không tồn tại"));
-    }
+//
+//    @PostMapping("/api/check-email")
+//    public ResponseEntity<?> checkEmail(@RequestBody Map<String, String> req) {
+//        String email = req.get("email");
+//        Optional<User> userOpt = userService.getByEmail(email);
+//        if (userOpt.isPresent()) {
+//            return ResponseEntity.ok(Map.of("success", true, "message", "Email hợp lệ. Mời bạn nhập mật khẩu mới"));
+//        }
+//        return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Email không tồn tại"));
+//    }
 
     @PostMapping("/api/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> req) {

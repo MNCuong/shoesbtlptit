@@ -34,12 +34,15 @@ public class AuthController {
         User user = userService.login(username, password);
 
         if (user != null) {
-            if (user.getRole().equals("ADMIN")) {
+            if ("ADMIN".equals(user.getRole()) || "STAFF".equals(user.getRole())) {
                 session.setAttribute("loggedInUser", user);
                 return "redirect:/admin/home";
             } else {
-                session.setAttribute("loggedInUser", user);
-                return "redirect:/home";
+                model.addAttribute("status", 403);
+                model.addAttribute("error", "Access Denied");
+                model.addAttribute("message", "Bạn không có quyền truy cập vào trang admin");
+
+                return "error";
             }
         }
         redirectAttributes.addFlashAttribute("error", "Sai tên đăng nhập hoặc mật khẩu!");

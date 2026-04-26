@@ -3,6 +3,7 @@ package com.example.shoes_store.Service;
 
 import com.example.shoes_store.Entity.Product;
 import com.example.shoes_store.Repo.ProductRepo;
+import com.example.shoes_store.dto.ProductDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,6 @@ public interface ProductService {
 
     Product saveProduct(MultipartFile productImage, Product product);
 
-    void deleteProduct(Long id);
-
     Optional<Product> getProductById(Long id);
 
     Product updateProduct(MultipartFile productImage, Product product);
@@ -33,5 +32,9 @@ public interface ProductService {
     List<Product> getProductsByCategory(Long categoryId);
 
     Product toggleProductStatus(Long id);
+
+    Product save(ProductDTO product);
+    Product update(ProductDTO product);
+    void deleteProduct(Long id);
 
 }

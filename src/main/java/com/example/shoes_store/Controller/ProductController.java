@@ -1,9 +1,12 @@
 package com.example.shoes_store.Controller;
 
+import com.example.shoes_store.Entity.Category;
 import com.example.shoes_store.Entity.Product;
 import com.example.shoes_store.Entity.User;
+import com.example.shoes_store.Repo.CategoryRepo;
 import com.example.shoes_store.Repo.ProductRepo;
 import com.example.shoes_store.Service.ProductService;
+import com.example.shoes_store.dto.ProductDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +30,15 @@ public class ProductController {
     private ProductService productService;
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
+    private CategoryRepo categoryRepo;
 
-
-    @GetMapping
+    @GetMapping("/all")
+    @ResponseBody
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
+    }
+    @GetMapping("")
     public String getAllProducts(Model model) {
         List<Product> products = productService.getAllProducts();
         model.addAttribute("products", products);
@@ -47,28 +56,24 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public String addProduct(@RequestParam MultipartFile productImage, @ModelAttribute Product product) {
-        productService.saveProduct(productImage, product);
+    public String addProduct(@ModelAttribute ProductDTO productDTO) {
+        productService.save(productDTO);
         return "redirect:/admin/home";
     }
 
-    @PostMapping("/edit")
-    public String editProduct(@RequestParam MultipartFile productImage, @ModelAttribute Product product) {
-        if (product == null) {
-            return "redirect:/admin/home";
-        }
-        productService.updateProduct(productImage, product);
-        log.info("product ID {}", product.getId());
+    @PostMapping("/update/{id}")
+    public String updateProduct(@PathVariable Long id, @ModelAttribute ProductDTO productDTO) {
+        productDTO.setId(id);
+        productService.update(productDTO);
         return "redirect:/admin/home";
     }
 
-
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return "redirect:/admin/home";
-
     }
+
 
     @GetMapping("/list-product/{categoryId}")
     public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {

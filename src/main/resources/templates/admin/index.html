@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="vi">
-
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -10,7 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
 
     <style>
         :root {
@@ -47,7 +49,7 @@
         .sidebar-header {
             padding: 20px;
             text-align: center;
-            background: rgba(0,0,0,0.1);
+            background: rgba(0, 0, 0, 0.1);
         }
 
         .sidebar-header h3 {
@@ -67,7 +69,7 @@
         }
 
         .nav-link {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             display: flex;
             align-items: center;
             padding: 12px 15px;
@@ -85,7 +87,7 @@
 
         .nav-link:hover, .nav-link.active {
             color: #fff;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .nav-link.active {
@@ -134,12 +136,35 @@
             text-transform: uppercase;
         }
 
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-confirmed { background: #cce5ff; color: #004085; }
-        .status-processing { background: #d1ecf1; color: #0c5460; }
-        .status-shipping { background: #e2e3e5; color: #383d41; }
-        .status-delivered { background: #d4edda; color: #155724; }
-        .status-cancel { background: #f8d7da; color: #721c24; }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-processing {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-shipping {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancel {
+            background: #f8d7da;
+            color: #721c24;
+        }
 
         /* Tables */
         .table thead th {
@@ -161,7 +186,10 @@
         /* Preloader */
         #preloader {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: 9999;
             background: #fff;
             display: flex;
@@ -170,11 +198,54 @@
         }
 
         @media (max-width: 992px) {
-            #sidebar { left: -var(--sidebar-width); }
-            #content { margin-left: 0; }
-            body.sidebar-open #sidebar { left: 0; }
-            body.sidebar-open #content { margin-left: var(--sidebar-width); }
+            #sidebar {
+                left: -var(--sidebar-width);
+            }
+
+            #content {
+                margin-left: 0;
+            }
+
+            body.sidebar-open #sidebar {
+                left: 0;
+            }
+
+            body.sidebar-open #content {
+                margin-left: var(--sidebar-width);
+            }
         }
+
+        .password-box {
+            display: inline-flex;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 4px 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .password-text {
+            font-family: monospace;
+            letter-spacing: 2px;
+            font-size: 14px;
+            margin-right: 6px;
+        }
+
+        .btn-toggle-password {
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        .btn-toggle-password:hover {
+            background: #e9ecef;
+            color: #000;
+        }
+
     </style>
 </head>
 
@@ -194,15 +265,36 @@
         <small class="text-muted">Hệ thống Chuỗi Cửa hàng</small>
     </div>
     <div class="nav-menu">
-        <div class="nav-item"><a href="#dashboard" class="nav-link active" data-section="dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a></div>
-        <div class="nav-item"><a href="#statistics" class="nav-link" data-section="statistics"><i class="bi bi-graph-up"></i>Thống kê</a></div>
-        <div class="nav-item"><a href="#products" class="nav-link" data-section="products"><i class="bi bi-box-seam"></i>Sản phẩm</a></div>
-        <div class="nav-item"><a href="#categories" class="nav-link" data-section="categories"><i class="bi bi-tags"></i>Thương hiệu</a></div>
-        <div class="nav-item"><a href="#orders" class="nav-link" data-section="orders"><i class="bi bi-cart-check"></i>Đơn hàng</a></div>
-        <div class="nav-item"><a href="#inventory" class="nav-link" data-section="inventory"><i class="bi bi-box-seam"></i> Xuất nhập kho</a></div>        <div class="nav-item"><a href="#customers" class="nav-link" data-section="customers"><i class="bi bi-people"></i>Khách hàng</a></div>
-        <div class="nav-item"><a href="#stores" class="nav-link" data-section="stores"><i class="bi bi-shop"></i>Cửa hàng (Cơ sở)</a></div>
+        <div class="nav-item"><a href="#dashboard" class="nav-link active" data-section="dashboard"><i
+                class="bi bi-speedometer2"></i>Dashboard</a></div>
+        <div class="nav-item"><a href="#statistics" class="nav-link" data-section="statistics"><i
+                class="bi bi-graph-up"></i>Thống kê</a></div>
+        <div class="nav-item"><a href="#products" class="nav-link" data-section="products"><i
+                class="bi bi-box-seam"></i>Sản phẩm</a></div>
+        <div class="nav-item"><a href="#categories" class="nav-link" data-section="categories"><i
+                class="bi bi-tags"></i>Danh mục</a></div>
+        <div class="nav-item"><a href="#history" class="nav-link" data-section="history"><i
+                class="bi bi-clock-history"></i>Lịch sử XNK</a></div>
+        <div class="nav-item"><a href="#inventory" class="nav-link" data-section="inventory"><i
+                class="bi bi-box-seam"></i> Xuất nhập kho</a></div>
+        <div class="nav-item" th:if="${session.loggedInUser.role == 'ADMIN'}"><a href="#account" class="nav-link"
+                                                                                 data-section="account"><i
+                class="bi bi-people"></i> Tài khoản</a></div>
+        <div class="nav-item"><a href="#stores" class="nav-link" data-section="stores"><i class="bi bi-shop"></i>Cửa
+            hàng (Cơ sở)</a></div>
+        <div class="nav-item">
+            <a href="#suppliers" class="nav-link" data-section="suppliers-section">
+                <i class="bi bi-truck"></i> Nhà phân phối
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="#employees" class="nav-link" data-section="employees-section">
+                <i class="bi bi-people-fill"></i> Quản lý nhân viên
+            </a>
+        </div>
         <hr class="mx-3 opacity-25">
-        <div class="nav-item"><a href="/logout" class="nav-link text-danger"><i class="bi bi-box-arrow-right"></i>Đăng xuất</a></div>
+        <div class="nav-item"><a href="/logout" class="nav-link text-danger"><i class="bi bi-box-arrow-right"></i>Đăng
+            xuất</a></div>
     </div>
 </div>
 
@@ -214,11 +306,14 @@
         <h2 class="section-title"><i class="bi bi-speedometer2"></i>Tổng quan hệ thống</h2>
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary h-100 py-2 shadow-sm" style="border-left: 4px solid var(--primary-color);">
+                <div class="card border-left-primary h-100 py-2 shadow-sm"
+                     style="border-left: 4px solid var(--primary-color);">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Doanh thu (Tháng)</div>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Doanh thu
+                                    (Tháng)
+                                </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-revenue">0đ</div>
                             </div>
                             <div class="col-auto"><i class="fas fa-calendar fa-2x text-gray-300"></i></div>
@@ -227,11 +322,13 @@
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success h-100 py-2 shadow-sm" style="border-left: 4px solid var(--success-color);">
+                <div class="card border-left-success h-100 py-2 shadow-sm"
+                     style="border-left: 4px solid var(--success-color);">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tổng đơn hàng</div>
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tổng đơn hàng
+                                </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-orders">0</div>
                             </div>
                             <div class="col-auto"><i class="fas fa-shopping-cart fa-2x text-gray-300"></i></div>
@@ -240,12 +337,13 @@
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info h-100 py-2 shadow-sm" style="border-left: 4px solid var(--info-color);">
+                <div class="card border-left-info h-100 py-2 shadow-sm"
+                     style="border-left: 4px solid var(--info-color);">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Khách hàng mới</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-customers">0</div>
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tài khoản mới</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-account">0</div>
                             </div>
                             <div class="col-auto"><i class="fas fa-users fa-2x text-gray-300"></i></div>
                         </div>
@@ -253,11 +351,13 @@
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning h-100 py-2 shadow-sm" style="border-left: 4px solid var(--warning-color);">
+                <div class="card border-left-warning h-100 py-2 shadow-sm"
+                     style="border-left: 4px solid var(--warning-color);">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Số lượng cơ sở</div>
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Số lượng cơ sở
+                                </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" id="dash-stores">0</div>
                             </div>
                             <div class="col-auto"><i class="fas fa-store fa-2x text-gray-300"></i></div>
@@ -306,10 +406,18 @@
                     <div class="col-md-3" id="statMonthGroup">
                         <label class="form-label">Tháng</label>
                         <select class="form-select" id="statMonthSelect">
-                            <option value="1">Tháng 1</option><option value="2">Tháng 2</option><option value="3">Tháng 3</option>
-                            <option value="4">Tháng 4</option><option value="5">Tháng 5</option><option value="6">Tháng 6</option>
-                            <option value="7">Tháng 7</option><option value="8">Tháng 8</option><option value="9">Tháng 9</option>
-                            <option value="10">Tháng 10</option><option value="11">Tháng 11</option><option value="12">Tháng 12</option>
+                            <option value="1">Tháng 1</option>
+                            <option value="2">Tháng 2</option>
+                            <option value="3">Tháng 3</option>
+                            <option value="4">Tháng 4</option>
+                            <option value="5">Tháng 5</option>
+                            <option value="6">Tháng 6</option>
+                            <option value="7">Tháng 7</option>
+                            <option value="8">Tháng 8</option>
+                            <option value="9">Tháng 9</option>
+                            <option value="10">Tháng 10</option>
+                            <option value="11">Tháng 11</option>
+                            <option value="12">Tháng 12</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -337,7 +445,9 @@
     <section id="products-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-box-seam"></i>Quản lý Sản phẩm</h2>
-            <button class="btn btn-success" onclick="openProductModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm sản phẩm</button>
+            <button class="btn btn-success" onclick="openProductModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm sản
+                phẩm
+            </button>
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
@@ -351,26 +461,71 @@
                             <th>#</th>
                             <th>Ảnh</th>
                             <th>Tên sản phẩm</th>
-                            <th>Thương hiệu</th>
+                            <th>Giới tính</th>
+                            <th>Độ tuổi</th>
                             <th>Giá bán</th>
                             <th>Tồn kho</th>
+                            <th>Trạng thái</th>
                             <th>Thao tác</th>
                         </tr>
                         </thead>
                         <tbody id="productTableBody">
-                        <!-- JS will populate -->
+                        <tr th:each="product : ${products}">
+                            <td th:text="${product.id}">...</td>
+                            <td>
+                                <img th:src="${product.imageUrl}" alt="Product"
+                                     style="width: 50px; height: 50px; object-fit: cover;"
+                                     onerror="this.src='/images/default-product.png'">
+                            </td>
+                            <td th:text="${product.name}">...</td>
+                            <td>
+                                <span th:if="${product.gender == 'BOY'}" class="badge bg-primary">Boy</span>
+                                <span th:if="${product.gender == 'GIRL'}" class="badge bg-danger">Girl</span>
+                                <span th:if="${product.gender == 'UNISEX'}" class="badge bg-secondary">Unisex</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info" th:text="${product.ageGroup}">...</span>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(product.price, 0, 0)} + 'đ'">...</td>
+                            <td th:text="${product.stockQuantity}">...</td>
+                            <td>
+                                <span th:if="${product.active}" class="badge bg-success">Active</span>
+                                <span th:unless="${product.active}" class="badge bg-danger">Inactive</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm btn-edit-product"
+                                        th:data-id="${product.id}"
+                                        th:data-name="${product.name}"
+                                        th:data-description="${product.description}"
+                                        th:data-features="${product.features}"
+                                        th:data-price="${product.price}"
+                                        th:data-stock="${product.stockQuantity}"
+                                        th:data-gender="${product.gender}"
+                                        th:data-agegroup="${product.ageGroup}"
+                                        th:data-category="${product.category.id}"
+                                        th:data-image="${product.imageUrl}"
+                                        th:data-active="${product.active}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm btn-delete-product"
+                                        th:data-id="${product.id}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </section>
-
     <!-- Categories Section -->
     <section id="categories-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title m-0"><i class="bi bi-tags"></i>Quản lý Thương hiệu</h2>
-            <button class="btn btn-success" onclick="openCategoryModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm thương hiệu</button>
+            <h2 class="section-title m-0"><i class="bi bi-tags"></i>Quản lý danh mục</h2>
+            <button class="btn btn-success" onclick="openCategoryModal()"><i class="bi bi-plus-lg me-2"></i>Thêm danh
+                mục
+            </button>
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
@@ -378,38 +533,99 @@
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tên thương hiệu</th>
-                        <th>Số lượng sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Mô tả</th>
+                        <th>Năm sản xuất</th>
+                        <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
                     </thead>
                     <tbody id="categoryTableBody">
-                    <!-- JS will populate -->
+                    <tr th:each="categori : ${categories}">
+                        <td th:text="${categori.id}"></td>
+                        <td th:text="${categori.name}"></td>
+                        <td th:text="${categori.description}"></td>
+                        <td th:text="${categori.establishedYear}"></td>
+                        <td>
+                            <span th:text="${categori.active}"></span>
+                        </td>
+                        <td>
+                            <!-- Edit -->
+                            <button class="btn btn-warning btn-sm btn-edit-category"
+                                    th:data-id="${categori.id}"
+                                    th:data-name="${categori.name}"
+                                    th:data-description="${categori.description}"
+                                    th:data-year="${categori.establishedYear}"
+                                    th:data-active="${categori.active}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <!-- Delete -->
+                            <a th:href="@{'/admin/category/delete/' + ${categori.id}}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Xóa thật không?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+
+                    </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
 
-    <!-- Orders Section -->
-    <section id="orders-section" class="admin-section d-none">
-        <h2 class="section-title"><i class="bi bi-cart-check"></i>Quản lý Đơn hàng</h2>
+    <!-- Lịch sử Xuất/Nhập -->
+    <section id="history-section" class="admin-section d-none">
+        <h2 class="section-title mb-4">
+            <i class="bi bi-clock-history"></i> Lịch sử Xuất/Nhập kho
+        </h2>
+
+        <!-- Tab chọn loại -->
+        <!-- Tab chọn loại -->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <button class="nav-link active"
+                        onclick="showHistory('all')"
+                        style="background-color: #4e73df; color: white; border-radius: 8px 8px 0 0; border: none; font-weight: bold;">
+                    <i class="bi bi-list"></i> Tất cả
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link"
+                        onclick="showHistory('import')"
+                        style="background-color: #1cc88a; color: white; border-radius: 8px 8px 0 0; border: none; font-weight: bold;">
+                    <i class="bi bi-box-arrow-in-down"></i> Phiếu nhập
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link"
+                        onclick="showHistory('export')"
+                        style="background-color: #e74a3b; color: white; border-radius: 8px 8px 0 0; border: none; font-weight: bold;">
+                    <i class="bi bi-box-arrow-up"></i> Phiếu xuất
+                </button>
+            </li>
+        </ul>
+
+        <!-- Bảng lịch sử -->
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
+                    <table class="table table-hover align-middle" id="historyTable">
+                        <thead class="table-light">
                         <tr>
-                            <th>Mã đơn</th>
-                            <th>Khách hàng</th>
-                            <th>Ngày đặt</th>
-                            <th>Trạng thái</th>
-                            <th>Thanh toán</th>
+                            <th>Mã phiếu</th>
+                            <th>Loại</th>
+                            <th>Người tạo phiếu</th>
+                            <th>Ngày tạo</th>
+                            <th>Tổng tiền</th>
+                            <th>Số lượng SP</th>
+                            <th>Lý do</th>
                             <th>Thao tác</th>
                         </tr>
                         </thead>
-                        <tbody id="orderTableBody">
-                        <!-- JS will populate -->
+                        <tbody id="historyTableBody">
+                        <!-- Dữ liệu sẽ được load bằng JS -->
                         </tbody>
                     </table>
                 </div>
@@ -417,122 +633,283 @@
         </div>
     </section>
 
-    <!-- Customers Section -->
-    <section id="customers-section" class="admin-section d-none">
-        <h2 class="section-title"><i class="bi bi-people"></i>Quản lý Khách hàng</h2>
+    <!-- Modal xem chi tiết -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalTitle">Chi tiết phiếu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailModalBody">
+                    <!-- Nội dung chi tiết sẽ load bằng JS -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="printInvoiceBtn" onclick="printInvoice()">
+                        <i class="bi bi-printer"></i> Xuất hóa đơn
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- account Section -->
+    <section id="account-section" class="admin-section d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title m-0"><i class="bi bi-people"></i>Quản lý tài khoản</h2>
+            <button class="btn btn-success" onclick="openAccountModal('add')">
+                <i class="bi bi-plus-lg me-2"></i>Thêm tài khoản
+            </button>
+        </div>
         <div class="card shadow-sm">
             <div class="card-body">
                 <table class="table table-hover align-middle">
                     <thead>
                     <tr>
                         <th>#</th>
-                        <th>Tài khoản</th>
                         <th>Họ tên</th>
+                        <th>Tài khoản</th>
+                        <th>Mật khẩu</th>
                         <th>Email</th>
                         <th>Vai trò</th>
-                        <th>Đơn hàng</th>
+                        <th>Thao tác</th>
                     </tr>
                     </thead>
-                    <tbody id="customerTableBody">
-                    <!-- JS will populate -->
+                    <tbody id="accountTableBody">
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">...</td>
+                        <td th:text="${user.fullname}">...</td>
+                        <td th:text="${user.username}">...</td>
+                        <td>
+                            <div class="password-box">
+                                <span class="password-text" th:data-password="${user.password}">
+                                    ••••••
+                                </span>
+                                <button type="button" class="btn-toggle-password btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td th:text="${user.email}">...</td>
+                        <td>
+                            <span th:text="${user.role}"></span>
+                        </td>
+                        <td>
+                            <!-- Edit -->
+                            <button class="btn btn-warning btn-sm btn-edit-account"
+                                    th:data-id="${user.id}"
+                                    th:data-fullname="${user.fullname}"
+                                    th:data-username="${user.username}"
+                                    th:data-password="${user.password}"
+                                    th:data-email="${user.email}"
+                                    th:data-role="${user.role}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <!-- Delete -->
+                            <button class="btn btn-danger btn-sm btn-delete-account"
+                                    th:data-id="${user.id}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
     <section id="inventory-section" class="admin-section d-none">
-
         <h2 class="mb-4">
             <i class="bi bi-arrow-left-right"></i> Xuất / Nhập kho
         </h2>
 
         <!-- Tabs -->
-        <ul class="nav nav-tabs mb-3">
+        <ul class="nav nav-tabs mb-3" style="gap: 10px; border-bottom: none;">
             <li class="nav-item">
-                <button class="nav-link active" onclick="switchTab('import')">
+                <button class="nav-link active"
+                        onclick="switchTab('import')"
+                        style="background: linear-gradient(135deg, #1cc88a, #169b6b);
+                       color: white;
+                       border: none;
+                       border-radius: 8px;
+                       padding: 10px 24px;
+                       font-weight: bold;">
                     <i class="bi bi-box-arrow-in-down"></i> Nhập hàng
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" onclick="switchTab('export')">
+                <button class="nav-link"
+                        onclick="switchTab('export')"
+                        style="background: linear-gradient(135deg, #e74a3b, #be3e31);
+                       color: white;
+                       border: none;
+                       border-radius: 8px;
+                       padding: 10px 24px;
+                       font-weight: bold;">
                     <i class="bi bi-box-arrow-up"></i> Xuất hàng
                 </button>
             </li>
         </ul>
 
-        <!-- FORM -->
-        <div class="card shadow-sm">
+        <!-- FORM NHẬP HÀNG -->
+        <div id="importForm" class="card shadow-sm">
             <div class="card-body">
+                <form method="post" th:action="@{/admin/inventory/process}" id="importInventoryForm">
+                    <input type="hidden" name="type" value="import">
 
-                <form method="post" th:action="@{/admin/inventory/process}">
-
-                    <!-- Chọn cửa hàng -->
-                    <div class="mb-3">
-                        <label>Cửa hàng</label>
-                        <select class="form-select" name="storeId">
-                            <option th:each="s : ${stores}"
-                                    th:value="${s.id}"
-                                    th:text="${s.name}">
-                            </option>
-                        </select>
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-person-circle"></i> <strong>Người nhập hàng:</strong> <span
+                            th:text="${session.loggedInUser.fullname}"></span>
+                        <input type="hidden" name="createdBy" th:value="${session.loggedInUser.id}">
                     </div>
 
-                    <!-- Danh sách sản phẩm -->
-                    <table class="table">
-                        <thead>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày nhập</label>
+                            <input type="date" class="form-control" name="importDate"
+                                   th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nhà cung cấp</label>
+                            <input type="text" class="form-control" name="supplier" placeholder="Tên nhà cung cấp">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú</label>
+                        <textarea class="form-control" name="note" rows="2"
+                                  placeholder="Ghi chú cho phiếu nhập..."></textarea>
+                    </div>
+
+                    <h5 class="mt-4">Danh sách sản phẩm nhập</h5>
+
+                    <!-- Chọn danh mục trước -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Chọn danh mục</label>
+                            <select class="form-select" id="importCategoryFilter"
+                                    onchange="filterProductsByCategory('import', this.value)">
+                                <option value="">Tất cả danh mục</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}"
+                                        th:text="${cat.name}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered">
+                        <thead class="table-light">
                         <tr>
                             <th>Sản phẩm</th>
-                            <th>Size</th>
+                            <th>Giới tính</th>
                             <th>Số lượng</th>
-                            <th>Giá</th>
+                            <th>Giá nhập (đ)</th>
+                            <th>Thành tiền</th>
                             <th></th>
                         </tr>
                         </thead>
-
-                        <tbody id="itemContainer">
-                        <tr>
-                            <td>
-                                <select name="productIds" class="form-select">
-                                    <option th:each="p : ${products}"
-                                            th:value="${p.id}"
-                                            th:text="${p.name}">
-                                    </option>
-                                </select>
-                            </td>
-                            <td><input type="text" name="sizes" class="form-control"/></td>
-                            <td><input type="number" name="quantities" class="form-control"/></td>
-                            <td><input type="number" name="prices" class="form-control"/></td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">X</button>
-                            </td>
-                        </tr>
+                        <tbody id="importItemContainer">
+                        <!-- Dòng mẫu -->
                         </tbody>
                     </table>
-
-                    <button type="button" class="btn btn-secondary mb-3" onclick="addRow()">
-                        + Thêm sản phẩm
+                    <button type="button" class="btn btn-secondary mb-3" onclick="addImportRow()">+ Thêm sản phẩm
                     </button>
 
-                    <!-- Action -->
-                    <div class="text-end">
-                        <button type="submit" name="type" value="import" class="btn btn-success">
-                            Lưu phiếu nhập
-                        </button>
-                        <button type="submit" name="type" value="export" class="btn btn-danger">
-                            Lưu phiếu xuất
-                        </button>
+                    <div class="alert alert-success">
+                        <strong>Tổng tiền nhập: </strong> <span id="importTotal">0đ</span>
                     </div>
 
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-success">Lưu phiếu nhập</button>
+                    </div>
                 </form>
             </div>
         </div>
 
+        <!-- FORM XUẤT HÀNG -->
+        <div id="exportForm" class="card shadow-sm" style="display: none;">
+            <div class="card-body">
+                <form method="post" th:action="@{/admin/inventory/process}" id="exportInventoryForm">
+                    <input type="hidden" name="type" value="export">
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Cửa hàng *</label>
+                            <select class="form-select" name="storeId" required>
+                                <option value="">Chọn cửa hàng</option>
+                                <option th:each="s : ${stores}" th:value="${s.id}" th:text="${s.name}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Lý do xuất *</label>
+                            <select class="form-select" name="reason" required>
+                                <option value="SALE">Bán hàng</option>
+                                <option value="TRANSFER">Chuyển kho</option>
+                                <option value="DAMAGE">Hàng hỏng</option>
+                                <option value="RETURN">Trả lại NCC</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Ngày xuất</label>
+                            <input type="date" class="form-control" name="exportDate"
+                                   th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú</label>
+                        <textarea class="form-control" name="note" rows="2"
+                                  placeholder="Ghi chú cho phiếu xuất..."></textarea>
+                    </div>
+
+                    <h5 class="mt-4">Danh sách sản phẩm xuất</h5>
+
+                    <!-- Chọn danh mục trước -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Chọn danh mục</label>
+                            <select class="form-select" id="exportCategoryFilter"
+                                    onchange="filterProductsByCategory('export', this.value)">
+                                <option value="">Tất cả danh mục</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}"
+                                        th:text="${cat.name}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Giới tính</th>
+                            <th>Số lượng</th>
+                            <th>Giá xuất (đ)</th>
+                            <th>Thành tiền</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="exportItemContainer">
+                        <!-- Dòng mẫu -->
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-secondary mb-3" onclick="addExportRow()">+ Thêm sản phẩm
+                    </button>
+
+                    <div class="alert alert-warning">
+                        <strong>Tổng tiền xuất: </strong> <span id="exportTotal">0đ</span>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-danger">Lưu phiếu xuất</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </section>
     <!-- Stores Section -->
     <section id="stores-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-shop"></i>Quản lý Cơ sở (Cửa hàng)</h2>
-            <button class="btn btn-success" onclick="openStoreModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm cơ sở</button>
+            <button class="btn btn-success" onclick="openStoreModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm cơ sở
+            </button>
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
@@ -549,12 +926,27 @@
                     </thead>
                     <tbody id="storeTableBody">
                     <tr th:each="store : ${stores}">
-                        <td th:text="${store.id}"></td>
-                        <td th:text="${store.name}"></td>
-                        <td th:text="${store.address}"></td>
-                        <td th:text="${store.phone}"></td>
+                        <td th:text="${store.id}">...</td>
+                        <td th:text="${store.name}">...</td>
+                        <td th:text="${store.address}">...</td>
+                        <td th:text="${store.phone}">...</td>
                         <td>
                             <span th:text="${store.active} ? 'Active' : 'Inactive'"></span>
+                        </td>
+                        <td>
+                            <!-- Nút sửa -->
+                            <button class="btn btn-warning btn-sm btn-edit-store"
+                                    th:data-id="${store.id}"
+                                    th:data-name="${store.name}"
+                                    th:data-address="${store.address}"
+                                    th:data-phone="${store.phone}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <!-- Nút xóa -->
+                            <button class="btn btn-danger btn-sm btn-delete-store"
+                                    th:data-id="${store.id}">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -562,7 +954,111 @@
             </div>
         </div>
     </section>
-
+    <section id="suppliers-section" class="admin-section d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title m-0"><i class="bi bi-truck"></i>Quản lý Nhà phân phối</h2>
+            <button class="btn btn-success" onclick="openSupplierModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm nhà phân phối</button>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên nhà phân phối</th>
+                        <th>Người liên hệ</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Địa chỉ</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="supplierTableBody">
+                    <tr th:each="supplier : ${suppliers}">
+                        <td th:text="${supplier.id}">...</td>
+                        <td th:text="${supplier.name}">...</td>
+                        <td th:text="${supplier.contactPerson}">...</td>
+                        <td th:text="${supplier.phone}">...</td>
+                        <td th:text="${supplier.email}">...</td>
+                        <td th:text="${supplier.address}">...</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm btn-edit-supplier"
+                                    th:data-id="${supplier.id}"
+                                    th:data-name="${supplier.name}"
+                                    th:data-contactperson="${supplier.contactPerson}"
+                                    th:data-phone="${supplier.phone}"
+                                    th:data-email="${supplier.email}"
+                                    th:data-address="${supplier.address}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-delete-supplier"
+                                    th:data-id="${supplier.id}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <section id="employees-section" class="admin-section d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title m-0"><i class="bi bi-people"></i>Quản lý Nhân viên</h2>
+            <button class="btn btn-success" onclick="openEmployeeModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm nhân viên</button>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Mã NV</th>
+                        <th>Họ tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Chức vụ</th>
+                        <th>Ngày vào làm</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="employeeTableBody">
+                    <tr th:each="employee : ${employees}">
+                        <td th:text="${employee.id}">...</td>
+                        <td th:text="${employee.code}">...</td>
+                        <td th:text="${employee.fullName}">...</td>
+                        <td th:text="${employee.phone}">...</td>
+                        <td th:text="${employee.email}">...</td>
+                        <td th:text="${employee.position}">...</td>
+                        <td th:text="${employee.hireDate}">...</td>
+                        <td>
+                            <span th:if="${employee.status == 'ACTIVE'}" class="badge bg-success">Đang làm</span>
+                            <span th:if="${employee.status == 'INACTIVE'}" class="badge bg-secondary">Nghỉ</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm btn-edit-employee"
+                                    th:data-id="${employee.id}"
+                                    th:data-code="${employee.code}"
+                                    th:data-fullname="${employee.fullName}"
+                                    th:data-phone="${employee.phone}"
+                                    th:data-email="${employee.email}"
+                                    th:data-position="${employee.position}"
+                                    th:data-hiredate="${employee.hireDate}"
+                                    th:data-status="${employee.status}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-delete-employee"
+                                    th:data-id="${employee.id}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 </div>
 
 <!-- MODALS -->
@@ -580,29 +1076,66 @@
                     <input type="hidden" id="prodId">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Tên sản phẩm</label>
+                            <label class="form-label">Tên sản phẩm *</label>
                             <input type="text" class="form-control" id="prodName" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Thương hiệu</label>
-                            <select class="form-select" id="prodCategory" required></select>
+                            <label class="form-label">Danh mục *</label>
+                            <select class="form-select" id="prodCategory" required>
+                                <option value="">Chọn danh mục</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}"
+                                        th:text="${cat.name}"></option>
+                            </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Giá bán (đ)</label>
+                            <label class="form-label">Giới tính *</label>
+                            <select class="form-select" id="prodGender" required>
+                                <option value="">Chọn giới tính</option>
+                                <option value="BOY">Boy</option>
+                                <option value="GIRL">Girl</option>
+                                <option value="UNISEX">Unisex</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Độ tuổi *</label>
+                            <select class="form-select" id="prodAgeGroup" required>
+                                <option value="">Chọn độ tuổi</option>
+                                <option value="0-2">0-2 tuổi</option>
+                                <option value="3-5">3-5 tuổi</option>
+                                <option value="6-10">6-10 tuổi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Giá bán (đ) *</label>
                             <input type="number" class="form-control" id="prodPrice" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Số lượng tồn</label>
+                            <label class="form-label">Số lượng tồn *</label>
                             <input type="number" class="form-control" id="prodStock" required>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="prodDesc" rows="3"></textarea>
+                        <div class="col-md-6">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-select" id="prodActive">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Hình ảnh</label>
-                            <input type="file" class="form-control" id="prodImage">
-                            <div id="prodImagePreview" class="mt-2"></div>
+                            <input type="file" class="form-control" id="prodImage" accept="image/*">
+                            <div id="prodImagePreview" class="mt-2">
+                                <img id="currentImage" src="" style="max-width: 150px; display: none;">
+                            </div>
+                            <small class="text-muted">Chọn ảnh từ máy tính (JPG, PNG, GIF)</small>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="prodDesc" rows="2"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Đặc điểm nổi bật</label>
+                            <textarea class="form-control" id="prodFeatures" rows="2"
+                                      placeholder="Chất liệu, mùa, phong cách,..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -613,21 +1146,19 @@
             </form>
         </div>
     </div>
-</div>
-
-<!-- Category Modal -->
+</div><!-- Category Modal -->
 <div class="modal fade" id="categoryModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <form id="categoryForm">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="categoryModalTitle">Thương hiệu</h5>
+                    <h5 class="modal-title" id="categoryModalTitle">Danh mục</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="cateId">
                     <div class="mb-3">
-                        <label class="form-label">Tên thương hiệu</label>
+                        <label class="form-label">Tên danh mục</label>
                         <input type="text" class="form-control" id="cateName" required>
                     </div>
                 </div>
@@ -672,7 +1203,55 @@
         </div>
     </div>
 </div>
-
+<!-- Modal Account -->
+<div class="modal fade" id="accountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="accountForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="accountModalTitle">Tài khoản</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="accountId">
+                    <div class="mb-3">
+                        <label class="form-label">Họ tên</label>
+                        <input type="text" class="form-control" id="accountFullname" name="fullname" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <input type="text" class="form-control" id="accountUsername" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="accountPassword" name="password" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="accountEmail" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Vai trò</label>
+                        <select class="form-control" id="accountRole" name="role" required>
+                            <option value="USER">USER</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="STAFF">STAFF</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu tài khoản</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
@@ -703,7 +1282,7 @@
     let orders = [];
     let users = [];
     let stores = [];
-    let deleteTarget = { type: '', id: null };
+    let deleteTarget = {type: '', id: null};
     let revenueChart = null;
     let detailedChart = null;
 
@@ -721,176 +1300,35 @@
     });
 
     async function loadAllData() {
-        // Mocking API calls based on your endpoints
-        try {
-            // Categories
-            const cateRes = await fetch('/categories');
-            categories = cateRes.ok ? await cateRes.json() : [
-                {id: 1, name: 'Babi Plus - Đồ bé trai', count: 12},
-                {id: 2, name: 'Babi Plus - Đồ bé gái', count: 15},
-                {id: 3, name: 'Phụ kiện sơ sinh', count: 8}
-            ];
-
-            // Products
-            const prodRes = await fetch('/admin/products/all');
-            products = prodRes.ok ? await prodRes.json() : [
-                {id: 1, name: 'Bộ thun Cotton bé trai', category: {id: 1, name: 'Đồ bé trai'}, price: 150000, stockQuantity: 50, imageUrl: 'p1.jpg'},
-                {id: 2, name: 'Váy công chúa bé gái', category: {id: 2, name: 'Đồ bé gái'}, price: 280000, stockQuantity: 30, imageUrl: 'p2.jpg'},
-                {id: 3, name: 'Giày tập đi sơ sinh', category: {id: 3, name: 'Phụ kiện'}, price: 95000, stockQuantity: 100, imageUrl: 'p3.jpg'}
-            ];
-
-            // Orders
-            const orderRes = await fetch('/admin/orders/all');
-            orders = orderRes.ok ? await orderRes.json() : [
-                {id: 1, code: 'ORD-001', user: {fullname: 'Nguyễn Văn A'}, orderDate: '2024-04-15', status: 'DELIVERED', paymentStatus: 'PAID', total: 450000},
-                {id: 2, code: 'ORD-002', user: {fullname: 'Trần Thị B'}, orderDate: '2024-04-16', status: 'PENDING', paymentStatus: 'UNPAID', total: 280000},
-                {id: 3, code: 'ORD-003', user: {fullname: 'Lê Văn C'}, orderDate: '2024-04-16', status: 'PROCESSING', paymentStatus: 'PAID', total: 150000}
-            ];
-
-            // Users
-            const userRes = await fetch('/admin/users');
-            users = userRes.ok ? await userRes.json() : [
-                {id: 1, username: 'user1', fullname: 'Nguyễn Văn A', email: 'a@gmail.com', role: 'USER', orderCount: 5},
-                {id: 2, username: 'admin', fullname: 'Quản trị viên', email: 'admin@babiplus.vn', role: 'ADMIN', orderCount: 0}
-            ];
-
-            // Stores
-            const storeRes = await fetch('/admin/stores');
-            stores = storeRes.ok ? await storeRes.json() : [
-                {id: 1, name: 'Babi Plus - Quận 1', address: '123 Lê Lợi, Q.1, TP.HCM', phone: '028.1234.5678'},
-                {id: 2, name: 'Babi Plus - Quận 7', address: '456 Nguyễn Văn Linh, Q.7, TP.HCM', phone: '028.8888.9999'}
-            ];
-
-            renderAll();
-            updateDashboardStats();
-        } catch (e) {
-            console.error("Data load error", e);
+        const prodRes = await fetch('/admin/products/all');
+        if (prodRes.ok) {
+            products = await prodRes.json();
+            console.log('Loaded products:', products);
         }
     }
 
-    // --- RENDERING ---
-    function renderAll() {
-        renderProducts();
-        renderCategories();
-        renderOrders();
-        renderCustomers();
-        renderStores();
-        updateSelects();
-    }
-
-    function renderProducts() {
-        const body = document.getElementById('productTableBody');
-        body.innerHTML = products.map((p, i) => `
-                <tr>
-                    <td>${i+1}</td>
-                    <td><img src="/assets/img/products/${p.imageUrl}" class="product-img" onerror="this.src='https://via.placeholder.com/50'"></td>
-                    <td>${p.name}</td>
-                    <td><span class="badge bg-light text-dark border">${p.category ? p.category.name : 'N/A'}</span></td>
-                    <td>${formatVND(p.price)}</td>
-                    <td><span class="badge ${p.stockQuantity < 10 ? 'bg-danger' : 'bg-success'}">${p.stockQuantity}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openProductModal('edit', ${p.id})"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('product', ${p.id})"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-    }
-
-    function renderCategories() {
-        const body = document.getElementById('categoryTableBody');
-        body.innerHTML = categories.map(c => `
-                <tr>
-                    <td>${c.id}</td>
-                    <td><strong>${c.name}</strong></td>
-                    <td>${c.count || 0} sản phẩm</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openCategoryModal('edit', ${c.id}, '${c.name}')"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('category', ${c.id})"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-    }
-
-    function renderOrders() {
-        const body = document.getElementById('orderTableBody');
-        body.innerHTML = orders.map(o => `
-                <tr>
-                    <td><strong>${o.code}</strong></td>
-                    <td>${o.user.fullname}</td>
-                    <td>${o.orderDate}</td>
-                    <td><span class="status-badge status-${o.status.toLowerCase()}">${getStatusText(o.status)}</span></td>
-                    <td><span class="badge ${o.paymentStatus === 'PAID' ? 'bg-success' : 'bg-warning'}">${o.paymentStatus}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-info text-white me-1"><i class="bi bi-eye"></i></button>
-                        <div class="btn-group">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Sửa</button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${o.id}, 'CONFIRMED')">Xác nhận</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${o.id}, 'SHIPPING')">Giao hàng</a></li>
-                                <li><a class="dropdown-item text-danger" href="#" onclick="updateOrderStatus(${o.id}, 'CANCEL')">Hủy đơn</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-
-        // Update recent orders on dashboard
-        const recent = document.getElementById('recent-orders-list');
-        recent.innerHTML = orders.slice(0, 5).map(o => `
-                <div class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
-                    <div>
-                        <div class="fw-bold">${o.code}</div>
-                        <small class="text-muted">${o.user.fullname} - ${formatVND(o.total || 0)}</small>
-                    </div>
-                    <span class="status-badge status-${o.status.toLowerCase()}" style="font-size: 0.6rem;">${getStatusText(o.status)}</span>
-                </div>
-            `).join('');
-    }
-
-    function renderCustomers() {
-        const body = document.getElementById('customerTableBody');
-        body.innerHTML = users.map((u, i) => `
-                <tr>
-                    <td>${i+1}</td>
-                    <td>${u.username}</td>
-                    <td>${u.fullname}</td>
-                    <td>${u.email}</td>
-                    <td><span class="badge ${u.role === 'ADMIN' ? 'bg-danger' : 'bg-info'}">${u.role}</span></td>
-                    <td><button class="btn btn-sm btn-link">${u.orderCount || 0} đơn</button></td>
-                </tr>
-            `).join('');
-    }
-
-    function renderStores() {
-        const body = document.getElementById('storeTableBody');
-        body.innerHTML = stores.map(s => `
-                <tr>
-                    <td>${s.id}</td>
-                    <td><strong>${s.name}</strong></td>
-                    <td>${s.address}</td>
-                    <td>${s.phone}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openStoreModal('edit', ${s.id})"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('store', ${s.id})"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-    }
 
     // --- UTILS ---
     function formatVND(amount) {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        return new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(amount);
     }
 
     function getStatusText(status) {
-        const map = { 'PENDING': 'Chờ duyệt', 'CONFIRMED': 'Đã xác nhận', 'PROCESSING': 'Đang xử lý', 'SHIPPING': 'Đang giao', 'DELIVERED': 'Đã giao', 'CANCEL': 'Đã hủy' };
+        const map = {
+            'PENDING': 'Chờ duyệt',
+            'CONFIRMED': 'Đã xác nhận',
+            'PROCESSING': 'Đang xử lý',
+            'SHIPPING': 'Đang giao',
+            'DELIVERED': 'Đã giao',
+            'CANCEL': 'Đã hủy'
+        };
         return map[status] || status;
     }
 
     function updateDashboardStats() {
         document.getElementById('dash-revenue').innerText = formatVND(125000000);
         document.getElementById('dash-orders').innerText = orders.length;
-        document.getElementById('dash-customers').innerText = users.length;
+        document.getElementById('dash-account').innerText = users.length;
         document.getElementById('dash-stores').innerText = stores.length;
     }
 
@@ -933,7 +1371,7 @@
                     tension: 0.3
                 }]
             },
-            options: { maintainAspectRatio: false }
+            options: {maintainAspectRatio: false}
         });
 
         const ctxDetail = document.getElementById('detailedChart').getContext('2d');
@@ -951,67 +1389,296 @@
     }
 
     // --- MODAL LOGIC ---
-    function openProductModal(mode, id = null) {
-        const modal = new bootstrap.Modal(document.getElementById('productModal'));
-        document.getElementById('productForm').reset();
-        document.getElementById('prodId').value = id || '';
-        document.getElementById('productModalTitle').innerText = mode === 'add' ? 'Thêm sản phẩm mới' : 'Chỉnh sửa sản phẩm';
+    // Preview ảnh khi chọn file từ máy tính
+    document.getElementById('prodImage').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const img = document.getElementById('currentImage');
 
-        if(mode === 'edit') {
-            const p = products.find(x => x.id === id);
-            if(p) {
-                document.getElementById('prodName').value = p.name;
-                document.getElementById('prodCategory').value = p.category.id;
-                document.getElementById('prodPrice').value = p.price;
-                document.getElementById('prodStock').value = p.stockQuantity;
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                img.src = event.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            img.style.display = 'none';
+            img.src = '';
+        }
+    });
+
+    // Mở modal product
+    function openProductModal(mode, id = null) {
+        document.getElementById('productForm').reset();
+        document.getElementById('prodId').value = '';
+        document.getElementById('currentImage').style.display = 'none';
+        document.getElementById('currentImage').src = '';
+        document.getElementById('prodImage').value = ''; // Reset input file
+
+        if (mode === 'add') {
+            document.getElementById('productModalTitle').innerText = 'Thêm sản phẩm mới';
+        } else if (mode === 'edit' && id) {
+            document.getElementById('productModalTitle').innerText = 'Chỉnh sửa sản phẩm';
+
+            const editBtn = document.querySelector(`.btn-edit-product[data-id='${id}']`);
+            if (editBtn) {
+                console.log('dabam')
+                document.getElementById('prodId').value = editBtn.getAttribute('data-id');
+                document.getElementById('prodName').value = editBtn.getAttribute('data-name') || '';
+                document.getElementById('prodCategory').value = editBtn.getAttribute('data-category') || '';
+                document.getElementById('prodGender').value = editBtn.getAttribute('data-gender') || '';
+                document.getElementById('prodAgeGroup').value = editBtn.getAttribute('data-agegroup') || '';
+                document.getElementById('prodPrice').value = editBtn.getAttribute('data-price') || '';
+                document.getElementById('prodStock').value = editBtn.getAttribute('data-stock') || '';
+                document.getElementById('prodDesc').value = editBtn.getAttribute('data-description') || '';
+                document.getElementById('prodFeatures').value = editBtn.getAttribute('data-features') || '';
+                document.getElementById('prodActive').value = editBtn.getAttribute('data-active') || 'true';
+
+                // Hiển thị ảnh cũ nếu có
+                const imageUrl = editBtn.getAttribute('data-image');
+                if (imageUrl && imageUrl !== '') {
+                    const img = document.getElementById('currentImage');
+                    img.src = imageUrl;
+                    img.style.display = 'block';
+                }
             }
         }
+
+        const modal = new bootstrap.Modal(document.getElementById('productModal'));
         modal.show();
     }
+
+    // Xử lý sự kiện click nút sửa sản phẩm
+    document.querySelectorAll('.btn-edit-product').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            console.log('Click edit, id:', id);
+            openProductModal('edit', id);
+        });
+    });
+
+    // Xử lý sự kiện click nút xóa sản phẩm
+    document.querySelectorAll('.btn-delete-product').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
+                fetch(`/admin/products/delete/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            alert('Xóa sản phẩm thành công!');
+                            location.reload();
+                        } else {
+                            throw new Error('Lỗi khi xóa');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Có lỗi xảy ra: ' + error.message);
+                    });
+            }
+        });
+    });
+    // Xử lý submit form (gửi dạng FormData để upload file)
+    document.getElementById('productForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        const productId = document.getElementById('prodId').value;
+
+        // Thêm dữ liệu text
+        formData.append('name', document.getElementById('prodName').value);
+        formData.append('description', document.getElementById('prodDesc').value);
+        formData.append('features', document.getElementById('prodFeatures').value);
+        formData.append('price', document.getElementById('prodPrice').value);
+        formData.append('stockQuantity', document.getElementById('prodStock').value);
+        formData.append('gender', document.getElementById('prodGender').value);
+        formData.append('ageGroup', document.getElementById('prodAgeGroup').value);
+        formData.append('categoryId', document.getElementById('prodCategory').value);
+        formData.append('active', document.getElementById('prodActive').value);
+
+        // Thêm file ảnh (nếu có chọn)
+        const imageFile = document.getElementById('prodImage').files[0];
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
+
+        // Thêm ảnh cũ (nếu không chọn ảnh mới)
+        const existingImage = document.getElementById('currentImage').src;
+        if (existingImage && existingImage !== '' && !imageFile) {
+            formData.append('existingImageUrl', existingImage);
+        }
+
+        const isUpdate = productId && productId !== '';
+        const url = isUpdate ? `/admin/products/update/${productId}` : '/admin/products/add';
+
+        fetch(url, {
+            method: 'POST',
+            body: formData  // Quan trọng: không set Content-Type
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+                    modal.hide();
+                    alert(isUpdate ? 'Cập nhật sản phẩm thành công!' : 'Thêm sản phẩm thành công!');
+                    location.reload();
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(text)
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra: ' + error.message);
+            });
+    });
 
     function openCategoryModal(mode, id = null, name = '') {
         const modal = new bootstrap.Modal(document.getElementById('categoryModal'));
         document.getElementById('cateId').value = id || '';
         document.getElementById('cateName').value = name || '';
-        document.getElementById('categoryModalTitle').innerText = mode === 'add' ? 'Thêm thương hiệu' : 'Sửa thương hiệu';
+        document.getElementById('categoryModalTitle').innerText = mode === 'add' ? 'Thêm danh mục' : 'Sửa danh mục';
         modal.show();
     }
 
+    // Mở modal: mode = 'add' hoặc 'edit'
     function openStoreModal(mode, id = null) {
-        const modal = new bootstrap.Modal(document.getElementById('storeModal'));
+        // Reset form trước khi mở
         document.getElementById('storeForm').reset();
-        document.getElementById('storeId').value = id || '';
-        document.getElementById('storeModalTitle').innerText = mode === 'add' ? 'Thêm cơ sở mới' : 'Sửa thông tin cơ sở';
+        document.getElementById('storeId').value = '';
 
-        if(mode === 'edit') {
-            const s = stores.find(x => x.id === id);
-            if(s) {
-                document.getElementById('storeName').value = s.name;
-                document.getElementById('storeAddress').value = s.address;
-                document.getElementById('storePhone').value = s.phone;
+        // Đặt title cho modal
+        if (mode === 'add') {
+            document.getElementById('storeModalTitle').innerText = 'Thêm cơ sở mới';
+            // Xóa dữ liệu cũ trong form (đã reset ở trên)
+        } else if (mode === 'edit' && id) {
+            document.getElementById('storeModalTitle').innerText = 'Sửa thông tin cơ sở';
+
+            // Lấy dữ liệu từ data attributes của nút edit
+            const editBtn = document.querySelector(`.btn-edit-store[data-id='${id}']`);
+            if (editBtn) {
+                document.getElementById('storeId').value = editBtn.getAttribute('data-id');
+                document.getElementById('storeName').value = editBtn.getAttribute('data-name');
+                document.getElementById('storeAddress').value = editBtn.getAttribute('data-address');
+                document.getElementById('storePhone').value = editBtn.getAttribute('data-phone');
             }
         }
+
+        // Hiển thị modal
+        const modal = new bootstrap.Modal(document.getElementById('storeModal'));
         modal.show();
     }
 
+    // Xử lý sự kiện click vào nút sửa (tự động lấy dữ liệu từ dòng đó)
+    document.querySelectorAll('.btn-edit-store').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            openStoreModal('edit', id);
+        });
+    });
+
+    // Xử lý sự kiện click vào nút xóa
+    document.querySelectorAll('.btn-delete-store').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            if (confirm('Bạn có chắc chắn muốn xóa cơ sở này không?')) {
+                fetch(`/api/stores/delete/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            alert('Xóa cơ sở thành công!');
+                            location.reload();
+                        } else {
+                            throw new Error('Lỗi khi xóa');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Có lỗi xảy ra: ' + error.message);
+                    });
+            }
+        });
+    });
+
+    // Xử lý submit form (thêm hoặc sửa)
+    document.getElementById('storeForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const storeId = document.getElementById('storeId').value;
+        const storeData = {
+            name: document.getElementById('storeName').value,
+            address: document.getElementById('storeAddress').value,
+            phone: document.getElementById('storePhone').value
+        };
+
+        // Xác định method và url dựa vào có id hay không
+        const isUpdate = storeId && storeId !== '';
+        const url = isUpdate ? `/api/stores/update/${storeId}` : '/api/stores/add';
+        const method = 'POST'; // Hoặc 'PUT' tùy controller
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(storeData)
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    // Đóng modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('storeModal'));
+                    modal.hide();
+
+                    // Reset form
+                    document.getElementById('storeForm').reset();
+                    document.getElementById('storeId').value = '';
+
+                    // Thông báo và reload
+                    alert(isUpdate ? 'Cập nhật cơ sở thành công!' : 'Thêm cơ sở thành công!');
+                    location.reload();
+                } else {
+                    throw new Error('Lỗi khi lưu dữ liệu');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra: ' + error.message);
+            });
+    });
+
     function confirmDelete(type, id) {
-        deleteTarget = { type, id };
+        deleteTarget = {type, id};
         new bootstrap.Modal(document.getElementById('deleteModal')).show();
     }
 
     // --- FORM SUBMISSIONS ---
     function setupForms() {
         // Product Form
-        document.getElementById('productForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Đã lưu thông tin sản phẩm thành công!');
-            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
-        });
+
 
         // Category Form
         document.getElementById('categoryForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            alert('Đã cập nhật thương hiệu!');
+            alert('Đã cập nhật danh mục!');
             bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
         });
 
@@ -1030,10 +1697,11 @@
     }
 
     async function updateOrderStatus(id, status) {
-        if(confirm(`Xác nhận chuyển trạng thái đơn hàng sang ${getStatusText(status)}?`)) {
+        if (confirm(`Xác nhận chuyển trạng thái đơn hàng sang ${getStatusText(status)}?`)) {
             alert('Cập nhật trạng thái thành công!');
         }
     }
+
     function addRow() {
         const row = document.querySelector("#itemContainer tr").cloneNode(true);
         document.getElementById("itemContainer").appendChild(row);
@@ -1043,6 +1711,598 @@
         btn.closest("tr").remove();
     }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".btn-toggle-password").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const span = this.previousElementSibling;
+                const icon = this.querySelector("i");
 
+                if (icon.classList.contains("bi-eye")) {
+                    span.textContent = span.dataset.password;
+                    icon.classList.remove("bi-eye");
+                    icon.classList.add("bi-eye-slash");
+                } else {
+                    span.textContent = "••••••";
+                    icon.classList.remove("bi-eye-slash");
+                    icon.classList.add("bi-eye");
+                }
+            });
+        });
+    });
+
+    function openAccountModal(mode, id = null) {
+        document.getElementById('accountForm').reset();
+        document.getElementById('accountId').value = '';
+
+        if (mode === 'add') {
+            document.getElementById('accountModalTitle').innerText = 'Thêm tài khoản mới';
+            document.getElementById('accountPassword').required = true;
+        } else if (mode === 'edit' && id) {
+            document.getElementById('accountModalTitle').innerText = 'Sửa thông tin tài khoản';
+            document.getElementById('accountPassword').required = false; // Sửa thì không bắt buộc nhập lại mật khẩu
+
+            const editBtn = document.querySelector(`.btn-edit-account[data-id='${id}']`);
+            if (editBtn) {
+                document.getElementById('accountId').value = editBtn.getAttribute('data-id');
+                document.getElementById('accountFullname').value = editBtn.getAttribute('data-fullname') || '';
+                document.getElementById('accountUsername').value = editBtn.getAttribute('data-username') || '';
+                document.getElementById('accountEmail').value = editBtn.getAttribute('data-email') || '';
+                document.getElementById('accountRole').value = editBtn.getAttribute('data-role') || 'USER';
+                // Không điền mật khẩu cũ vào form, để user nhập mới nếu muốn đổi
+                document.getElementById('accountPassword').value = '';
+                document.getElementById('accountPassword').placeholder = 'Để trống nếu không muốn đổi mật khẩu';
+            }
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('accountModal'));
+        modal.show();
+    }
+
+    // Xử lý sự kiện click nút sửa
+    document.querySelectorAll('.btn-edit-account').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            openAccountModal('edit', id);
+        });
+    });
+
+    // Xử lý sự kiện click nút xóa
+    document.querySelectorAll('.btn-delete-account').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
+                fetch(`/api/users/delete/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            alert('Xóa tài khoản thành công!');
+                            location.reload();
+                        } else {
+                            throw new Error('Lỗi khi xóa');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Có lỗi xảy ra: ' + error.message);
+                    });
+            }
+        });
+    });
+
+    // Xử lý submit form account
+    document.getElementById('accountForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const accountId = document.getElementById('accountId').value;
+        const accountData = {
+            fullname: document.getElementById('accountFullname').value,
+            username: document.getElementById('accountUsername').value,
+            email: document.getElementById('accountEmail').value,
+            role: document.getElementById('accountRole').value
+        };
+
+        // Chỉ thêm password vào data nếu có nhập (khi thêm mới hoặc đổi mật khẩu)
+        const password = document.getElementById('accountPassword').value;
+        if (password && password.trim() !== '') {
+            accountData.password = password;
+        }
+
+        const isUpdate = accountId && accountId !== '';
+        const url = isUpdate ? `/api/users/update/${accountId}` : '/api/users/add';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(accountData)
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('accountModal'));
+                    modal.hide();
+                    document.getElementById('accountForm').reset();
+                    alert(isUpdate ? 'Cập nhật tài khoản thành công!' : 'Thêm tài khoản thành công!');
+                    location.reload();
+                } else {
+                    throw new Error('Lỗi khi lưu dữ liệu');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra: ' + error.message);
+            });
+    });
+
+    // Chuyển tab
+    function switchTab(type) {
+        if (type === 'import') {
+            document.getElementById('importForm').style.display = 'block';
+            document.getElementById('exportForm').style.display = 'none';
+        } else {
+            document.getElementById('importForm').style.display = 'none';
+            document.getElementById('exportForm').style.display = 'block';
+        }
+    }
+
+    // Thêm dòng cho nhập hàng
+    let importRowIndex = 1;
+    // Thêm dòng cho nhập hàng
+    function addImportRow() {
+        const container = document.getElementById('importItemContainer');
+        const rowCount = container.children.length;
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+        <td>
+            <select name="items[${rowCount}].productId" class="form-select product-select" required>
+                <option value="">Chọn sản phẩm</option>
+            </select>
+        </td>
+        <td><input type="text" name="items[${rowCount}].gender" class="form-control" placeholder="Giới tính"></td>
+        <td><input type="number" name="items[${rowCount}].quantity" class="form-control quantity" required></td>
+        <td><input type="number" name="items[${rowCount}].price" class="form-control price" required></td>
+        <td><input type="text" class="form-control total-price" readonly></td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">X</button></td>
+    `;
+        container.appendChild(newRow);
+
+        // Load sản phẩm vào select
+        const select = newRow.querySelector('.product-select');
+        products.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = `${product.name} - (Tồn: ${product.stockQuantity})`;
+            select.appendChild(option);
+        });
+
+        attachRowEvents(newRow);
+    }
+
+    // Thêm dòng cho xuất hàng
+    function addExportRow() {
+        const container = document.getElementById('exportItemContainer');
+        const rowCount = container.children.length;
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+        <td>
+            <select name="items[${rowCount}].productId" class="form-select product-select" required>
+                <option value="">Chọn sản phẩm</option>
+            </select>
+        </td>
+        <td><input type="text" name="items[${rowCount}].gender" class="form-control" placeholder="Giới tính"></td>
+        <td><input type="number" name="items[${rowCount}].quantity" class="form-control quantity" required></td>
+        <td><input type="number" name="items[${rowCount}].price" class="form-control price" required></td>
+        <td><input type="text" class="form-control total-price" readonly></td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">X</button></td>
+    `;
+        container.appendChild(newRow);
+
+        // Load sản phẩm vào select
+        const select = newRow.querySelector('.product-select');
+        products.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = `${product.name} - (Tồn: ${product.stockQuantity})`;
+            select.appendChild(option);
+        });
+
+        attachRowEvents(newRow);
+    }
+
+    // Gắn sự kiện cho dòng
+    function attachRowEvents(row) {
+        const quantityInput = row.querySelector('.quantity');
+        const priceInput = row.querySelector('.price');
+        const select = row.querySelector('.product-select');
+
+        // Tính tiền khi nhập số lượng hoặc giá
+        function calculateTotal() {
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const total = quantity * price;
+            row.querySelector('.total-price').value = total.toLocaleString('vi-VN') + 'đ';
+            updateTotal();
+        }
+
+        // Cập nhật tồn kho khi chọn sản phẩm (cho xuất hàng)
+        if (select && document.getElementById('exportForm').style.display !== 'none') {
+            select.addEventListener('change', function() {
+                const productId = this.value;
+                const product = products.find(p => p.id == productId);
+                if (product) {
+                    quantityInput.max = product.stockQuantity;
+                    quantityInput.placeholder = `Tồn: ${product.stockQuantity}`;
+                }
+            });
+        }
+
+        quantityInput.addEventListener('input', calculateTotal);
+        priceInput.addEventListener('input', calculateTotal);
+    }
+
+    // Cập nhật tổng tiền
+    function updateTotal() {
+        let importTotal = 0;
+        document.querySelectorAll('#importItemContainer .total-price').forEach(el => {
+            const val = parseFloat(el.value.replace(/[^0-9]/g, '')) || 0;
+            importTotal += val;
+        });
+        document.getElementById('importTotal').innerText = importTotal.toLocaleString('vi-VN') + 'đ';
+
+        let exportTotal = 0;
+        document.querySelectorAll('#exportItemContainer .total-price').forEach(el => {
+            const val = parseFloat(el.value.replace(/[^0-9]/g, '')) || 0;
+            exportTotal += val;
+        });
+        document.getElementById('exportTotal').innerText = exportTotal.toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Xóa dòng
+    function removeRow(btn) {
+        btn.closest('tr').remove();
+        updateTotal();
+    }
+
+    // Khởi tạo - thêm 1 dòng mặc định khi load trang
+    function initInventoryForms() {
+        // Chỉ thêm dòng nếu chưa có dòng nào
+        if (document.getElementById('importItemContainer').children.length === 0) {
+            addImportRow();
+        }
+        if (document.getElementById('exportItemContainer').children.length === 0) {
+            addExportRow();
+        }
+    }
+
+    // Gọi sau khi load xong products
+    setTimeout(() => {
+        if (products.length > 0) {
+            initInventoryForms();
+        }
+    }, 500);
+
+    // Gắn sự kiện cho các dòng có sẵn
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('#importItemContainer tr, #exportItemContainer tr').forEach(row => {
+            attachRowEvents(row);
+        });
+    });
+    // Biến lưu dữ liệu hiện tại để in
+    let currentInvoiceData = null;
+    let currentInvoiceType = null;
+
+    // Hiển thị lịch sử
+    async function showHistory(type = 'all') {
+        try {
+            const response = await fetch(`/admin/inventory/history?type=${type}`);
+            const data = await response.json();
+            console.log("dâtne: ",data);
+
+
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+
+            // Thêm phiếu nhập
+            if (data.imports && data.imports.length > 0) {
+                data.imports.forEach(item => {
+                    addHistoryRow(tbody, {
+                        id: item.id,
+                        code: item.receiptCode,
+                        type: 'import',
+                        typeName: 'NHẬP KHO',
+                        store: item.store?.name || 'N/A',
+                        user: item.createdBy?.fullname ,
+                        date: formatDate(item.createdAt || item.importDate),
+                        total: item.totalAmount,
+                        itemCount: item.details?.length || 0,
+                        reason: 'Nhập hàng'
+                    });
+                });
+            }
+
+            // Thêm phiếu xuất
+            if (data.exports && data.exports.length > 0) {
+                data.exports.forEach(item => {
+                    addHistoryRow(tbody, {
+                        id: item.id,
+                        code: item.receiptCode,
+                        type: 'export',
+                        typeName: 'XUẤT KHO',
+                        store: item.store?.name || 'N/A',
+                        date: formatDate(item.createdAt || item.exportDate),
+                        total: item.totalAmount,
+                        itemCount: item.details?.length || 0,
+                        reason: getReasonText(item.reason)
+                    });
+                });
+            }
+
+            // Nếu không có dữ liệu
+            if (tbody.children.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Không có dữ liệu</td></tr>';
+            }
+
+        } catch (error) {
+            console.error('Lỗi khi tải lịch sử:', error);
+            alert('Có lỗi xảy ra khi tải dữ liệu');
+        }
+    }
+
+    // Thêm dòng vào bảng
+    function addHistoryRow(tbody, item) {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+        <td><strong>${item.code}</strong></td>
+        <td>
+            <span class="badge ${item.type === 'import' ? 'bg-success' : 'bg-warning'}">
+                ${item.typeName}
+            </span>
+        </td>
+        <td>${item.store}</td>
+        <td>${item.date}</td>
+        <td class="text-end">${formatCurrency(item.total)}</td>
+        <td class="text-center">${item.itemCount}</td>
+        <td>${item.reason}</td>
+        <td>
+            <button class="btn btn-sm btn-info" onclick="viewDetail('${item.type}', ${item.id})">
+                <i class="bi bi-eye"></i> Xem
+            </button>
+            <button class="btn btn-sm btn-primary" onclick="printReceipt('${item.type}', ${item.id})">
+                <i class="bi bi-printer"></i> In
+            </button>
+        </td>
+    `;
+    }
+
+    // Xem chi tiết phiếu
+    async function viewDetail(type, id) {
+        try {
+            const url = `/admin/inventory/${type}/${id}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            currentInvoiceData = data;
+            currentInvoiceType = type;
+
+            // Hiển thị chi tiết trong modal
+            const modalBody = document.getElementById('detailModalBody');
+            modalBody.innerHTML = renderDetailHTML(data, type);
+
+            // Hiển thị modal
+            const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+            modal.show();
+
+        } catch (error) {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra khi tải chi tiết');
+        }
+    }
+
+    // Render chi tiết phiếu
+    function renderDetailHTML(data, type) {
+        const isImport = type === 'import';
+        const title = isImport ? 'PHIẾU NHẬP KHO' : 'PHIẾU XUẤT KHO';
+        const items = data.details || [];
+
+        // Debug: in ra console để xem dữ liệu
+        console.log('Data receipt:', data);
+        console.log('Items:', items);
+
+        return `
+        <div class="invoice-box" style="padding: 20px; font-family: Arial, sans-serif;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2>${title}</h2>
+                <h4>CÔNG TY CỔ PHẦN THỜI TRANG BABI</h4>
+                <p>123 Lê Lợi, Quận 1, TP.HCM | Hotline: 1900 1234</p>
+                <hr>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <p><strong>Mã phiếu:</strong> ${data.receiptCode || 'N/A'}</p>
+
+                <p><strong>Ngày tạo:</strong> ${formatDate(data.createdAt || data.importDate || data.exportDate)}</p>
+                ${data.reason ? `<p><strong>Lý do:</strong> ${getReasonText(data.reason)}</p>` : ''}
+                ${data.note ? `<p><strong>Ghi chú:</strong> ${data.note}</p>` : ''}
+            </div>
+
+            ${items.length > 0 ? `
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">STT</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Sản phẩm</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Giới tính</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Số lượng</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Đơn giá</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map((item, index) => `
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${index + 1}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; color: ${!item.productName || item.productName === 'Sản phẩm không tồn tại' ? 'red' : 'black'}">
+                                ${item.productName || 'N/A'}
+                            </td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${item.gender || '-'}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.quantity}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${formatCurrency(item.unitPrice)}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${formatCurrency(item.totalPrice)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+                <tfoot>
+                    <tr style="background-color: #f2f2f2;">
+                        <td colspan="5" style="border: 1px solid #ddd; padding: 8px; text-align: right;">
+                            <strong>TỔNG CỘNG:</strong>
+                        </td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
+                            <strong>${formatCurrency(data.totalAmount)}</strong>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            ` : '<p class="text-center">Không có chi tiết sản phẩm</p>'}
+
+            <div style="margin-top: 50px;">
+                <div style="float: left; width: 33%; text-align: center;">
+                    <p>Người lập phiếu</p>
+                    <p style="margin-top: 40px;">(Ký, họ tên)</p>
+                </div>
+                <div style="float: left; width: 33%; text-align: center;">
+                    <p>Thủ kho</p>
+                    <p style="margin-top: 40px;">(Ký, họ tên)</p>
+                </div>
+                <div style="float: left; width: 33%; text-align: center;">
+                    <p>Giám đốc</p>
+                    <p style="margin-top: 40px;">(Ký, họ tên)</p>
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+        </div>
+    `;
+    }
+
+    // In hóa đơn
+    function printReceipt(type, id) {
+        // Lưu thông tin để in
+        currentInvoiceData = null;
+        currentInvoiceType = type;
+
+        // Gọi API lấy chi tiết và in
+        fetch(`/admin/inventory/${type}/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Hóa đơn ${data.receiptCode}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        .invoice-box { max-width: 800px; margin: auto; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        .text-right { text-align: right; }
+                        .text-center { text-align: center; }
+                        @media print {
+                            .no-print { display: none; }
+                            button { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${renderDetailHTML(data, type)}
+                    <div class="text-center no-print" style="margin-top: 20px;">
+                        <button onclick="window.print()" style="padding: 10px 20px;">In hóa đơn</button>
+                        <button onclick="window.close()" style="padding: 10px 20px;">Đóng</button>
+                    </div>
+                </body>
+                </html>
+            `);
+                printWindow.document.close();
+            })
+            .catch(error => {
+                console.error('Lỗi khi in:', error);
+                alert('Có lỗi xảy ra khi in hóa đơn');
+            });
+    }
+
+    // In từ modal (nếu đang xem chi tiết)
+    function printInvoice() {
+        if (currentInvoiceData && currentInvoiceType) {
+            printReceipt(currentInvoiceType, currentInvoiceData.id);
+        }
+    }
+
+    // Format ngày tháng
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleString('vi-VN');
+    }
+
+    // Format tiền tệ
+    function formatCurrency(amount) {
+        if (!amount) return '0đ';
+        return amount.toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Lấy text lý do
+    function getReasonText(reason) {
+        const reasons = {
+            'SALE': 'Bán hàng',
+            'TRANSFER': 'Chuyển kho',
+            'DAMAGE': 'Hàng hỏng',
+            'RETURN': 'Trả lại NCC'
+        };
+        return reasons[reason] || reason || 'Xuất kho';
+    }
+
+    // Load lịch sử khi mở section
+    document.querySelector('[data-section="inventory"]')?.addEventListener('click', () => {
+        showHistory('all');
+    });
+
+    function filterProductsByCategory(type, categoryId) {
+        const container = type === 'import' ? 'importItemContainer' : 'exportItemContainer';
+        const selects = document.querySelectorAll(`#${container} .product-select`);
+
+        selects.forEach(select => {
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">Chọn sản phẩm</option>';
+
+            let filteredProducts = [];
+            if (!categoryId || categoryId === '') {
+                filteredProducts = products;
+            } else {
+                filteredProducts = products.filter(p => p.category?.id == categoryId);
+            }
+
+            filteredProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.name} - (Tồn: ${product.stockQuantity})`;
+                if (currentValue == product.id) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        });
+    }
+
+</script>
 </body>
 </html>
