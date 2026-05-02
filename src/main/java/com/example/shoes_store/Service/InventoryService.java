@@ -1,11 +1,8 @@
 package com.example.shoes_store.Service;
 
-import com.example.shoes_store.dto.ImportReceiptDTO;
-import com.example.shoes_store.dto.ImportReceiptDetailDTO;
-import com.example.shoes_store.dto.InventoryDTO;
+import com.example.shoes_store.dto.*;
 import com.example.shoes_store.Entity.*;
 import com.example.shoes_store.Repo.*;
-import com.example.shoes_store.dto.InventoryItemDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,28 +32,34 @@ public class InventoryService {
 
     @Autowired
     private UserRepo userRepository;
+    @Autowired
+    private SupperlieRepo supperlieRepo;
 
     @Transactional
     public void createImportReceipt(InventoryDTO dto, HttpSession session) {
-//        Store store = storeRepository.findById(dto.getStoreId())
-//                .orElseThrow(() -> new RuntimeException("Không tìm thấy cửa hàng"));
         User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+        // Lấy nhà phân phối
+        Supplier supplier = null;
+        if (dto.getSupplierId() != null) {
+            supplier = supperlieRepo.findById(dto.getSupplierId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy nhà phân phối"));
+        }
 
         // Tạo phiếu nhập
         ImportReceipt receipt = new ImportReceipt();
         receipt.setReceiptCode("IMP-" + System.currentTimeMillis());
-//        receipt.setStore(store);
         receipt.setImportDate(LocalDateTime.now());
         receipt.setCreatedAt(LocalDateTime.now());
         receipt.setNote(dto.getNote());
         receipt.setCreatedBy(loggedInUser);
+        receipt.setSupplier(supplier);
 
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        // Tạo chi tiết phiếu nhập
         for (InventoryItemDTO item : dto.getItems()) {
             Product product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm ID: " + item.getProductId()));
 
             ImportReceiptDetail detail = new ImportReceiptDetail();
             detail.setImportReceipt(receipt);
@@ -69,7 +72,7 @@ public class InventoryService {
             receipt.getDetails().add(detail);
             totalAmount = totalAmount.add(detail.getTotalPrice());
 
-            // Cập nhật tồn kho cho sản phẩm
+            // Cập nhật tồn kho
             product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
             productRepository.save(product);
         }
@@ -127,17 +130,71 @@ public class InventoryService {
         exportReceiptRepository.save(receipt);
     }
 
-    // Lấy danh sách phiếu nhập
-    public List<ImportReceipt> getAllImportReceipts() {
+    // Trong InventoryService.java
 
-        log.info("addd: {}",importReceiptRepository.findAllByOrderByCreatedAtDesc().size());
-        return importReceiptRepository.findAllByOrderByCreatedAtDesc();
+    // Lấy danh sách phiếu nhập (chỉ thông tin cơ bản, không details)
+    public List<ImportReceiptListDTO> getAllImportReceiptsList() {
+        List<ImportReceipt> receipts = importReceiptRepository.findAllByOrderByCreatedAtDesc();
+        List<ImportReceiptListDTO> result = new ArrayList<>();
+
+        for (ImportReceipt receipt : receipts) {
+            ImportReceiptListDTO dto = new ImportReceiptListDTO();
+            dto.setId(receipt.getId());
+            dto.setReceiptCode(receipt.getReceiptCode());
+            dto.setImportDate(receipt.getImportDate());
+            dto.setTotalAmount(receipt.getTotalAmount());
+            dto.setNote(receipt.getNote());
+            dto.setCreatedAt(receipt.getCreatedAt());
+            dto.setItemCount(receipt.getDetails() != null ? receipt.getDetails().size() : 0);
+
+            // Lấy tên nhà phân phối
+            if (receipt.getSupplier() != null) {
+                dto.setSupplierName(receipt.getSupplier().getName());
+            }
+
+            // Lấy tên người tạo
+            if (receipt.getCreatedBy() != null) {
+                dto.setCreatedByName(receipt.getCreatedBy().getFullname());
+            }
+
+            result.add(dto);
+        }
+
+        log.info("Số lượng phiếu nhập trả về: {}", result.size());
+        return result;
     }
 
-    // Lấy danh sách phiếu xuất
-    public List<ExportReceipt> getAllExportReceipts() {
-        log.info("uddd: {}",exportReceiptRepository.findAllByOrderByCreatedAtDesc().size());
-        return exportReceiptRepository.findAllByOrderByCreatedAtDesc();
+    // Lấy danh sách phiếu xuất (chỉ thông tin cơ bản, không details)
+    public List<ExportReceiptListDTO> getAllExportReceiptsList() {
+        List<ExportReceipt> receipts = exportReceiptRepository.findAllByOrderByCreatedAtDesc();
+        List<ExportReceiptListDTO> result = new ArrayList<>();
+
+        for (ExportReceipt receipt : receipts) {
+            ExportReceiptListDTO dto = new ExportReceiptListDTO();
+            dto.setId(receipt.getId());
+            dto.setReceiptCode(receipt.getReceiptCode());
+            dto.setExportDate(receipt.getExportDate());
+            dto.setTotalAmount(receipt.getTotalAmount());
+            dto.setNote(receipt.getNote());
+            dto.setCreatedAt(receipt.getCreatedAt());
+            dto.setReason(receipt.getReason());
+            dto.setItemCount(receipt.getDetails() != null ? receipt.getDetails().size() : 0);
+
+            // Lấy tên cửa hàng
+            if (receipt.getStore() != null) {
+                dto.setStoreName(receipt.getStore().getName());
+            }
+
+            // Lấy tên người tạo
+            if (receipt.getCreatedBy() != null) {
+                dto.setCreatedByName(receipt.getCreatedBy().getFullname());
+            }
+
+            result.add(dto);
+        }
+
+        log.info("Số lượng phiếu xuất trả về: {}", result.size());
+        return result;
     }
 
     // Lấy chi tiết phiếu nhập
@@ -148,20 +205,24 @@ public class InventoryService {
         ImportReceiptDTO dto = new ImportReceiptDTO();
         dto.setId(receipt.getId());
         dto.setReceiptCode(receipt.getReceiptCode());
-
-        // Lấy tên cửa hàng an toàn
-//        if (receipt.getStore() != null) {
-//            dto.setStoreName(receipt.getStore().getName());
-//            dto.setStoreAddress(receipt.getStore().getAddress());
-//        } else {
-//            dto.setStoreName("Chưa có thông tin");
-//            dto.setStoreAddress("Chưa có thông tin");
-//        }
-
         dto.setCreatedAt(receipt.getCreatedAt());
         dto.setImportDate(receipt.getImportDate());
         dto.setTotalAmount(receipt.getTotalAmount());
         dto.setNote(receipt.getNote());
+
+        if (receipt.getCreatedBy() != null) {
+            dto.setCreatedByName(receipt.getCreatedBy().getFullname());
+        } else {
+            dto.setCreatedByName("N/A");
+        }
+
+        if (receipt.getSupplier() != null) {
+            dto.setSupplierName(receipt.getSupplier().getName());
+            dto.setSupplierAddress(receipt.getSupplier().getAddress());
+        } else {
+            dto.setSupplierName("N/A");
+            dto.setSupplierAddress("N/A");
+        }
 
         List<ImportReceiptDetailDTO> details = new ArrayList<>();
         if (receipt.getDetails() != null) {
@@ -173,13 +234,75 @@ public class InventoryService {
                 detailDTO.setTotalPrice(detail.getTotalPrice());
                 detailDTO.setGender(detail.getGender());
 
-                // Lấy tên sản phẩm an toàn
                 if (detail.getProduct() != null) {
                     detailDTO.setProductId(detail.getProduct().getId());
                     detailDTO.setProductName(detail.getProduct().getName());
                 } else {
                     detailDTO.setProductId(null);
-                    detailDTO.setProductName("Sản phẩm không tồn tại (ID: " + detail.getProduct().getId() + ")");
+                    detailDTO.setProductName("Sản phẩm không tồn tại");
+                }
+                details.add(detailDTO);
+            }
+        }
+        dto.setDetails(details);
+
+        // Log để debug
+        log.info("=== IMPORT RECEIPT DETAIL ===");
+        log.info("CreatedByName: {}", dto.getCreatedByName());
+        log.info("SupplierName: {}", dto.getSupplierName());
+        log.info("Total amount: {}", dto.getTotalAmount());
+        log.info("Details count: {}", details.size());
+
+        return dto;
+    }
+    // Lấy chi tiết phiếu xuất
+    public ExportReceiptDTO getExportReceiptDetail(Long id) {
+        ExportReceipt receipt = exportReceiptRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu xuất"));
+
+        ExportReceiptDTO dto = new ExportReceiptDTO();
+        dto.setId(receipt.getId());
+        dto.setReceiptCode(receipt.getReceiptCode());
+        dto.setExportDate(receipt.getExportDate());
+        dto.setTotalAmount(receipt.getTotalAmount());
+        dto.setNote(receipt.getNote());
+        dto.setCreatedAt(receipt.getCreatedAt());
+        dto.setReason(receipt.getReason());
+
+        // Lấy thông tin cửa hàng
+        if (receipt.getStore() != null) {
+            dto.setStoreName(receipt.getStore().getName());
+            dto.setStoreAddress(receipt.getStore().getAddress());
+        } else {
+            dto.setStoreName("N/A");
+            dto.setStoreAddress("N/A");
+        }
+
+        // Lấy thông tin người tạo
+        if (receipt.getCreatedBy() != null) {
+            dto.setCreatedByName(receipt.getCreatedBy().getFullname());
+        } else {
+            dto.setCreatedByName("N/A");
+        }
+
+        // Lấy danh sách chi tiết sản phẩm
+        List<ExportReceiptDetailDTO> details = new ArrayList<>();
+        if (receipt.getDetails() != null && !receipt.getDetails().isEmpty()) {
+            for (ExportReceiptDetail detail : receipt.getDetails()) {
+                ExportReceiptDetailDTO detailDTO = new ExportReceiptDetailDTO();
+                detailDTO.setId(detail.getId());
+                detailDTO.setQuantity(detail.getQuantity());
+                detailDTO.setUnitPrice(detail.getUnitPrice());
+                detailDTO.setTotalPrice(detail.getTotalPrice());
+                detailDTO.setGender(detail.getGender());
+
+                if (detail.getProduct() != null) {
+                    detailDTO.setProductId(detail.getProduct().getId());
+                    detailDTO.setProductName(detail.getProduct().getName());
+                    detailDTO.setProductGender(detail.getProduct().getGender());
+                } else {
+                    detailDTO.setProductId(null);
+                    detailDTO.setProductName("Sản phẩm không tồn tại");
                 }
 
                 details.add(detailDTO);
@@ -187,12 +310,8 @@ public class InventoryService {
         }
         dto.setDetails(details);
 
-        return dto;
-    }
+        log.info("Export receipt details size: {}", details.size());
 
-    // Lấy chi tiết phiếu xuất
-    public ExportReceipt getExportReceiptDetail(Long id) {
-        return exportReceiptRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu xuất"));
+        return dto;
     }
 }

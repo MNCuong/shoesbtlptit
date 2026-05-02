@@ -28,6 +28,10 @@ public class ImportReceipt {
 
     private LocalDateTime createdAt;
 
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
+
     @OneToMany(mappedBy = "importReceipt", cascade = CascadeType.ALL)
     private List<ImportReceiptDetail> details = new ArrayList<>();
 }

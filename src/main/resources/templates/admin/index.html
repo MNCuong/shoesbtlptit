@@ -175,7 +175,64 @@
             text-transform: uppercase;
             font-size: 0.8rem;
         }
+        /* Custom styles cho bảng lịch sử */
+        #historyTable tbody tr {
+            transition: all 0.2s ease;
+        }
 
+        #historyTable tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+            transform: translateX(2px);
+        }
+
+        .badge.bg-info-subtle {
+            background-color: rgba(13, 202, 240, 0.1);
+        }
+
+        /* Tooltip custom */
+        .btn-tooltip {
+            cursor: pointer;
+        }
+        /* Style cho modal chi tiết */
+        .invoice-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .invoice-header .icon-circle {
+            transition: transform 0.3s ease;
+        }
+
+        .invoice-header .icon-circle:hover {
+            transform: scale(1.05);
+        }
+
+        .info-card, .summary-card {
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover, .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        #detailModal .table {
+            margin-bottom: 0;
+        }
+
+        #detailModal .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+
+        .signature-box {
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .signature-box:hover {
+            opacity: 1;
+        }
         .product-img {
             width: 50px;
             height: 50px;
@@ -283,12 +340,12 @@
         <div class="nav-item"><a href="#stores" class="nav-link" data-section="stores"><i class="bi bi-shop"></i>Cửa
             hàng (Cơ sở)</a></div>
         <div class="nav-item">
-            <a href="#suppliers" class="nav-link" data-section="suppliers-section">
+            <a href="#suppliers" class="nav-link" data-section="suppliers">
                 <i class="bi bi-truck"></i> Nhà phân phối
             </a>
         </div>
         <div class="nav-item">
-            <a href="#employees" class="nav-link" data-section="employees-section">
+            <a href="#employees" class="nav-link" data-section="employees">
                 <i class="bi bi-people-fill"></i> Quản lý nhân viên
             </a>
         </div>
@@ -582,33 +639,60 @@
         </h2>
 
         <!-- Tab chọn loại -->
-        <!-- Tab chọn loại -->
-        <ul class="nav nav-tabs mb-3">
+        <ul class="nav nav-pills mb-4" style="gap: 10px;">
             <li class="nav-item">
-                <button class="nav-link active"
-                        onclick="showHistory('all')"
-                        style="background-color: #4e73df; color: white; border-radius: 8px 8px 0 0; border: none; font-weight: bold;">
-                    <i class="bi bi-list"></i> Tất cả
+                <button class="nav-link active" onclick="showHistory('all')"
+                        style="background-color: #4e73df; color: white; border-radius: 30px; padding: 8px 24px;">
+                    <i class="bi bi-list-ul"></i> Tất cả
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link"
-                        onclick="showHistory('import')"
-                        style="background-color: #1cc88a; color: white; border-radius: 8px 8px 0 0; border: none; font-weight: bold;">
+                <button class="nav-link" onclick="showHistory('import')"
+                        style="background-color: #1cc88a; color: white; border-radius: 30px; padding: 8px 24px;">
                     <i class="bi bi-box-arrow-in-down"></i> Phiếu nhập
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link"
-                        onclick="showHistory('export')"
-                        style="background-color: #e74a3b; color: white; border-radius: 8px 8px 0 0; border: none; font-weight: bold;">
+                <button class="nav-link" onclick="showHistory('export')"
+                        style="background-color: #e74a3b; color: white; border-radius: 30px; padding: 8px 24px;">
                     <i class="bi bi-box-arrow-up"></i> Phiếu xuất
                 </button>
             </li>
         </ul>
 
+        <!-- Bộ lọc thời gian -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Từ ngày</label>
+                        <input type="date" class="form-control" id="filterFromDate">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Đến ngày</label>
+                        <input type="date" class="form-control" id="filterToDate">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Tìm kiếm</label>
+                        <input type="text" class="form-control" id="filterSearch" placeholder="Mã phiếu, người tạo...">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary w-100" onclick="applyFilter()">
+                            <i class="bi bi-search"></i> Lọc dữ liệu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Bảng lịch sử -->
         <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-table"></i> Danh sách phiếu xuất/nhập</strong>
+<!--                <button class="btn btn-sm btn-outline-success" onclick="exportToExcel()">-->
+<!--                    <i class="bi bi-file-excel"></i> Xuất Excel-->
+<!--                </button>-->
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle" id="historyTable">
@@ -616,44 +700,62 @@
                         <tr>
                             <th>Mã phiếu</th>
                             <th>Loại</th>
-                            <th>Người tạo phiếu</th>
+                            <th>Cửa hàng/NCC</th>
+                            <th>Người tạo</th>
                             <th>Ngày tạo</th>
-                            <th>Tổng tiền</th>
-                            <th>Số lượng SP</th>
-                            <th>Lý do</th>
-                            <th>Thao tác</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th class="text-center">SL SP</th>
+                            <th>Lý do/Ghi chú</th>
+                            <th class="text-center">Thao tác</th>
                         </tr>
                         </thead>
                         <tbody id="historyTableBody">
-                        <!-- Dữ liệu sẽ được load bằng JS -->
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-5">
+                                <i class="bi bi-inbox fs-1"></i><br>
+                                Đang tải dữ liệu...
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
+                </div>
+                <!-- Phân trang -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <span id="paginationInfo" class="text-muted"></span>
+                    </div>
+                    <nav>
+                        <ul class="pagination mb-0" id="pagination"></ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </section>
-
     <!-- Modal xem chi tiết -->
-    <div class="modal fade" id="detailModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalTitle">Chi tiết phiếu</h5>
+    <!-- Modal xem chi tiết - Thiết kế mới -->
+    <div class="modal fade" id="detailModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header" id="detailModalHeader">
+                    <h5 class="modal-title" id="detailModalTitle">
+                        <i class="bi bi-receipt me-2"></i> Chi tiết phiếu
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="detailModalBody">
+                <div class="modal-body" id="detailModalBody" style="max-height: 70vh; overflow-y: auto;">
                     <!-- Nội dung chi tiết sẽ load bằng JS -->
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Đóng
+                    </button>
                     <button type="button" class="btn btn-primary" id="printInvoiceBtn" onclick="printInvoice()">
                         <i class="bi bi-printer"></i> Xuất hóa đơn
                     </button>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- account Section -->
+    </div>    <!-- account Section -->
     <section id="account-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-people"></i>Quản lý tài khoản</h2>
@@ -751,26 +853,31 @@
         </ul>
 
         <!-- FORM NHẬP HÀNG -->
+        <!-- FORM NHẬP HÀNG -->
         <div id="importForm" class="card shadow-sm">
             <div class="card-body">
                 <form method="post" th:action="@{/admin/inventory/process}" id="importInventoryForm">
                     <input type="hidden" name="type" value="import">
 
                     <div class="alert alert-info mb-3">
-                        <i class="bi bi-person-circle"></i> <strong>Người nhập hàng:</strong> <span
-                            th:text="${session.loggedInUser.fullname}"></span>
+                        <i class="bi bi-person-circle"></i> <strong>Người nhập hàng:</strong>
+                        <span th:text="${session.loggedInUser.fullname}"></span>
                         <input type="hidden" name="createdBy" th:value="${session.loggedInUser.id}">
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Ngày nhập</label>
-                            <input type="date" class="form-control" name="importDate"
+                            <input type="date" class="form-control" name="importDate" id="importDate"
                                    th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Nhà cung cấp</label>
-                            <input type="text" class="form-control" name="supplier" placeholder="Tên nhà cung cấp">
+                            <label class="form-label">Nhà phân phối *</label>
+                            <select class="form-select" name="supplierId" id="supplierSelect" required>
+                                <option value="">-- Chọn nhà phân phối --</option>
+                                <option th:each="sup : ${suppliers}" th:value="${sup.id}"
+                                        th:text="${sup.name}"></option>
+                            </select>
                         </div>
                     </div>
 
@@ -782,48 +889,40 @@
 
                     <h5 class="mt-4">Danh sách sản phẩm nhập</h5>
 
-                    <!-- Chọn danh mục trước -->
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Chọn danh mục</label>
-                            <select class="form-select" id="importCategoryFilter"
-                                    onchange="filterProductsByCategory('import', this.value)">
-                                <option value="">Tất cả danh mục</option>
-                                <option th:each="cat : ${categories}" th:value="${cat.id}"
-                                        th:text="${cat.name}"></option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="importItemsTable">
                         <thead class="table-light">
                         <tr>
-                            <th>Sản phẩm</th>
-                            <th>Giới tính</th>
-                            <th>Số lượng</th>
-                            <th>Giá nhập (đ)</th>
-                            <th>Thành tiền</th>
-                            <th></th>
+                            <th style="width: 20%">Danh mục</th>
+                            <th style="width: 30%">Sản phẩm</th>
+                            <th style="width: 10%">Giới tính</th>
+                            <th style="width: 10%">Số lượng</th>
+                            <th style="width: 15%">Giá nhập (đ)</th>
+                            <th style="width: 10%">Thành tiền</th>
+                            <th style="width: 5%"></th>
                         </tr>
                         </thead>
                         <tbody id="importItemContainer">
-                        <!-- Dòng mẫu -->
+                        <!-- Dòng sản phẩm sẽ được thêm bằng JS -->
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-secondary mb-3" onclick="addImportRow()">+ Thêm sản phẩm
+                    <button type="button" class="btn btn-secondary mb-3" onclick="addImportRow()">
+                        <i class="bi bi-plus-lg"></i> Thêm sản phẩm
                     </button>
 
-                    <div class="alert alert-success">
-                        <strong>Tổng tiền nhập: </strong> <span id="importTotal">0đ</span>
+                    <div class="alert alert-success d-flex justify-content-between align-items-center">
+                        <strong><i class="bi bi-calculator"></i> Tổng tiền nhập:</strong>
+                        <span id="importTotal" style="font-size: 1.3rem; font-weight: bold;">0đ</span>
                     </div>
 
                     <div class="text-end">
-                        <button type="submit" class="btn btn-success">Lưu phiếu nhập</button>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-save"></i> Lưu phiếu nhập
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
-
+        <!-- FORM XUẤT HÀNG -->
         <!-- FORM XUẤT HÀNG -->
         <div id="exportForm" class="card shadow-sm" style="display: none;">
             <div class="card-body">
@@ -862,48 +961,40 @@
 
                     <h5 class="mt-4">Danh sách sản phẩm xuất</h5>
 
-                    <!-- Chọn danh mục trước -->
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Chọn danh mục</label>
-                            <select class="form-select" id="exportCategoryFilter"
-                                    onchange="filterProductsByCategory('export', this.value)">
-                                <option value="">Tất cả danh mục</option>
-                                <option th:each="cat : ${categories}" th:value="${cat.id}"
-                                        th:text="${cat.name}"></option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <table class="table table-bordered">
+                    <!-- Bảng xuất hàng - mỗi dòng có danh mục riêng -->
+                    <table class="table table-bordered" id="exportItemsTable">
                         <thead class="table-light">
                         <tr>
-                            <th>Sản phẩm</th>
-                            <th>Giới tính</th>
-                            <th>Số lượng</th>
-                            <th>Giá xuất (đ)</th>
-                            <th>Thành tiền</th>
-                            <th></th>
+                            <th style="width: 20%">Danh mục</th>
+                            <th style="width: 30%">Sản phẩm</th>
+                            <th style="width: 10%">Giới tính</th>
+                            <th style="width: 10%">Số lượng</th>
+                            <th style="width: 15%">Giá xuất (đ)</th>
+                            <th style="width: 10%">Thành tiền</th>
+                            <th style="width: 5%"></th>
                         </tr>
                         </thead>
                         <tbody id="exportItemContainer">
-                        <!-- Dòng mẫu -->
+                        <!-- Dòng sản phẩm sẽ được thêm bằng JS -->
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-secondary mb-3" onclick="addExportRow()">+ Thêm sản phẩm
+                    <button type="button" class="btn btn-secondary mb-3" onclick="addExportRow()">
+                        <i class="bi bi-plus-lg"></i> Thêm sản phẩm
                     </button>
 
-                    <div class="alert alert-warning">
-                        <strong>Tổng tiền xuất: </strong> <span id="exportTotal">0đ</span>
+                    <div class="alert alert-warning d-flex justify-content-between align-items-center">
+                        <strong><i class="bi bi-calculator"></i> Tổng tiền xuất:</strong>
+                        <span id="exportTotal" style="font-size: 1.3rem; font-weight: bold;">0đ</span>
                     </div>
 
                     <div class="text-end">
-                        <button type="submit" class="btn btn-danger">Lưu phiếu xuất</button>
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="bi bi-save"></i> Lưu phiếu xuất
+                        </button>
                     </div>
                 </form>
             </div>
-        </div>
-    </section>
+        </div>    </section>
     <!-- Stores Section -->
     <section id="stores-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -988,7 +1079,8 @@
                                     th:data-contactperson="${supplier.contactPerson}"
                                     th:data-phone="${supplier.phone}"
                                     th:data-email="${supplier.email}"
-                                    th:data-address="${supplier.address}">
+                                    th:data-address="${supplier.address}"
+                                    th:data-note="${supplier.note}">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                             <button class="btn btn-danger btn-sm btn-delete-supplier"
@@ -1034,7 +1126,7 @@
                         <td th:text="${employee.hireDate}">...</td>
                         <td>
                             <span th:if="${employee.status == 'ACTIVE'}" class="badge bg-success">Đang làm</span>
-                            <span th:if="${employee.status == 'INACTIVE'}" class="badge bg-secondary">Nghỉ</span>
+                            <span th:unless="${employee.status == 'ACTIVE'}" class="badge bg-danger">Nghỉ</span>
                         </td>
                         <td>
                             <button class="btn btn-warning btn-sm btn-edit-employee"
@@ -1045,7 +1137,8 @@
                                     th:data-email="${employee.email}"
                                     th:data-position="${employee.position}"
                                     th:data-hiredate="${employee.hireDate}"
-                                    th:data-status="${employee.status}">
+                                    th:data-status="${employee.status}"
+                                    th:data-userid="${employee.userId}">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                             <button class="btn btn-danger btn-sm btn-delete-employee"
@@ -1267,6 +1360,120 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="submit" class="btn btn-primary">Lưu tài khoản</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Supplier Modal -->
+<div class="modal fade" id="supplierModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="supplierForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="supplierModalTitle">Nhà phân phối</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="supplierId">
+                    <input type="hidden" id="supplierMode" value="add">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tên nhà phân phối *</label>
+                            <input type="text" class="form-control" id="supplierName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Người liên hệ</label>
+                            <input type="text" class="form-control" id="supplierContactPerson">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" id="supplierPhone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="supplierEmail">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Địa chỉ</label>
+                            <textarea class="form-control" id="supplierAddress" rows="2"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" id="supplierNote" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu nhà phân phối</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Employee Modal -->
+<div class="modal fade" id="employeeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="employeeForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="employeeModalTitle">Nhân viên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="employeeId">
+                    <input type="hidden" id="employeeMode" value="add">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mã nhân viên *</label>
+                            <input type="text" class="form-control" id="employeeCode" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Họ tên *</label>
+                            <input type="text" class="form-control" id="employeeFullName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" id="employeePhone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="employeeEmail">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Chức vụ</label>
+                            <select class="form-select" id="employeePosition">
+                                <option value="Nhân viên kho">Nhân viên kho</option>
+                                <option value="Quản lý kho">Quản lý kho</option>
+                                <option value="Nhân viên bán hàng">Nhân viên bán hàng</option>
+                                <option value="Kế toán">Kế toán</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ngày vào làm</label>
+                            <input type="date" class="form-control" id="employeeHireDate">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-select" id="employeeStatus">
+                                <option value="ACTIVE">Đang làm</option>
+                                <option value="INACTIVE">Nghỉ việc</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Liên kết tài khoản (User ID)</label>
+                            <input type="number" class="form-control" id="employeeUserId" placeholder="Nhập ID tài khoản">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu nhân viên</button>
                 </div>
             </form>
         </div>
@@ -2019,39 +2226,236 @@
         }
     }
 
-    // Thêm dòng cho nhập hàng
-    let importRowIndex = 1;
-    // Thêm dòng cho nhập hàng
+    // ==================== IMPORT FORM - MỖI DÒNG CÓ DANH MỤC RIÊNG ====================
+
+    // Lấy danh sách categories từ DOM
+    function getCategoryList() {
+        const categories = [];
+        // Lấy từ select category filter có sẵn trong form
+        const categoryFilter = document.getElementById('importCategoryFilter');
+        if (categoryFilter) {
+            categoryFilter.querySelectorAll('option').forEach(opt => {
+                if (opt.value) {
+                    categories.push({ id: opt.value, name: opt.text });
+                }
+            });
+        }
+        // Nếu không có thì lấy từ category table
+        if (categories.length === 0) {
+            document.querySelectorAll('#categoryTableBody tr').forEach(row => {
+                const idCell = row.querySelector('td:first-child');
+                const nameCell = row.querySelector('td:nth-child(2)');
+                if (idCell && nameCell) {
+                    categories.push({ id: idCell.innerText, name: nameCell.innerText });
+                }
+            });
+        }
+        return categories;
+    }
+
+    // Lấy danh sách sản phẩm từ DOM (có cả số lượng tồn kho)
+    function getProductList() {
+        const products = [];
+        document.querySelectorAll('#productTableBody tr').forEach(row => {
+            const editBtn = row.querySelector('.btn-edit-product');
+            if (editBtn) {
+                // Lấy số lượng tồn kho từ cột thứ 7 (cột Tồn kho)
+                const stockCell = row.querySelector('td:nth-child(7)');
+                let stock = 0;
+                if (stockCell) {
+                    // Xử lý text có thể có định dạng "5.000đ" hoặc "5000"
+                    let stockText = stockCell.innerText;
+                    stockText = stockText.replace(/[^0-9]/g, ''); // Chỉ lấy số
+                    stock = parseInt(stockText) || 0;
+                }
+
+                products.push({
+                    id: editBtn.getAttribute('data-id'),
+                    name: editBtn.getAttribute('data-name'),
+                    gender: editBtn.getAttribute('data-gender') || '',
+                    categoryId: editBtn.getAttribute('data-category'),
+                    stock: stock
+                });
+            }
+        });
+        console.log('Products loaded with stock:', products);
+        return products;
+    }
+
+    // Cập nhật danh sách sản phẩm theo category cho 1 dòng
+    function updateProductSelect(rowId) {
+        const catSelect = document.querySelector(`#${rowId} .category-select`);
+        const productSelect = document.querySelector(`#${rowId} .product-select`);
+        const genderInput = document.querySelector(`#${rowId} .gender-input`);
+        const selectedCategoryId = catSelect.value;
+
+        // Reset product select
+        productSelect.innerHTML = '<option value="">-- Chọn sản phẩm --</option>';
+        productSelect.disabled = !selectedCategoryId;
+        genderInput.value = '';
+
+        if (selectedCategoryId) {
+            // Lọc sản phẩm theo categoryId
+            const filteredProducts = allProducts.filter(p => p.categoryId == selectedCategoryId);
+            filteredProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.name;
+                option.setAttribute('data-gender', product.gender);
+                productSelect.appendChild(option);
+            });
+        }
+    }
+
+    // Cập nhật tổng tiền 1 dòng
+    function updateRowTotal(rowId) {
+        const quantity = parseFloat(document.querySelector(`#${rowId} .quantity-input`).value) || 0;
+        const price = parseFloat(document.querySelector(`#${rowId} .price-input`).value) || 0;
+        const totalSpan = document.querySelector(`#${rowId} .row-total`);
+        const total = quantity * price;
+        totalSpan.innerText = total.toLocaleString('vi-VN') + 'đ';
+        updateImportTotal();
+    }
+
+    // Cập nhật tổng tiền toàn bộ phiếu nhập
+    function updateImportTotal() {
+        let total = 0;
+        document.querySelectorAll('#importItemContainer .row-total').forEach(span => {
+            const val = span.innerText.replace(/[^0-9]/g, '');
+            total += parseInt(val) || 0;
+        });
+        document.getElementById('importTotal').innerText = total.toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Xóa dòng import
+    function removeImportRow(btn) {
+        btn.closest('tr').remove();
+        updateImportTotal();
+        updateRowIndices();
+    }
+
+    // Cập nhật chỉ số name cho các input để submit đúng format
+    function updateRowIndices() {
+        const rows = document.querySelectorAll('#importItemContainer tr');
+        rows.forEach((row, index) => {
+            const productSelect = row.querySelector('.product-select');
+            const quantityInput = row.querySelector('.quantity-input');
+            const priceInput = row.querySelector('.price-input');
+            const genderInput = row.querySelector('.gender-input');
+
+            if (productSelect) productSelect.name = `items[${index}].productId`;
+            if (quantityInput) quantityInput.name = `items[${index}].quantity`;
+            if (priceInput) priceInput.name = `items[${index}].price`;
+            if (genderInput) genderInput.name = `items[${index}].gender`;
+        });
+    }
+
+    // Thêm dòng mới cho import - PHIÊN BẢN ĐÚNG
     function addImportRow() {
         const container = document.getElementById('importItemContainer');
-        const rowCount = container.children.length;
+        if (!container) return;
 
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-        <td>
-            <select name="items[${rowCount}].productId" class="form-select product-select" required>
-                <option value="">Chọn sản phẩm</option>
-            </select>
-        </td>
-        <td><input type="text" name="items[${rowCount}].gender" class="form-control" placeholder="Giới tính"></td>
-        <td><input type="number" name="items[${rowCount}].quantity" class="form-control quantity" required></td>
-        <td><input type="number" name="items[${rowCount}].price" class="form-control price" required></td>
-        <td><input type="text" class="form-control total-price" readonly></td>
-        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">X</button></td>
-    `;
-        container.appendChild(newRow);
+        const rowId = 'import_row_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        const categories = getCategoryList();
 
-        // Load sản phẩm vào select
-        const select = newRow.querySelector('.product-select');
-        products.forEach(product => {
-            const option = document.createElement('option');
-            option.value = product.id;
-            option.textContent = `${product.name} - (Tồn: ${product.stockQuantity})`;
-            select.appendChild(option);
+        // Tạo HTML cho category options
+        let categoryOptions = '<option value="">-- Chọn danh mục --</option>';
+        categories.forEach(cat => {
+            categoryOptions += `<option value="${cat.id}">${cat.name}</option>`;
         });
 
-        attachRowEvents(newRow);
+        const newRow = document.createElement('tr');
+        newRow.id = rowId;
+        newRow.innerHTML = `
+        <td>
+            <select class="form-select category-select" data-row-id="${rowId}" onchange="onCategoryChange('${rowId}')">
+                ${categoryOptions}
+            </select>
+        </div>
+        </td>
+        <td>
+            <select class="form-select product-select" data-row-id="${rowId}" disabled onchange="onProductChange('${rowId}')">
+                <option value="">-- Chọn sản phẩm --</option>
+            </select>
+        </div>
+        </td>
+        <td>
+            <input type="text" class="form-control gender-input" readonly placeholder="Tự động">
+        </div>
+        </td>
+        <td>
+            <input type="number" class="form-control quantity-input" value="1" min="1" onchange="updateRowTotal('${rowId}')">
+        </div>
+        </td>
+        <td>
+            <input type="number" class="form-control price-input" value="0" min="0" onchange="updateRowTotal('${rowId}')">
+        </div>
+        </td>
+        <td class="row-total-cell">
+            <span class="row-total">0đ</span>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeImportRow(this)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    `;
+
+        container.appendChild(newRow);
+        updateRowIndices();
     }
+
+    // Khi chọn category
+    function onCategoryChange(rowId) {
+        const catSelect = document.querySelector(`#${rowId} .category-select`);
+        const productSelect = document.querySelector(`#${rowId} .product-select`);
+        const genderInput = document.querySelector(`#${rowId} .gender-input`);
+        const selectedCategoryId = catSelect.value;
+
+        // Reset product select
+        productSelect.innerHTML = '<option value="">-- Chọn sản phẩm --</option>';
+        productSelect.disabled = !selectedCategoryId;
+        genderInput.value = '';
+
+        if (selectedCategoryId) {
+            // Lọc sản phẩm theo category
+            const filteredProducts = allProducts.filter(p => p.categoryId == selectedCategoryId);
+            filteredProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.name;
+                option.setAttribute('data-gender', product.gender);
+                productSelect.appendChild(option);
+            });
+        }
+    }
+
+    // Khi chọn sản phẩm
+    function onProductChange(rowId) {
+        const productSelect = document.querySelector(`#${rowId} .product-select`);
+        const genderInput = document.querySelector(`#${rowId} .gender-input`);
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const gender = selectedOption.getAttribute('data-gender') || '';
+        genderInput.value = gender;
+    }
+
+    // Khởi tạo dữ liệu products và categories từ DOM
+    function initInventoryData() {
+        allProducts = getProductList();
+        allCategories = getCategoryList();
+        console.log('Products loaded:', allProducts.length);
+        console.log('Categories loaded:', allCategories.length);
+
+        // Thêm dòng mặc định
+        if (document.getElementById('importItemContainer').children.length === 0) {
+            addImportRow();
+        }
+    }
+
+    // Gọi khởi tạo khi trang load xong
+    setTimeout(() => {
+        initInventoryData();
+    }, 500);
 
     // Thêm dòng cho xuất hàng
     function addExportRow() {
@@ -2086,36 +2490,164 @@
     }
 
     // Gắn sự kiện cho dòng
-    function attachRowEvents(row) {
-        const quantityInput = row.querySelector('.quantity');
-        const priceInput = row.querySelector('.price');
-        const select = row.querySelector('.product-select');
+    // ==================== EXPORT FORM - MỖI DÒNG CÓ DANH MỤC RIÊNG ====================
 
-        // Tính tiền khi nhập số lượng hoặc giá
-        function calculateTotal() {
-            const quantity = parseFloat(quantityInput.value) || 0;
-            const price = parseFloat(priceInput.value) || 0;
-            const total = quantity * price;
-            row.querySelector('.total-price').value = total.toLocaleString('vi-VN') + 'đ';
-            updateTotal();
-        }
+    // Thêm dòng mới cho export
+    function addExportRow() {
+        const container = document.getElementById('exportItemContainer');
+        if (!container) return;
 
-        // Cập nhật tồn kho khi chọn sản phẩm (cho xuất hàng)
-        if (select && document.getElementById('exportForm').style.display !== 'none') {
-            select.addEventListener('change', function() {
-                const productId = this.value;
-                const product = products.find(p => p.id == productId);
-                if (product) {
-                    quantityInput.max = product.stockQuantity;
-                    quantityInput.placeholder = `Tồn: ${product.stockQuantity}`;
-                }
-            });
-        }
+        const rowId = 'export_row_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        const categories = getCategoryList();
 
-        quantityInput.addEventListener('input', calculateTotal);
-        priceInput.addEventListener('input', calculateTotal);
+        let categoryOptions = '<option value="">-- Chọn danh mục --</option>';
+        categories.forEach(cat => {
+            categoryOptions += `<option value="${cat.id}">${cat.name}</option>`;
+        });
+
+        const newRow = document.createElement('tr');
+        newRow.id = rowId;
+        newRow.innerHTML = `
+        <td>
+            <select class="form-select category-select" data-row-id="${rowId}" onchange="onExportCategoryChange('${rowId}')">
+                ${categoryOptions}
+            </select>
+        </div>
+        </td>
+        <td>
+            <select class="form-select product-select" data-row-id="${rowId}" disabled onchange="onExportProductChange('${rowId}')">
+                <option value="">-- Chọn sản phẩm --</option>
+            </select>
+        </div>
+        </td>
+        <td>
+            <input type="text" class="form-control gender-input" readonly placeholder="Tự động">
+        </div>
+        </td>
+        <td>
+            <input type="number" class="form-control quantity-input" onchange="updateExportRowTotal('${rowId}')">
+        </div>
+        </td>
+        <td>
+            <input type="number" class="form-control price-input" value="0" min="0" onchange="updateExportRowTotal('${rowId}')">
+        </div>
+        </td>
+        <td class="row-total-cell">
+            <span class="row-total">0đ</span>
+        </div>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeExportRow(this)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    `;
+
+        container.appendChild(newRow);
+        updateExportRowIndices();
     }
 
+    // Khi chọn category ở form xuất
+    function onExportCategoryChange(rowId) {
+        const catSelect = document.querySelector(`#${rowId} .category-select`);
+        const productSelect = document.querySelector(`#${rowId} .product-select`);
+        const genderInput = document.querySelector(`#${rowId} .gender-input`);
+        const selectedCategoryId = catSelect.value;
+
+        productSelect.innerHTML = '<option value="">-- Chọn sản phẩm --</option>';
+        productSelect.disabled = !selectedCategoryId;
+        genderInput.value = '';
+
+        if (selectedCategoryId) {
+            const filteredProducts = allProducts.filter(p => p.categoryId == selectedCategoryId);
+            filteredProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.name;
+                option.setAttribute('data-gender', product.gender);
+                option.setAttribute('data-stock', product.stock || 0);
+                productSelect.appendChild(option);
+            });
+        }
+    }
+
+    // Khi chọn sản phẩm ở form xuất
+    function onExportProductChange(rowId) {
+        const productSelect = document.querySelector(`#${rowId} .product-select`);
+        const genderInput = document.querySelector(`#${rowId} .gender-input`);
+        const quantityInput = document.querySelector(`#${rowId} .quantity-input`);
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+
+        const gender = selectedOption.getAttribute('data-gender') || '';
+        const stock = parseInt(selectedOption.getAttribute('data-stock')) || 0;
+
+        genderInput.value = gender;
+
+        // Cập nhật max cho số lượng (không được vượt quá tồn kho)
+        quantityInput.max = stock;
+        quantityInput.placeholder = `Tồn: ${stock}`;
+
+        // Nếu số lượng hiện tại lớn hơn tồn kho thì giảm xuống
+        if (parseInt(quantityInput.value) > stock) {
+            quantityInput.value = stock;
+        }
+
+        updateExportRowTotal(rowId);
+    }
+
+    // Cập nhật tổng tiền 1 dòng xuất
+    function updateExportRowTotal(rowId) {
+        const quantity = parseFloat(document.querySelector(`#${rowId} .quantity-input`).value) || 0;
+        const price = parseFloat(document.querySelector(`#${rowId} .price-input`).value) || 0;
+        const totalSpan = document.querySelector(`#${rowId} .row-total`);
+        const total = quantity * price;
+        totalSpan.innerText = total.toLocaleString('vi-VN') + 'đ';
+        updateExportTotal();
+    }
+
+    // Cập nhật tổng tiền toàn bộ phiếu xuất
+    function updateExportTotal() {
+        let total = 0;
+        document.querySelectorAll('#exportItemContainer .row-total').forEach(span => {
+            const val = span.innerText.replace(/[^0-9]/g, '');
+            total += parseInt(val) || 0;
+        });
+        document.getElementById('exportTotal').innerText = total.toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Xóa dòng export
+    function removeExportRow(btn) {
+        btn.closest('tr').remove();
+        updateExportTotal();
+        updateExportRowIndices();
+    }
+
+    // Cập nhật chỉ số name cho các input của form xuất
+    function updateExportRowIndices() {
+        const rows = document.querySelectorAll('#exportItemContainer tr');
+        rows.forEach((row, index) => {
+            const productSelect = row.querySelector('.product-select');
+            const quantityInput = row.querySelector('.quantity-input');
+            const priceInput = row.querySelector('.price-input');
+            const genderInput = row.querySelector('.gender-input');
+
+            if (productSelect) productSelect.name = `items[${index}].productId`;
+            if (quantityInput) quantityInput.name = `items[${index}].quantity`;
+            if (priceInput) priceInput.name = `items[${index}].price`;
+            if (genderInput) genderInput.name = `items[${index}].gender`;
+        });
+    }
+
+    // Khởi tạo dòng mặc định cho form xuất
+    function initExportForm() {
+        if (document.getElementById('exportItemContainer').children.length === 0) {
+            addExportRow();
+        }
+    }
+
+    // Gọi khởi tạo
+    setTimeout(() => {
+        initExportForm();
+    }, 500);
     // Cập nhật tổng tiền
     function updateTotal() {
         let importTotal = 0;
@@ -2168,17 +2700,17 @@
     let currentInvoiceType = null;
 
     // Hiển thị lịch sử
+    // Hiển thị lịch sử
     async function showHistory(type = 'all') {
         try {
             const response = await fetch(`/admin/inventory/history?type=${type}`);
             const data = await response.json();
-            console.log("dâtne: ",data);
-
+            console.log("Data from API: ", data);
 
             const tbody = document.getElementById('historyTableBody');
             tbody.innerHTML = '';
 
-            // Thêm phiếu nhập
+            // Thêm phiếu nhập - DÙNG DTO MỚI
             if (data.imports && data.imports.length > 0) {
                 data.imports.forEach(item => {
                     addHistoryRow(tbody, {
@@ -2186,17 +2718,17 @@
                         code: item.receiptCode,
                         type: 'import',
                         typeName: 'NHẬP KHO',
-                        store: item.store?.name || 'N/A',
-                        user: item.createdBy?.fullname ,
+                        store: item.supplierName || 'N/A',           // 🔥 supplierName từ DTO
+                        user: item.createdByName || 'N/A',          // 🔥 createdByName từ DTO
                         date: formatDate(item.createdAt || item.importDate),
-                        total: item.totalAmount,
-                        itemCount: item.details?.length || 0,
+                        total: item.totalAmount || 0,
+                        itemCount: item.itemCount || 0,             // 🔥 itemCount từ DTO
                         reason: 'Nhập hàng'
                     });
                 });
             }
 
-            // Thêm phiếu xuất
+            // Thêm phiếu xuất - DÙNG DTO MỚI
             if (data.exports && data.exports.length > 0) {
                 data.exports.forEach(item => {
                     addHistoryRow(tbody, {
@@ -2204,10 +2736,11 @@
                         code: item.receiptCode,
                         type: 'export',
                         typeName: 'XUẤT KHO',
-                        store: item.store?.name || 'N/A',
+                        store: item.storeName || 'N/A',             // 🔥 storeName từ DTO
+                        user: item.createdByName || 'N/A',          // 🔥 createdByName từ DTO
                         date: formatDate(item.createdAt || item.exportDate),
-                        total: item.totalAmount,
-                        itemCount: item.details?.length || 0,
+                        total: item.totalAmount || 0,
+                        itemCount: item.itemCount || 0,             // 🔥 itemCount từ DTO
                         reason: getReasonText(item.reason)
                     });
                 });
@@ -2215,53 +2748,133 @@
 
             // Nếu không có dữ liệu
             if (tbody.children.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Không có dữ liệu</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-5"><i class="bi bi-inbox fs-1"></i><br>Không có dữ liệu</td></tr>';
             }
 
         } catch (error) {
             console.error('Lỗi khi tải lịch sử:', error);
-            alert('Có lỗi xảy ra khi tải dữ liệu');
+            document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger py-5">Có lỗi xảy ra khi tải dữ liệu</td></tr>';
         }
     }
-
     // Thêm dòng vào bảng
+    // Thêm dòng vào bảng - Thiết kế đẹp
     function addHistoryRow(tbody, item) {
         const row = tbody.insertRow();
+        row.classList.add('align-middle');
+
+        // Định dạng màu sắc theo loại
+        const typeBadgeClass = item.type === 'import' ? 'bg-success' : 'bg-warning text-dark';
+        const typeIcon = item.type === 'import' ? 'bi-box-arrow-in-down' : 'bi-box-arrow-up';
+
+        // Định dạng số tiền
+        const totalClass = item.type === 'import' ? 'text-success' : 'text-danger';
+
         row.innerHTML = `
-        <td><strong>${item.code}</strong></td>
         <td>
-            <span class="badge ${item.type === 'import' ? 'bg-success' : 'bg-warning'}">
-                ${item.typeName}
+            <div class="fw-bold">${escapeHtml(item.code)}</div>
+            <small class="text-muted">ID: ${item.id}</small>
+        </div>
+        <td>
+            <span class="badge ${typeBadgeClass} px-3 py-2 rounded-pill">
+                <i class="${typeIcon} me-1"></i> ${item.typeName}
             </span>
-        </td>
-        <td>${item.store}</td>
-        <td>${item.date}</td>
-        <td class="text-end">${formatCurrency(item.total)}</td>
-        <td class="text-center">${item.itemCount}</td>
-        <td>${item.reason}</td>
+        </div>
         <td>
-            <button class="btn btn-sm btn-info" onclick="viewDetail('${item.type}', ${item.id})">
-                <i class="bi bi-eye"></i> Xem
-            </button>
-            <button class="btn btn-sm btn-primary" onclick="printReceipt('${item.type}', ${item.id})">
-                <i class="bi bi-printer"></i> In
-            </button>
-        </td>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-building text-secondary"></i>
+                <span class="fw-medium">${escapeHtml(item.store)}</span>
+            </div>
+        </div>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-person-circle text-primary"></i>
+                <span>${escapeHtml(item.user || 'N/A')}</span>
+            </div>
+        </div>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-calendar3 text-secondary"></i>
+                <span>${item.date}</span>
+            </div>
+        </div>
+        <td class="text-end ${totalClass} fw-bold">
+            ${formatCurrency(item.total)}
+        </div>
+        <td class="text-center">
+            <span class="badge bg-secondary rounded-pill px-3 py-2">
+                <i class="bi bi-box-seam me-1"></i> ${item.itemCount}
+            </span>
+         </div>
+        <td>
+            <div class="d-flex flex-wrap gap-1">
+                ${item.reason ? `<span class="badge bg-info-subtle text-info border border-info-subtle">
+                    <i class="bi bi-tag me-1"></i> ${escapeHtml(item.reason)}
+                </span>` : ''}
+                ${item.note ? `<span class="badge bg-light text-muted border">
+                    <i class="bi bi-chat me-1"></i> ${escapeHtml(item.note).substring(0, 30)}${item.note.length > 30 ? '...' : ''}
+                </span>` : ''}
+            </div>
+         </div>
+        <td>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-info" onclick="viewDetail('${item.type}', ${item.id})"
+                        title="Xem chi tiết" data-bs-toggle="tooltip">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary" onclick="printReceipt('${item.type}', ${item.id})"
+                        title="In phiếu" data-bs-toggle="tooltip">
+                    <i class="bi bi-printer"></i>
+                </button>
+            </div>
+         </div>
     `;
     }
 
+    // Hàm hỗ trợ escape HTML để tránh XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+    // Xem chi tiết phiếu
     // Xem chi tiết phiếu
     async function viewDetail(type, id) {
         try {
+            // Hiển thị loading
+            const modalBody = document.getElementById('detailModalBody');
+            modalBody.innerHTML = `
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3">Đang tải chi tiết phiếu...</p>
+            </div>
+        `;
+
             const url = `/admin/inventory/${type}/${id}`;
             const response = await fetch(url);
             const data = await response.json();
 
+            console.log('Detail data:', data);
+
             currentInvoiceData = data;
             currentInvoiceType = type;
 
-            // Hiển thị chi tiết trong modal
-            const modalBody = document.getElementById('detailModalBody');
+            // Đổi màu header modal theo loại phiếu
+            const modalHeader = document.getElementById('detailModalHeader');
+            if (modalHeader) {
+                if (type === 'import') {
+                    modalHeader.style.background = 'linear-gradient(135deg, #1cc88a, #169b6b)';
+                    modalHeader.style.color = 'white';
+                } else {
+                    modalHeader.style.background = 'linear-gradient(135deg, #e74a3b, #be3e31)';
+                    modalHeader.style.color = 'white';
+                }
+            }
+
+            // Hiển thị chi tiết
             modalBody.innerHTML = renderDetailHTML(data, type);
 
             // Hiển thị modal
@@ -2270,95 +2883,218 @@
 
         } catch (error) {
             console.error('Lỗi:', error);
-            alert('Có lỗi xảy ra khi tải chi tiết');
+            document.getElementById('detailModalBody').innerHTML = `
+            <div class="alert alert-danger text-center py-5 m-3">
+                <i class="bi bi-exclamation-triangle fs-1"></i>
+                <p class="mt-3">Có lỗi xảy ra khi tải chi tiết: ${error.message}</p>
+            </div>
+        `;
         }
     }
-
     // Render chi tiết phiếu
+    // Render chi tiết phiếu - Giao diện đẹp
     function renderDetailHTML(data, type) {
         const isImport = type === 'import';
         const title = isImport ? 'PHIẾU NHẬP KHO' : 'PHIẾU XUẤT KHO';
         const items = data.details || [];
 
-        // Debug: in ra console để xem dữ liệu
-        console.log('Data receipt:', data);
-        console.log('Items:', items);
+        // Lấy thông tin từ DTO
+        const receiptCode = data.receiptCode || 'N/A';
+        const createdAt = data.createdAt || data.importDate || data.exportDate;
+        const totalAmount = data.totalAmount || 0;
+        const note = data.note || '';
+        const createdByName = data.createdByName || 'N/A';
+        const supplierName = data.supplierName || data.storeName || 'N/A';
+        const reason = data.reason || '';
+
+        // Format ngày giờ đẹp
+        const formattedDate = formatDateTime(createdAt);
 
         return `
-        <div class="invoice-box" style="padding: 20px; font-family: Arial, sans-serif;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h2>${title}</h2>
-                <h4>CÔNG TY CỔ PHẦN THỜI TRANG BABI</h4>
-                <p>123 Lê Lợi, Quận 1, TP.HCM | Hotline: 1900 1234</p>
-                <hr>
+        <div class="container p-4">
+            <!-- Header -->
+            <div class="text-center mb-4 pb-3 border-bottom">
+                <h2 class="fw-bold mb-2" style="color: ${isImport ? '#1cc88a' : '#e74a3b'}">
+                    <i class="bi ${isImport ? 'bi-box-arrow-in-down' : 'bi-box-arrow-up'} me-2"></i>
+                    ${title}
+                </h2>
+                <h5 class="text-muted">CÔNG TY CỔ PHẦN THỜI TRANG BABI</h5>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-geo-alt"></i> 123 Lê Lợi, Quận 1, TP.HCM |
+                    <i class="bi bi-telephone"></i> Hotline: 1900 1234
+                </p>
             </div>
 
-            <div style="margin-bottom: 20px;">
-                <p><strong>Mã phiếu:</strong> ${data.receiptCode || 'N/A'}</p>
-
-                <p><strong>Ngày tạo:</strong> ${formatDate(data.createdAt || data.importDate || data.exportDate)}</p>
-                ${data.reason ? `<p><strong>Lý do:</strong> ${getReasonText(data.reason)}</p>` : ''}
-                ${data.note ? `<p><strong>Ghi chú:</strong> ${data.note}</p>` : ''}
+            <!-- Thông tin phiếu -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card bg-light border-0">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-receipt"></i> THÔNG TIN PHIẾU</h6>
+                            <table class="table table-sm table-borderless">
+                                <tr>
+                                    <td style="width: 120px;"><strong>Mã phiếu:</strong></td>
+                                    <td><span class="badge bg-secondary">${receiptCode}</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ngày tạo:</strong></td>
+                                    <td><i class="bi bi-calendar3"></i> ${formattedDate}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Người tạo:</strong></td>
+                                    <td><i class="bi bi-person-circle"></i> ${escapeHtml(createdByName)}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>${isImport ? 'Nhà phân phối' : 'Cửa hàng'}:</strong></td>
+                                    <td><i class="bi ${isImport ? 'bi-truck' : 'bi-shop'}"></i> ${escapeHtml(supplierName)}</td>
+                                </tr>
+                                ${reason ? `
+                                <tr>
+                                    <td><strong>Lý do xuất:</strong></td>
+                                    <td><span class="badge bg-warning text-dark">${getReasonText(reason)}</span></td>
+                                </tr>
+                                ` : ''}
+                                ${note ? `
+                                <tr>
+                                    <td><strong>Ghi chú:</strong></td>
+                                    <td><i class="bi bi-chat"></i> ${escapeHtml(note)}</td>
+                                </tr>
+                                ` : ''}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0" style="background: ${isImport ? 'rgba(28, 200, 138, 0.1)' : 'rgba(231, 74, 59, 0.1)'}">
+                        <div class="card-body text-center">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-calculator"></i> TỔNG KẾT</h6>
+                            <div class="mb-3">
+                                <span class="text-muted">Số loại sản phẩm:</span>
+                                <h3 class="mb-0">${items.length}</h3>
+                            </div>
+                            <div class="mb-3">
+                                <span class="text-muted">Tổng số lượng:</span>
+                                <h3 class="mb-0">${items.reduce((sum, item) => sum + (item.quantity || 0), 0)}</h3>
+                            </div>
+                            <div>
+                                <span class="text-muted">Tổng tiền:</span>
+                                <h2 class="fw-bold ${isImport ? 'text-success' : 'text-danger'} mb-0">
+                                    ${formatCurrency(totalAmount)}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            ${items.length > 0 ? `
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                <thead>
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">STT</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Sản phẩm</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Giới tính</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Số lượng</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Đơn giá</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Thành tiền</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${items.map((item, index) => `
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${index + 1}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; color: ${!item.productName || item.productName === 'Sản phẩm không tồn tại' ? 'red' : 'black'}">
-                                ${item.productName || 'N/A'}
-                            </td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${item.gender || '-'}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.quantity}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${formatCurrency(item.unitPrice)}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${formatCurrency(item.totalPrice)}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-                <tfoot>
-                    <tr style="background-color: #f2f2f2;">
-                        <td colspan="5" style="border: 1px solid #ddd; padding: 8px; text-align: right;">
-                            <strong>TỔNG CỘNG:</strong>
-                        </td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
-                            <strong>${formatCurrency(data.totalAmount)}</strong>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-            ` : '<p class="text-center">Không có chi tiết sản phẩm</p>'}
+            <!-- Danh sách sản phẩm -->
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-box-seam"></i> DANH SÁCH SẢN PHẨM</h6>
+                ${items.length > 0 ? `
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;">STT</th>
+                                <th>Sản phẩm</th>
+                                <th style="width: 100px;">Giới tính</th>
+                                <th style="width: 100px;">Số lượng</th>
+                                <th style="width: 150px;">Đơn giá</th>
+                                <th style="width: 150px;">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${items.map((item, index) => `
+                                <tr>
+                                    <td class="fw-bold">${index + 1}</td>
+                                    <td class="text-start">
+                                        <strong>${escapeHtml(item.productName || 'N/A')}</strong>
+                                    </td>
+                                    <td>
+                                        ${item.gender ? `<span class="badge ${item.gender === 'BOY' ? 'bg-primary' : item.gender === 'GIRL' ? 'bg-danger' : 'bg-secondary'}">${item.gender}</span>` : '-'}
+                                    </td>
+                                    <td class="fw-bold">${item.quantity}</td>
+                                    <td class="text-end">${formatCurrency(item.unitPrice)}</td>
+                                    <td class="text-end fw-bold">${formatCurrency(item.totalPrice)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="5" class="text-end fw-bold">TỔNG CỘNG:</td>
+                                <td class="text-end fw-bold fs-5 ${isImport ? 'text-success' : 'text-danger'}">
+                                    ${formatCurrency(totalAmount)}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                ` : `
+                <div class="alert alert-warning text-center py-5">
+                    <i class="bi bi-box-seam fs-1"></i>
+                    <p class="mb-0">Không có chi tiết sản phẩm</p>
+                </div>
+                `}
+            </div>
 
-            <div style="margin-top: 50px;">
-                <div style="float: left; width: 33%; text-align: center;">
-                    <p>Người lập phiếu</p>
-                    <p style="margin-top: 40px;">(Ký, họ tên)</p>
+            <!-- Chữ ký -->
+            <div class="row mt-5 pt-3 text-center">
+                <div class="col-md-4">
+                    <p class="mb-0"><strong>Người lập phiếu</strong></p>
+                    <div class="border-top w-75 mx-auto mt-4 pt-2">
+                        <small class="text-muted">(Ký, họ tên)</small>
+                    </div>
                 </div>
-                <div style="float: left; width: 33%; text-align: center;">
-                    <p>Thủ kho</p>
-                    <p style="margin-top: 40px;">(Ký, họ tên)</p>
+                <div class="col-md-4">
+                    <p class="mb-0"><strong>Thủ kho</strong></p>
+                    <div class="border-top w-75 mx-auto mt-4 pt-2">
+                        <small class="text-muted">(Ký, họ tên)</small>
+                    </div>
                 </div>
-                <div style="float: left; width: 33%; text-align: center;">
-                    <p>Giám đốc</p>
-                    <p style="margin-top: 40px;">(Ký, họ tên)</p>
+                <div class="col-md-4">
+                    <p class="mb-0"><strong>Giám đốc</strong></p>
+                    <div class="border-top w-75 mx-auto mt-4 pt-2">
+                        <small class="text-muted">(Ký, họ tên)</small>
+                    </div>
                 </div>
-                <div style="clear: both;"></div>
             </div>
         </div>
     `;
     }
 
+    // Format ngày giờ đẹp
+    function formatDateTime(dateString) {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleString('vi-VN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    // Hàm escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }    // Hàm escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
     // In hóa đơn
     function printReceipt(type, id) {
         // Lưu thông tin để in
@@ -2467,6 +3203,318 @@
             });
         });
     }
+    // ==================== SUPPLIER MANAGEMENT ====================
+
+    // Mở modal supplier
+    function openSupplierModal(mode, id = null, name = '', contactPerson = '', phone = '', email = '', address = '', note = '') {
+        document.getElementById('supplierForm').reset();
+        document.getElementById('supplierId').value = '';
+
+        if (mode === 'add') {
+            document.getElementById('supplierModalTitle').innerText = 'Thêm nhà phân phối';
+            document.getElementById('supplierMode').value = 'add';
+            document.getElementById('supplierName').value = '';
+            document.getElementById('supplierContactPerson').value = '';
+            document.getElementById('supplierPhone').value = '';
+            document.getElementById('supplierEmail').value = '';
+            document.getElementById('supplierAddress').value = '';
+            document.getElementById('supplierNote').value = '';
+        } else if (mode === 'edit' && id) {
+            document.getElementById('supplierModalTitle').innerText = 'Sửa nhà phân phối';
+            document.getElementById('supplierMode').value = 'edit';
+            document.getElementById('supplierId').value = id;
+            document.getElementById('supplierName').value = name || '';
+            document.getElementById('supplierContactPerson').value = contactPerson || '';
+            document.getElementById('supplierPhone').value = phone || '';
+            document.getElementById('supplierEmail').value = email || '';
+            document.getElementById('supplierAddress').value = address || '';
+            document.getElementById('supplierNote').value = note || '';
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('supplierModal'));
+        modal.show();
+    }
+
+    // Submit form supplier
+    document.getElementById('supplierForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const mode = document.getElementById('supplierMode').value;
+        const id = document.getElementById('supplierId').value;
+        const supplierData = {
+            name: document.getElementById('supplierName').value,
+            contactPerson: document.getElementById('supplierContactPerson').value,
+            phone: document.getElementById('supplierPhone').value,
+            email: document.getElementById('supplierEmail').value,
+            address: document.getElementById('supplierAddress').value,
+            note: document.getElementById('supplierNote').value
+        };
+
+        if (!supplierData.name.trim()) {
+            alert('Vui lòng nhập tên nhà phân phối!');
+            return;
+        }
+
+        if (mode === 'add') {
+            await addSupplier(supplierData);
+        } else {
+            await updateSupplier(id, supplierData);
+        }
+    });
+
+    // API thêm supplier
+    async function addSupplier(data) {
+        try {
+            const response = await fetch('/suppliers/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else if (response.ok) {
+                alert('Thêm nhà phân phối thành công!');
+                bootstrap.Modal.getInstance(document.getElementById('supplierModal')).hide();
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert('Thêm thất bại: ' + error);
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra: ' + error.message);
+        }
+    }
+
+    // API sửa supplier
+    async function updateSupplier(id, data) {
+        try {
+            const response = await fetch(`/suppliers/edit/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else if (response.ok) {
+                alert('Sửa nhà phân phối thành công!');
+                bootstrap.Modal.getInstance(document.getElementById('supplierModal')).hide();
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert('Sửa thất bại: ' + error);
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra: ' + error.message);
+        }
+    }
+
+    // Gán sự kiện cho nút sửa supplier
+    document.querySelectorAll('.btn-edit-supplier').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openSupplierModal('edit',
+                this.getAttribute('data-id'),
+                this.getAttribute('data-name'),
+                this.getAttribute('data-contactperson'),
+                this.getAttribute('data-phone'),
+                this.getAttribute('data-email'),
+                this.getAttribute('data-address'),
+                this.getAttribute('data-note')
+            );
+        });
+    });
+
+    // Gán sự kiện cho nút xóa supplier
+    document.querySelectorAll('.btn-delete-supplier').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            if (confirm('Bạn có chắc muốn xóa nhà phân phối này không?')) {
+                fetch(`/suppliers/delete/${id}`, { method: 'POST' })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            alert('Xóa thành công!');
+                            location.reload();
+                        } else {
+                            throw new Error('Lỗi khi xóa');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                        alert('Có lỗi xảy ra: ' + error.message);
+                    });
+            }
+        });
+    });
+    // ==================== EMPLOYEE MANAGEMENT ====================
+
+    // Mở modal employee
+    function openEmployeeModal(mode, id = null, code = '', fullName = '', phone = '', email = '', position = '', hireDate = '', status = 'ACTIVE', userId = '') {
+        document.getElementById('employeeForm').reset();
+        document.getElementById('employeeId').value = '';
+
+        if (mode === 'add') {
+            document.getElementById('employeeModalTitle').innerText = 'Thêm nhân viên';
+            document.getElementById('employeeMode').value = 'add';
+            document.getElementById('employeeCode').value = '';
+            document.getElementById('employeeFullName').value = '';
+            document.getElementById('employeePhone').value = '';
+            document.getElementById('employeeEmail').value = '';
+            document.getElementById('employeePosition').value = 'Nhân viên kho';
+            document.getElementById('employeeHireDate').value = '';
+            document.getElementById('employeeStatus').value = 'ACTIVE';
+            document.getElementById('employeeUserId').value = '';
+        } else if (mode === 'edit' && id) {
+            document.getElementById('employeeModalTitle').innerText = 'Sửa nhân viên';
+            document.getElementById('employeeMode').value = 'edit';
+            document.getElementById('employeeId').value = id;
+            document.getElementById('employeeCode').value = code || '';
+            document.getElementById('employeeFullName').value = fullName || '';
+            document.getElementById('employeePhone').value = phone || '';
+            document.getElementById('employeeEmail').value = email || '';
+            document.getElementById('employeePosition').value = position || 'Nhân viên kho';
+            document.getElementById('employeeHireDate').value = hireDate || '';
+            document.getElementById('employeeStatus').value = status || 'ACTIVE';
+            document.getElementById('employeeUserId').value = userId || '';
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('employeeModal'));
+        modal.show();
+    }
+
+    // Submit form employee
+    document.getElementById('employeeForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const mode = document.getElementById('employeeMode').value;
+        const id = document.getElementById('employeeId').value;
+        const employeeData = {
+            code: document.getElementById('employeeCode').value,
+            fullName: document.getElementById('employeeFullName').value,
+            phone: document.getElementById('employeePhone').value,
+            email: document.getElementById('employeeEmail').value,
+            position: document.getElementById('employeePosition').value,
+            hireDate: document.getElementById('employeeHireDate').value,
+            status: document.getElementById('employeeStatus').value,
+            userId: document.getElementById('employeeUserId').value || null
+        };
+
+        if (!employeeData.code.trim()) {
+            alert('Vui lòng nhập mã nhân viên!');
+            return;
+        }
+        if (!employeeData.fullName.trim()) {
+            alert('Vui lòng nhập họ tên nhân viên!');
+            return;
+        }
+
+        if (mode === 'add') {
+            await addEmployee(employeeData);
+        } else {
+            await updateEmployee(id, employeeData);
+        }
+    });
+
+    // API thêm employee
+    async function addEmployee(data) {
+        try {
+            const response = await fetch('/employees/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else if (response.ok) {
+                alert('Thêm nhân viên thành công!');
+                bootstrap.Modal.getInstance(document.getElementById('employeeModal')).hide();
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert('Thêm thất bại: ' + error);
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra: ' + error.message);
+        }
+    }
+
+    // API sửa employee
+    async function updateEmployee(id, data) {
+        try {
+            const response = await fetch(`/employees/edit/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else if (response.ok) {
+                alert('Sửa nhân viên thành công!');
+                bootstrap.Modal.getInstance(document.getElementById('employeeModal')).hide();
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert('Sửa thất bại: ' + error);
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra: ' + error.message);
+        }
+    }
+
+    // Gán sự kiện cho nút sửa employee
+    document.querySelectorAll('.btn-edit-employee').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openEmployeeModal('edit',
+                this.getAttribute('data-id'),
+                this.getAttribute('data-code'),
+                this.getAttribute('data-fullname'),
+                this.getAttribute('data-phone'),
+                this.getAttribute('data-email'),
+                this.getAttribute('data-position'),
+                this.getAttribute('data-hiredate'),
+                this.getAttribute('data-status'),
+                this.getAttribute('data-userid')
+            );
+        });
+    });
+
+    // Gán sự kiện cho nút xóa employee
+    document.querySelectorAll('.btn-delete-employee').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.getAttribute('data-id');
+            if (confirm('Bạn có chắc muốn xóa nhân viên này không?')) {
+                fetch(`/employees/delete/${id}`, { method: 'POST' })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            alert('Xóa thành công!');
+                            location.reload();
+                        } else {
+                            throw new Error('Lỗi khi xóa');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                        alert('Có lỗi xảy ra: ' + error.message);
+                    });
+            }
+        });
+    });
+
+
 
 </script>
 </body>

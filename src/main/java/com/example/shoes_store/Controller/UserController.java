@@ -99,8 +99,8 @@ public class UserController {
         model.addAttribute("products", products);
         model.addAttribute("users", users);
         model.addAttribute("stores", stores);
-        model.addAttribute("employees", employees);
-        model.addAttribute("suppliers", suppliers);
+        model.addAttribute("suppliers", supperlieService.getAll());
+        model.addAttribute("employees", employeeService.getAll());
         log.info("Người dùng ADMIN: " + loggedInUser.getUsername());
         model.addAttribute("user", loggedInUser);
         return "/admin/index";
