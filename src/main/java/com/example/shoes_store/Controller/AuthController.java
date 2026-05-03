@@ -37,6 +37,10 @@ public class AuthController {
             if ("ADMIN".equals(user.getRole()) || "STAFF".equals(user.getRole())) {
                 session.setAttribute("loggedInUser", user);
                 return "redirect:/admin/home";
+            }else if ("USER".equals(user.getRole()) ) {
+                session.setAttribute("loggedInUser", user);
+                model.addAttribute("user", user);
+                return "redirect:/";
             } else {
                 model.addAttribute("status", 403);
                 model.addAttribute("error", "Access Denied");

@@ -75,17 +75,17 @@ public class ProductController {
     }
 
 
-    @GetMapping("/list-product/{categoryId}")
-    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
-        List<Product> products = new ArrayList<>();
-        if (categoryId == 0) {
-            products = productRepo.findByCategory_Active(true);
-        } else {
-            products = productRepo.findByCategory_Id(categoryId);
-        }
-
-        return ResponseEntity.ok(products);
-    }
+//    @GetMapping("/list-product/{categoryId}")
+//    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
+//        List<Product> products = new ArrayList<>();
+//        if (categoryId == 0) {
+//            products = productRepo.findByCategory_Active(true);
+//        } else {
+//            products = productRepo.findByCategory_Id(categoryId);
+//        }
+//
+//        return ResponseEntity.ok(products);
+//    }
 
     @GetMapping("/toggle-status/{id}")
     public String toggleProductStatus(@PathVariable Long id) {

@@ -25,6 +25,7 @@ public class User {
     private String role; // ADMIN, CUSTOMER
     private String fullname;
     private String address;
+    private String phone;
 
     public User() {
     }

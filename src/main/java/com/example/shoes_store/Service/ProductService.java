@@ -20,7 +20,8 @@ import java.util.Optional;
 public interface ProductService {
 
     List<Product> getAllProducts();
-
+    long countAll();
+    List<Product> getProductsByCategoryId(Long categoryId);
     List<Product> getAllProductsWithCateActive();
 
     Product saveProduct(MultipartFile productImage, Product product);

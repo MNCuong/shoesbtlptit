@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Shoes Store</title>
+    <title>Shoes Store - Cập nhật thông tin</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -13,26 +13,165 @@
     <link rel="stylesheet" href="../css/templatemo.css">
     <link rel="stylesheet" href="../css/custom.css">
 
-    <!-- Load fonts style after rendering the layout styles -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="../css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Load map styles -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-          crossorigin=""/>
-    <!--
+    <style>
+        body {
+            background: #f5f7fa;
+        }
 
-    TemplateMo 559 Shoes Shop
+        .profile-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
 
-    https://templatemo.com/tm-559-Shoes-shop
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
 
-    -->
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #28a745;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid white;
+        }
+
+        .avatar-upload:hover {
+            background: #218838;
+            transform: scale(1.1);
+        }
+
+        .avatar-upload i {
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-section {
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control[readonly] {
+            background-color: #f7fafc;
+            color: #718096;
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-back {
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 500;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .info-icon i {
+            font-size: 22px;
+            color: #667eea;
+        }
+
+        .toast-message {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<!-- Start Top Nav -->
+
+<!-- Top Nav -->
 <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
     <div class="container text-light">
         <div class="w-100 d-flex justify-content-between">
@@ -43,28 +182,19 @@
                 <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
             </div>
             <div>
-                <a class="text-light" href="https://fb.com/templatemo" target="_blank" rel="sponsored"><i
-                        class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://www.instagram.com/" target="_blank"><i
-                        class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://twitter.com/" target="_blank"><i
-                        class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i
-                        class="fab fa-linkedin fa-sm fa-fw"></i></a>
+                <a class="text-light" href="https://fb.com/templatemo" target="_blank"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://twitter.com/" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin fa-sm fa-fw"></i></a>
             </div>
         </div>
     </div>
 </nav>
-<!-- Close Top Nav -->
-
 
 <!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-light shadow">
     <div class="container d-flex justify-content-between align-items-center">
-
-        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/home}">
-            Shoes
-        </a>
+        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/home}">Shoes</a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -72,173 +202,231 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
+        <div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between"
              id="templatemo_main_nav">
             <div class="flex-fill">
                 <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">Trang chủ </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/about}">Về chúng tôi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/shop}">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/home}">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/about}">Về chúng tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/shop}">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Liên hệ</a></li>
                 </ul>
             </div>
             <div class="navbar align-self-center d-flex">
-                <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
-                        <div class="input-group-text">
-                            <i class="fa fa-fw fa-search"></i>
-                        </div>
-                    </div>
-                </div>
-                <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                   data-bs-target="#templatemo_search">
+                <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                     <i class="fa fa-fw fa-search text-dark mr-2"></i>
                 </a>
 
-                <div th:if="${user != null}">
+                <div th:if="${session.loggedInUser != null}">
                     <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
-                              th:text="${cartItemQuantity}"></span>
+                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark" th:text="${session.cartItemQuantity != null ? session.cartItemQuantity : 0}"></span>
                     </a>
 
                     <a class="nav-icon position-relative text-decoration-none" href="#" id="dropdownMenuButton"
                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" th:href="@{/update-use}">Thông tin cá nhân</a>
+                        <a class="dropdown-item" th:href="@{/update-user}">Thông tin cá nhân</a>
                         <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Đổi mật khẩu</a>
-                        <a class="dropdown-item" th:href="@{/order}">Thông tin đơn hàng</a>
+                        <a class="dropdown-item" th:href="@{/orders}">Đơn hàng của tôi</a>
                         <a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a>
                     </div>
-                    <!-- Modal -->
-                    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                </div>
 
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <div th:unless="${session.loggedInUser != null}">
+                    <a href="/login" class="btn btn-outline-primary btn-sm me-2">Đăng nhập</a>
+                    <a href="/register" class="btn btn-primary btn-sm">Đăng ký</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Search Modal -->
+<div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="w-100 pt-1 mb-5 text-right">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="" method="get" class="modal-content modal-body border-0 p-0">
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Tìm kiếm sản phẩm...">
+                <button type="submit" class="input-group-text bg-success text-light">
+                    <i class="fa fa-fw fa-search text-white"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Thông báo -->
+            <div id="successMessage" th:if="${message != null}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle me-2"></i> <span th:text="${message}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="card profile-card">
+                <div class="profile-header">
+                    <div class="avatar-wrapper">
+                        <img class="avatar" src="/img/default-avatar.png"
+                             alt="Avatar" onerror="this.src='/images/default-avatar.png'">
+<!--                        <label class="avatar-upload" for="avatarUpload">-->
+<!--                            <i class="fas fa-camera"></i>-->
+<!--                        </label>-->
+                    </div>
+                    <h3 class="mt-3 mb-1" th:text="${user.fullname}">Người dùng</h3>
+                    <p class="mb-0 opacity-75">
+                        <i class="fas fa-envelope me-1"></i> <span th:text="${user.email}"></span>
+                    </p>
+                </div>
+
+                <div class="form-section">
+                    <form th:action="@{/user/update}" th:object="${user}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" th:field="*{id}" />
+                        <input type="file" id="avatarUpload" name="avatarFile" style="display: none;" accept="image/*">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="info-icon">
+                                            <i class="fas fa-user-circle"></i>
+                                        </div>
+                                        <h5 class="mb-0 fw-bold">Thông tin tài khoản</h5>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <i class="fas fa-user text-muted me-1"></i> Tên đăng nhập
+                                        </label>
+                                        <input type="text" class="form-control" th:field="*{username}" readonly>
+                                        <small class="text-muted">Tên đăng nhập không thể thay đổi</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <i class="fas fa-tag text-muted me-1"></i> Vai trò
+                                        </label>
+                                        <div class="form-control bg-light">
+                                            <span th:if="${user.role == 'ADMIN'}" class="badge bg-danger">Quản trị viên</span>
+                                            <span th:if="${user.role == 'STAFF'}" class="badge bg-warning">Nhân viên</span>
+                                            <span th:if="${user.role == 'USER'}" class="badge bg-info">Khách hàng</span>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <form id="changePasswordForm">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
-                                            <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="info-icon">
+                                            <i class="fas fa-id-card"></i>
                                         </div>
-
-                                        <div class="mb-3">
-                                            <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
-                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                                        </div>
-
-                                        <div id="changePasswordMessage" class="mt-2"></div>
+                                        <h5 class="mb-0 fw-bold">Thông tin cá nhân</h5>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <i class="fas fa-signature text-muted me-1"></i> Họ và tên
+                                        </label>
+                                        <input type="text" class="form-control" th:field="*{fullname}" required>
                                     </div>
-                                </form>
 
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <i class="fas fa-envelope text-muted me-1"></i> Email
+                                        </label>
+                                        <input type="email" class="form-control" th:field="*{email}" required>
+                                    </div>
 
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <i class="fas fa-map-marker-alt text-muted me-1"></i> Địa chỉ
+                                        </label>
+                                        <input type="text" class="form-control" th:field="*{address}" placeholder="Nhập địa chỉ của bạn">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <i class="fas fa-phone text-muted me-1"></i> Số điện thoại
+                                        </label>
+                                        <input type="tel" class="form-control" th:field="*{phone}" placeholder="Nhập số điện thoại">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a th:href="@{/}" class="btn btn-outline-secondary btn-back">
+                                <i class="fas fa-arrow-left me-2"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-update text-white">
+                                <i class="fas fa-save me-2"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Thông tin bổ sung -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                                    <i class="fas fa-shopping-bag text-success fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Tổng đơn hàng</h6>
+                                    <h3 class="mb-0 fw-bold" th:text="${totalOrders != null ? totalOrders : 0}">0</h3>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                                    <i class="fas fa-calendar-check text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Ngày tham gia</h6>
+                                    <h5 class="mb-0 fw-bold" th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy')}">-</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div th:unless="${user != null}">
-                    <a href="/login">Đăng nhập</a>|
-                    <a href="/register">Đăng ký</a>
-
-                </div>
-
             </div>
         </div>
-
     </div>
-</nav>
-<!-- Close Header -->
-<div class="container mt-5" style="
-    padding-bottom: 20px;">
-    <h2 class="mb-4">Chỉnh sửa người dùng</h2>
-    <form th:action="@{/user/update}" th:object="${user}" method="post" enctype="multipart/form-data">
-        <input type="hidden" th:field="*{id}" />
-
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <img src="../assets/img/download.png" alt="Ảnh đại diện" class="img-thumbnail mb-3" style="width: 200px; height: 200px; object-fit: cover;">
-
-<!--                <input type="file" class="form-control" name="avatarFile">-->
-            </div>
-
-            <div class="col-md-8">
-                <div class="mb-3">
-                    <label class="form-label">Tên đăng nhập</label>
-                    <input type="text" class="form-control" th:field="*{username}" required readonly />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control" th:field="*{email}" required />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Họ tên</label>
-                    <input type="text" class="form-control" th:field="*{fullname}" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Đại chỉ</label>
-                    <input type="text" class="form-control" th:field="*{address}" required />
-                </div>
-                <button type="submit" class="btn btn-primary">Cập nhật</button>
-                <a th:href="@{/admin/users}" class="btn btn-secondary">Quay lại</a>
-            </div>
-        </div>
-    </form>
 </div>
 
-<!-- Start Footer -->
-<footer class="bg-dark" id="tempaltemo_footer">
+<!-- Footer -->
+<footer class="bg-dark mt-5" id="tempaltemo_footer">
     <div class="container">
         <div class="row">
-
             <div class="col-md-4 pt-5">
                 <h2 class="h2 text-success border-bottom pb-3 border-light logo">Shoes Shop</h2>
                 <ul class="list-unstyled text-light footer-link-list">
-                    <li>
-                        <i class="fas fa-map-marker-alt fa-fw"></i>
-                        123 Consectetur at ligula 10660
-                    </li>
-                    <li>
-                        <i class="fa fa-phone fa-fw"></i>
-                        <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
-                    </li>
-                    <li>
-                        <i class="fa fa-envelope fa-fw"></i>
-                        <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a>
-                    </li>
+                    <li><i class="fas fa-map-marker-alt fa-fw"></i> 123 Consectetur at ligula 10660</li>
+                    <li><i class="fa fa-phone fa-fw"></i> <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a></li>
+                    <li><i class="fa fa-envelope fa-fw"></i> <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a></li>
                 </ul>
             </div>
-
             <div class="col-md-4 pt-5">
                 <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
                 <ul class="list-unstyled text-light footer-link-list">
@@ -246,25 +434,17 @@
                     <li><a class="text-decoration-none" href="#">Sport Wear</a></li>
                     <li><a class="text-decoration-none" href="#">Men's Shoes</a></li>
                     <li><a class="text-decoration-none" href="#">Women's Shoes</a></li>
-                    <li><a class="text-decoration-none" href="#">Popular Dress</a></li>
-                    <li><a class="text-decoration-none" href="#">Gym Accessories</a></li>
-                    <li><a class="text-decoration-none" href="#">Sport Shoes</a></li>
                 </ul>
             </div>
-
             <div class="col-md-4 pt-5">
                 <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
                 <ul class="list-unstyled text-light footer-link-list">
-                    <li><a class="text-decoration-none" href="#">Home</a></li>
-                    <li><a class="text-decoration-none" href="#">About Us</a></li>
-                    <li><a class="text-decoration-none" href="#">Shop Locations</a></li>
-                    <li><a class="text-decoration-none" href="#">FAQs</a></li>
-                    <li><a class="text-decoration-none" href="#">Contact</a></li>
+                    <li><a class="text-decoration-none" th:href="@{/home}">Home</a></li>
+                    <li><a class="text-decoration-none" th:href="@{/about}">About Us</a></li>
+                    <li><a class="text-decoration-none" th:href="@{/contact}">Contact</a></li>
                 </ul>
             </div>
-
         </div>
-
         <div class="row text-light mb-4">
             <div class="col-12 mb-3">
                 <div class="w-100 my-3 border-top border-light"></div>
@@ -272,62 +452,51 @@
             <div class="col-auto me-auto">
                 <ul class="list-inline text-left footer-icons">
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="http://facebook.com/"><i
-                                class="fab fa-facebook-f fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="http://facebook.com/"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/"><i
-                                class="fab fa-instagram fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i
-                                class="fab fa-twitter fa-lg fa-fw"></i></a>
-                    </li>
-                    <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.linkedin.com/"><i
-                                class="fab fa-linkedin fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
                     </li>
                 </ul>
             </div>
-            <div class="col-auto">
-                <label class="sr-only" for="subscribeEmail">Email address</label>
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
-                           placeholder="Email address">
-                    <div class="input-group-text btn-success text-light">Subscribe</div>
-                </div>
-            </div>
         </div>
     </div>
-
     <div class="w-100 bg-black py-3">
         <div class="container">
             <div class="row pt-2">
                 <div class="col-12">
-                    <p class="text-left text-light">
-                        Copyright &copy; 2021 Company Name
-                        | Designed by <a rel="sponsored" href="https://templatemo.com" target="_blank">TemplateMo</a>
-                    </p>
+                    <p class="text-left text-light">Copyright &copy; 2024 Shoes Store | Designed by TemplateMo</p>
                 </div>
             </div>
         </div>
     </div>
-
 </footer>
-<!-- End Footer -->
 
-<!-- Start Script -->
 <script src="../js/jquery-1.11.0.min.js"></script>
 <script src="../js/jquery-migrate-1.2.1.min.js"></script>
 <script src="../js/bootstrap.bundle.min.js"></script>
 <script src="../js/templatemo.js"></script>
 <script src="../js/custom.js"></script>
-<!-- End Script -->
-</body>
-<script>
-    document.getElementById("changePasswordForm").addEventListener("submit", function (e) {
-        e.preventDefault();
 
+<script>
+    // Avatar upload preview
+    document.getElementById('avatarUpload')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.querySelector('.avatar').src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Change password modal
+    document.getElementById("changePasswordForm")?.addEventListener("submit", function(e) {
+        e.preventDefault();
         const oldPassword = document.getElementById("oldPassword").value;
         const newPassword = document.getElementById("newPassword").value;
         const confirmPassword = document.getElementById("confirmPassword").value;
@@ -335,14 +504,8 @@
 
         fetch('/api/change-password', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                oldPassword: oldPassword,
-                newPassword: newPassword,
-                confirmPassword: confirmPassword
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldPassword, newPassword, confirmPassword })
         })
             .then(res => res.json())
             .then(data => {
@@ -351,16 +514,50 @@
                     setTimeout(() => {
                         document.getElementById("changePasswordForm").reset();
                         const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
-                        modal.hide();
+                        modal?.hide();
                     }, 500);
                 } else {
                     messageEl.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
                 }
             })
-            .catch(err => {
-                console.error(err);
-                messageEl.innerHTML = `<div class="alert alert-danger">Có lỗi xảy ra, vui lòng thử lại.</div>`;
-            });
+            .catch(err => messageEl.innerHTML = `<div class="alert alert-danger">Có lỗi xảy ra!</div>`);
     });
 </script>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">
+                    <i class="fas fa-key me-2"></i> Đổi Mật Khẩu
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form id="changePasswordForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
+                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <div id="changePasswordMessage" class="mt-2"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
 </html>

@@ -37,6 +37,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public long countAll() {
+        return productRepo.count();
+    }
+
+    @Override
+    public List<Product> getProductsByCategoryId(Long categoryId) {
+        return productRepo.findByCategory_Id(categoryId);
+    }
+
+    @Override
     public List<Product> getAllProductsWithCateActive() {
         return productRepo.findByCategory_Active(true);
     }
