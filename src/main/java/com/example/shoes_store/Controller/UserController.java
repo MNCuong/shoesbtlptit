@@ -8,6 +8,7 @@ import com.example.shoes_store.Repo.UserRepo;
 import com.example.shoes_store.Service.*;
 import com.example.shoes_store.dto.AccountDTO;
 import com.example.shoes_store.dto.ChangePasswordRequest;
+import com.example.shoes_store.dto.OrderResponseDTO;
 import com.example.shoes_store.dto.ProductDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private EmployeeService employeeService;
+    @Autowired
+    private OrderService orderService;
     @Autowired
     private SupperlieRepo supperlieRepo;
     @Autowired
@@ -313,6 +316,8 @@ public class UserController {
         user.setRole(accountDTO.getRole());
         user.setEmail(accountDTO.getEmail());
         user.setFullname(accountDTO.getFullname());
+        user.setCart(null);
+        user.setPhone("");
         userRepo.save(user);
         return "redirect:/admin/home";
     }
@@ -364,7 +369,27 @@ public class UserController {
         return "/user/shop-single";
     }
 
+    @GetMapping("/admin/orders/all")
+    @ResponseBody
+    public ResponseEntity<?> getAllOrders() {
+        List<OrderResponseDTO> orders = orderService.getAllOrders();
+        return ResponseEntity.ok(Map.of("success", true, "data", orders));
+    }
 
+    @GetMapping("/admin/orders/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getOrderDetail(@PathVariable Long id) {
+        OrderResponseDTO order = orderService.getOrderById(id);
+        return ResponseEntity.ok(Map.of("success", true, "data", order));
+    }
+
+    @PutMapping("/admin/orders/{id}/status")
+    @ResponseBody
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        String newStatus = payload.get("status");
+        orderService.updateOrderStatus(id, newStatus);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Cập nhật thành công"));
+    }
     @PostMapping("/api/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, HttpSession session) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");

@@ -1,33 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Shoes Store</title>
+    <title>Đơn hàng của tôi - Shoes Store</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="apple-touch-icon" href="../img/apple-icon.png">
-    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
-
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/templatemo.css">
     <link rel="stylesheet" href="../css/custom.css">
-
-    <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="../css/fontawesome.min.css">
-    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    TemplateMo 559 Shoes Shop
+    <style>
+        body {
+            background: #f5f7fa;
+        }
 
-    https://templatemo.com/tm-559-Shoes-shop
+        .order-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    -->
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 18px 25px;
+            color: white;
+        }
+
+        .order-code {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .order-date {
+            font-size: 0.8rem;
+            opacity: 0.85;
+        }
+
+        .order-status {
+            padding: 5px 15px;
+            border-radius: 25px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-PENDING { background: #ffc107; color: #856404; }
+        .status-CONFIRMED { background: #17a2b8; color: white; }
+        .status-SHIPPING { background: #007bff; color: white; }
+        .status-DELIVERED { background: #28a745; color: white; }
+        .status-CANCELLED { background: #dc3545; color: white; }
+
+        .order-body {
+            background: white;
+            padding: 20px 25px;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .total-amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e53e3e;
+            margin: 0;
+        }
+
+        .btn-view-detail {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: white;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn-view-detail:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Modal Styles */
+        .detail-modal .modal-content {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .detail-modal .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 25px;
+        }
+
+        .detail-modal .modal-body {
+            padding: 25px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .product-item {
+            border-bottom: 1px solid #e9ecef;
+            padding: 15px 0;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .product-name-modal {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-size {
+            font-size: 0.75rem;
+            color: #718096;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #e9ecef;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .empty-cart-box {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .empty-cart-icon {
+            font-size: 80px;
+            color: #cbd5e0;
+            margin-bottom: 20px;
+        }
+
+        .shop-now-btn {
+            display: inline-block;
+            padding: 12px 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .shop-now-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+    </style>
 </head>
-
 <body>
-<!-- Start Top Nav -->
+
+<!-- Top Nav -->
 <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
     <div class="container text-light">
         <div class="w-100 d-flex justify-content-between">
@@ -38,381 +205,420 @@
                 <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
             </div>
             <div>
-                <a class="text-light" href="https://fb.com/templatemo" target="_blank" rel="sponsored"><i
-                        class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://www.instagram.com/" target="_blank"><i
-                        class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://twitter.com/" target="_blank"><i
-                        class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i
-                        class="fab fa-linkedin fa-sm fa-fw"></i></a>
+                <a class="text-light" href="https://fb.com/templatemo" target="_blank"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://twitter.com/" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin fa-sm fa-fw"></i></a>
             </div>
         </div>
     </div>
 </nav>
-<!-- Close Top Nav -->
-
 
 <!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-light shadow">
     <div class="container d-flex justify-content-between align-items-center">
-
-        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/home}">
-            Shoes
-        </a>
-
+        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/}">Shoes</a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
+        <div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between"
              id="templatemo_main_nav">
             <div class="flex-fill">
                 <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">Trang chủ </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/about}">Về chúng tôi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/shop}">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/about}">Về chúng tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/shop}">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Liên hệ</a></li>
                 </ul>
             </div>
             <div class="navbar align-self-center d-flex">
-                <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
-                        <div class="input-group-text">
-                            <i class="fa fa-fw fa-search"></i>
-                        </div>
-                    </div>
-                </div>
-                <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                   data-bs-target="#templatemo_search">
-                    <i class="fa fa-fw fa-search text-dark mr-2"></i>
-                </a>
-
-                <div th:if="${user != null}">
+                <div th:if="${session.loggedInUser != null}">
                     <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                         <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
-                              th:text="${cartItemQuantity}"></span>
+                              th:text="${session.cartItemQuantity != null ? session.cartItemQuantity : 0}">0</span>
                     </a>
-
                     <a class="nav-icon position-relative text-decoration-none" href="#" id="dropdownMenuButton"
                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
                     </a>
-
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" th:href="@{/update-use}">Thông tin cá nhân</a>
-                        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Đổi mật
-                            khẩu</a>
-                        <a class="dropdown-item" th:href="@{/order}">Thông tin đơn hàng</a>
+                        <a class="dropdown-item" th:href="@{/update-user}">Thông tin cá nhân</a>
+                        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Đổi mật khẩu</a>
+                        <a class="dropdown-item" th:href="@{/order}">Đơn hàng của tôi</a>
                         <a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a>
                     </div>
-                    <!-- Modal -->
-                    <div class="modal fade" id="changePasswordModal" tabindex="-1"
-                         aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                </div>
+                <div th:unless="${session.loggedInUser != null}">
+                    <a href="/login" class="btn btn-outline-primary btn-sm me-2">Đăng nhập</a>
+                    <a href="/register" class="btn btn-primary btn-sm">Đăng ký</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Đóng"></button>
+<!-- Main Content -->
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="section-title">
+                <i class="fas fa-truck me-2"></i> Đơn hàng của tôi
+            </h2>
+            <p class="text-muted">Quản lý và theo dõi tất cả đơn hàng của bạn</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <!-- Empty Orders -->
+            <div th:if="${orders == null or #lists.isEmpty(orders)}" class="empty-cart-box">
+                <div class="empty-cart-icon">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h4>Chưa có đơn hàng nào</h4>
+                <p>Hãy mua sắm và trải nghiệm dịch vụ của chúng tôi</p>
+                <a href="/shop" class="shop-now-btn">
+                    <i class="fas fa-arrow-left me-2"></i> Mua sắm ngay
+                </a>
+            </div>
+
+            <!-- Orders List -->
+            <div th:unless="${orders == null or #lists.isEmpty(orders)}">
+                <div class="order-card" th:each="order : ${orders}">
+                    <div class="order-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="order-code">
+                                <i class="fas fa-receipt me-2"></i>
+                                <span th:text="${order.orderCode}"></span>
+                            </div>
+                            <div class="order-date mt-1">
+                                <i class="far fa-calendar-alt me-1"></i>
+                                <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="order-status" th:class="'order-status status-' + ${order.status}" th:text="${order.status}"></span>
+                        </div>
+                    </div>
+
+                    <div class="order-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="info-label">
+                                            <i class="fas fa-user me-1"></i> Người nhận
+                                        </div>
+                                        <div class="info-value" th:text="${order.fullName}"></div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="info-label">
+                                            <i class="fas fa-phone me-1"></i> Số điện thoại
+                                        </div>
+                                        <div class="info-value" th:text="${order.phone}"></div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="info-label">
+                                            <i class="fas fa-credit-card me-1"></i> Thanh toán
+                                        </div>
+                                        <div class="info-value">
+                                            <span th:if="${order.paymentMethod == 'COD'}">💰 Thanh toán khi nhận hàng</span>
+                                            <span th:if="${order.paymentMethod == 'BANKING'}">🏦 Chuyển khoản ngân hàng</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="info-label">
+                                            <i class="fas fa-map-marker-alt me-1"></i> Địa chỉ giao hàng
+                                        </div>
+                                        <div class="info-value" th:text="${order.address}"></div>
+                                    </div>
                                 </div>
-
-                                <form id="changePasswordForm">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
-                                            <input type="password" class="form-control" id="oldPassword"
-                                                   name="oldPassword" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                                            <input type="password" class="form-control" id="newPassword"
-                                                   name="newPassword" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu
-                                                mới</label>
-                                            <input type="password" class="form-control" id="confirmPassword"
-                                                   name="confirmPassword" required>
-                                        </div>
-
-                                        <div id="changePasswordMessage" class="mt-2"></div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng
-                                        </button>
-                                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-                                    </div>
-                                </form>
-
-
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <p class="info-label mb-1">Tổng thanh toán</p>
+                                <div class="total-amount" th:data-amount="${order.totalAmount}">0₫</div>
+                                <button class="btn-view-detail mt-3" th:onclick="'viewOrderDetail(' + ${order.id} + ')'">
+                                    <i class="fas fa-eye me-2"></i> Xem chi tiết
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div th:unless="${user != null}">
-                <a href="/login">Đăng nhập</a>|
-                <a href="/register">Đăng ký</a>
-
-            </div>
-
-        </div>
-    </div>
-
-    </div>
-</nav>
-<!-- Close Header -->
-
-
-<div class="untree_co-section before-footer-section">
-    <div class="container">
-        <div class="row mb-5" style="
-    padding-top: 20px;">
-            <div th:each=" order, iterStat : ${orders}
-        " class="order-box bg-white shadow-sm rounded">
-                <div th:if="${#lists.isEmpty(order.orderItems)}">
-                    <span colspan="7" class="text-center">Bạn chưa có tạo đơn hàng</span>
-                </div>
-                <h2 class="h4 text-success">Mã #<span th:text="${order.code}"></span> - Trạng thái đơn hàng:
-                    <span th:switch="${order.status}">
-                                <span th:case="'PENDING'">Chờ xác nhận</span>
-                                <span th:case="'CONFIRMED'">Đã xác nhận</span>
-                                <span th:case="'PROCESSING'">Đang chuẩn bị hàng</span>
-                                <span th:case="'SHIPPING'">Đang giao hàng</span>
-                                <span th:case="'DELIVERED'">Đã giao hàng</span>
-                                <span th:case="'CANCEL'">Đã hủy</span>
-                                <span th:case="*">Không xác định</span>
-                            </span>
-                </h2>
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-
-                    <tr>
-                        <th class="product-thumbnail" style="width: 120px">Hình ảnh</th>
-                        <th class="product-name" style="width: 350px">Sản phẩm</th>
-                        <th class="product-price" style="width: 150px">Giá tiền(VND)</th>
-                        <th class="product-quantity" style="width: 80px">Số lượng</th>
-                        <th class="product-total" style="width: 200px">Thành tiền(VND)</th>
-                        <th class="product-total" style="width: 200px">Trạng thái thanh toán</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    <tr th:each="orderItem : ${order.orderItems}">
-                        <td class="product-thumbnail" style="width: 120px">
-                            <!--                            <img th:src="@{${orderItem.product.imageUrl}}" alt="Image" class="img-fluid rounded">-->
-                            <img th:src="@{'/assets/img/products/' + ${orderItem.product.imageUrl}}" alt="Image"
-                                 class="img-fluid rounded"
-                                 style="max-width: 100px; height: auto;">
-
-                        </td>
-                        <td class="product-name" style="width: 350px">
-                            <h5>
-                                <a th:href="@{'/product/' + ${orderItem.product.id}}"
-                                   style="text-decoration: none; color: inherit;">
-                                    <span th:text="${orderItem.product.name}"></span>
-                                </a>
-                            </h5>
-                        </td>
-
-                        <td class="product-price" style="width: 200px">
-                            <span th:text="${orderItem.price}/${orderItem.quantity}"></span>
-                        </td>
-                        <td class="product-quantity" style="width: 80px">
-                            <span th:text="${orderItem.quantity}"></span>
-                        </td>
-                        <td class="product-total" style="width: 150px">
-                            <strong><em th:text="${orderItem.price}"></em></strong>
-                        </td>
-                        <td class="order-status-payment" style="width: 150px">
-                            <strong><em>
-                                <span th:switch="${order.paymentStatus}">
-                                    <span th:case="'Wait for payment'">Chờ thanh toán</span>
-                                    <span th:case="'Payment'">Đã thanh toán</span>
-                                    <span th:case="'Cancel'">Đã hủy</span>
-                                    <span th:case="*">Không xác định</span>
-                                </span>
-                            </em></strong>
-                        </td>
-
-
-                        <!--                        <td class="product-remove">-->
-                        <!--                            <button class="btn btn-remove btn-sm">Remove</button>-->
-                        <!--                        </td>-->
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="row">
-
         </div>
     </div>
 </div>
 
+<!-- Order Detail Modal -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title">
+                        <i class="fas fa-receipt me-2"></i> Chi tiết đơn hàng
+                    </h5>
+                    <small class="text-white-50" id="modalOrderCode"></small>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="orderDetailBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="mt-2">Đang tải...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- Start Footer -->
-<footer class="bg-dark" id="tempaltemo_footer">
-    <div class="container">
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">
+                    <i class="fas fa-key me-2"></i> Đổi mật khẩu
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="changePasswordForm">
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu cũ</label>
+                        <input type="password" class="form-control" id="oldPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu mới</label>
+                        <input type="password" class="form-control" id="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Xác nhận mật khẩu mới</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                    </div>
+                    <div id="changePasswordMessage" class="mt-2"></div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Đổi mật khẩu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark mt-5">
+    <div class="container py-5">
         <div class="row">
-
-            <div class="col-md-4 pt-5">
+            <div class="col-md-4">
                 <h2 class="h2 text-success border-bottom pb-3 border-light logo">Shoes Shop</h2>
-                <ul class="list-unstyled text-light footer-link-list">
-                    <li>
-                        <i class="fas fa-map-marker-alt fa-fw"></i>
-                        123 Consectetur at ligula 10660
-                    </li>
-                    <li>
-                        <i class="fa fa-phone fa-fw"></i>
-                        <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
-                    </li>
-                    <li>
-                        <i class="fa fa-envelope fa-fw"></i>
-                        <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a>
-                    </li>
+                <ul class="list-unstyled text-light">
+                    <li><i class="fas fa-map-marker-alt fa-fw"></i> 123 Lê Lợi, Quận 1, TP.HCM</li>
+                    <li><i class="fa fa-phone fa-fw"></i> <a class="text-decoration-none text-light" href="tel:19001234">1900 1234</a></li>
+                    <li><i class="fa fa-envelope fa-fw"></i> <a class="text-decoration-none text-light" href="mailto:info@shoes.com">info@shoes.com</a></li>
                 </ul>
             </div>
-
-            <div class="col-md-4 pt-5">
-                <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
-                <ul class="list-unstyled text-light footer-link-list">
-                    <li><a class="text-decoration-none" href="#">Luxury</a></li>
-                    <li><a class="text-decoration-none" href="#">Sport Wear</a></li>
-                    <li><a class="text-decoration-none" href="#">Men's Shoes</a></li>
-                    <li><a class="text-decoration-none" href="#">Women's Shoes</a></li>
-                    <li><a class="text-decoration-none" href="#">Popular Dress</a></li>
-                    <li><a class="text-decoration-none" href="#">Gym Accessories</a></li>
-                    <li><a class="text-decoration-none" href="#">Sport Shoes</a></li>
+            <div class="col-md-4">
+                <h2 class="h2 text-light border-bottom pb-3 border-light">Danh mục</h2>
+                <ul class="list-unstyled text-light">
+                    <li><a class="text-decoration-none text-light" href="/shop">Sản phẩm</a></li>
+                    <li><a class="text-decoration-none text-light" href="/about">Về chúng tôi</a></li>
+                    <li><a class="text-decoration-none text-light" href="/contact">Liên hệ</a></li>
                 </ul>
             </div>
-
-            <div class="col-md-4 pt-5">
-                <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
-                <ul class="list-unstyled text-light footer-link-list">
-                    <li><a class="text-decoration-none" href="#">Home</a></li>
-                    <li><a class="text-decoration-none" href="#">About Us</a></li>
-                    <li><a class="text-decoration-none" href="#">Shop Locations</a></li>
-                    <li><a class="text-decoration-none" href="#">FAQs</a></li>
-                    <li><a class="text-decoration-none" href="#">Contact</a></li>
+            <div class="col-md-4">
+                <h2 class="h2 text-light border-bottom pb-3 border-light">Hỗ trợ</h2>
+                <ul class="list-unstyled text-light">
+                    <li><a class="text-decoration-none text-light" href="#">Hướng dẫn mua hàng</a></li>
+                    <li><a class="text-decoration-none text-light" href="#">Chính sách đổi trả</a></li>
+                    <li><a class="text-decoration-none text-light" href="#">Chính sách bảo mật</a></li>
                 </ul>
-            </div>
-
-        </div>
-
-        <div class="row text-light mb-4">
-            <div class="col-12 mb-3">
-                <div class="w-100 my-3 border-top border-light"></div>
-            </div>
-            <div class="col-auto me-auto">
-                <ul class="list-inline text-left footer-icons">
-                    <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a rel="nofollow" class="text-light text-decoration-none" target="_blank"
-                           href="http://fb.com/templatemo"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
-                    </li>
-                    <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/"><i
-                                class="fab fa-instagram fa-lg fa-fw"></i></a>
-                    </li>
-                    <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i
-                                class="fab fa-twitter fa-lg fa-fw"></i></a>
-                    </li>
-                    <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.linkedin.com/"><i
-                                class="fab fa-linkedin fa-lg fa-fw"></i></a>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-auto">
-                <label class="sr-only" for="subscribeEmail">Email address</label>
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
-                           placeholder="Email address">
-                    <div class="input-group-text btn-success text-light">Subscribe</div>
-                </div>
             </div>
         </div>
     </div>
-
-    <div class="w-100 bg-black py-3">
-        <div class="container">
-            <div class="row pt-2">
-                <div class="col-12">
-                    <p class="text-left text-light">
-                        Copyright &copy; 2021 Company Name
-                        | Designed by <a rel="sponsored" href="https://templatemo.com/page/1"
-                                         target="_blank">TemplateMo</a>
-                    </p>
-                </div>
-            </div>
-        </div>
+    <div class="bg-black py-3 text-center">
+        <p class="text-light mb-0">Copyright &copy; 2024 Shoes Store. All rights reserved.</p>
     </div>
-
 </footer>
-<!-- End Footer -->
 
+<script src="../js/jquery-1.11.0.min.js"></script>
+<script src="../js/jquery-migrate-1.2.1.min.js"></script>
+<script src="../js/bootstrap.bundle.min.js"></script>
+<script src="../js/templatemo.js"></script>
+<script src="../js/custom.js"></script>
 
-<script src="./assets2/js/bootstrap.bundle.min.js"></script>
-<script src="./assets2/js/tiny-slider.js"></script>
-<script src="./assets2/js/custom.js"></script>
-</body>
 <script>
-    document.getElementById("changePasswordForm").addEventListener("submit", function (e) {
-        e.preventDefault();
+    // Format số tiền
+    document.querySelectorAll('.total-amount').forEach(el => {
+        let amount = parseFloat(el.getAttribute('data-amount'));
+        if (!isNaN(amount)) {
+            el.innerText = amount.toLocaleString('vi-VN') + '₫';
+        }
+    });
 
-        const oldPassword = document.getElementById("oldPassword").value;
-        const newPassword = document.getElementById("newPassword").value;
-        const confirmPassword = document.getElementById("confirmPassword").value;
-        const messageEl = document.getElementById("changePasswordMessage");
+    // Xem chi tiết đơn hàng
+    function viewOrderDetail(orderId) {
+        const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+        const modalBody = document.getElementById('orderDetailBody');
+        const modalOrderCode = document.getElementById('modalOrderCode');
 
-        fetch('/api/change-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                oldPassword: oldPassword,
-                newPassword: newPassword,
-                confirmPassword: confirmPassword
-            })
-        })
+        modalBody.innerHTML = `
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary"></div>
+                <p class="mt-3">Đang tải chi tiết đơn hàng...</p>
+            </div>
+        `;
+
+        modal.show();
+
+        fetch('/order/detail/' + orderId)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    messageEl.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                    setTimeout(() => {
-                        document.getElementById("changePasswordForm").reset();
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
-                        modal.hide();
-                    }, 500);
+                    renderOrderDetail(data.data);
                 } else {
-                    messageEl.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    modalBody.innerHTML = `
+                        <div class="alert alert-danger text-center">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            ${data.message || "Không thể tải chi tiết đơn hàng"}
+                        </div>
+                    `;
                 }
             })
             .catch(err => {
                 console.error(err);
-                messageEl.innerHTML = `<div class="alert alert-danger">Có lỗi xảy ra, vui lòng thử lại.</div>`;
+                modalBody.innerHTML = `
+                    <div class="alert alert-danger text-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Có lỗi xảy ra khi tải dữ liệu
+                    </div>
+                `;
             });
+    }
+
+    function renderOrderDetail(order) {
+        const modalBody = document.getElementById('orderDetailBody');
+        document.getElementById('modalOrderCode').innerText = order.orderCode;
+
+        let productsHtml = '';
+        if (order.orderDetails && order.orderDetails.length > 0) {
+            productsHtml = order.orderDetails.map(detail => `
+                <div class="product-item d-flex align-items-center">
+                    <img class="product-img me-3"
+                         src="${detail.productImage || '/images/default-product.png'}"
+                         alt="${detail.productName}"
+                         onerror="this.src='/images/default-product.png'">
+                    <div class="flex-grow-1">
+                        <div class="product-name-modal">${detail.productName}</div>
+                        <div class="product-size">Size: ${detail.size || '-'}</div>
+                    </div>
+                    <div class="text-end">
+                        <div>${detail.quantity} x ${detail.price.toLocaleString('vi-VN')}₫</div>
+                        <div class="fw-bold text-danger">${detail.totalPrice.toLocaleString('vi-VN')}₫</div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            productsHtml = '<div class="text-center text-muted py-3">Không có chi tiết sản phẩm</div>';
+        }
+
+        modalBody.innerHTML = `
+            <div>
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2"></i>Thông tin đơn hàng</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <div class="text-muted small">Mã đơn hàng</div>
+                            <div class="fw-bold">${order.orderCode}</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="text-muted small">Ngày đặt</div>
+                            <div>${new Date(order.createdAt).toLocaleString('vi-VN')}</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="text-muted small">Trạng thái</div>
+                            <span class="badge bg-${getStatusColor(order.status)}">${order.status}</span>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="text-muted small">Thanh toán</div>
+                            <div>${order.paymentMethod === 'COD' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản ngân hàng'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3"><i class="fas fa-user me-2"></i>Thông tin người nhận</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <div class="text-muted small">Họ tên</div>
+                            <div>${order.fullName}</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="text-muted small">Số điện thoại</div>
+                            <div>${order.phone}</div>
+                        </div>
+                        <div class="col-12">
+                            <div class="text-muted small">Địa chỉ</div>
+                            <div>${order.address}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h6 class="fw-bold mb-3"><i class="fas fa-box me-2"></i>Sản phẩm đã đặt</h6>
+                    ${productsHtml}
+                </div>
+
+                <div class="summary-row total mt-3">
+                    <span>Tổng cộng</span>
+                    <span class="fw-bold text-danger fs-5">${order.totalAmount.toLocaleString('vi-VN')}₫</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function getStatusColor(status) {
+        const colors = {
+            'PENDING': 'warning',
+            'CONFIRMED': 'info',
+            'SHIPPING': 'primary',
+            'DELIVERED': 'success',
+            'CANCELLED': 'danger'
+        };
+        return colors[status] || 'secondary';
+    }
+
+    // Đổi mật khẩu
+    document.getElementById("changePasswordForm")?.addEventListener("submit", function(e) {
+        e.preventDefault();
+        fetch('/api/change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                oldPassword: document.getElementById("oldPassword").value,
+                newPassword: document.getElementById("newPassword").value,
+                confirmPassword: document.getElementById("confirmPassword").value
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                const msgEl = document.getElementById("changePasswordMessage");
+                if (data.success) {
+                    msgEl.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    msgEl.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                }
+            })
+            .catch(err => document.getElementById("changePasswordMessage").innerHTML = `<div class="alert alert-danger">Có lỗi xảy ra!</div>`);
     });
 </script>
+
+</body>
 </html>

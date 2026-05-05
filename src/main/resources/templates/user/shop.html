@@ -63,6 +63,26 @@
             top: 20px;
         }
 
+        .size-selector {
+            font-size: 13px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .size-selector:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        .add-to-cart:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 768px) {
             .filter-section {
                 position: static;
@@ -97,10 +117,7 @@
 <!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-light shadow">
     <div class="container d-flex justify-content-between align-items-center">
-
-        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/home}">
-            Shoes
-        </a>
+        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/}">Shoes</a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -108,22 +125,14 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
+        <div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between"
              id="templatemo_main_nav">
             <div class="flex-fill">
                 <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">Trang chủ </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/about}">Về chúng tôi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/shop}">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/about}">Về chúng tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/shop}">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Liên hệ</a></li>
                 </ul>
             </div>
             <div class="navbar align-self-center d-flex">
@@ -135,80 +144,36 @@
                         </div>
                     </div>
                 </div>
-                <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                   data-bs-target="#templatemo_search">
+                <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                     <i class="fa fa-fw fa-search text-dark mr-2"></i>
                 </a>
 
-                <div th:if="${user != null}">
+                <div th:if="${session.loggedInUser != null}">
                     <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                         <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
-                              th:text="${cartItemQuantity}"></span>
+                              th:text="${session.cartItemQuantity != null ? session.cartItemQuantity : 0}">0</span>
                     </a>
 
                     <a class="nav-icon position-relative text-decoration-none" href="#" id="dropdownMenuButton"
                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" th:href="@{/update-use}">Thông tin cá nhân</a>
+                        <a class="dropdown-item" th:href="@{/update-user}">Thông tin cá nhân</a>
                         <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Đổi mật khẩu</a>
-                        <a class="dropdown-item" th:href="@{/order}">Thông tin đơn hàng</a>
+                        <a class="dropdown-item" th:href="@{/order}">Đơn hàng của tôi</a>
                         <a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a>
-                    </div>  <!-- Modal -->
-                    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                                </div>
-
-                                <form id="changePasswordForm">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
-                                            <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
-                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                                        </div>
-
-                                        <div id="changePasswordMessage" class="mt-2"></div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-                                    </div>
-                                </form>
-
-
-                            </div>
-                        </div>
                     </div>
                 </div>
+
+                <div th:unless="${session.loggedInUser != null}">
+                    <a href="/login" class="btn btn-outline-primary btn-sm me-2">Đăng nhập</a>
+                    <a href="/register" class="btn btn-primary btn-sm">Đăng ký</a>
+                </div>
             </div>
-
-            <div th:unless="${user != null}">
-                <a href="/login">Đăng nhập</a>|
-                <a href="/register">Đăng ký</a>
-
-            </div>
-
         </div>
-    </div>
-
     </div>
 </nav>
 
@@ -226,6 +191,38 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="changePasswordModalLabel">
+                    <i class="fas fa-key me-2"></i> Đổi mật khẩu
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="changePasswordForm">
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu cũ</label>
+                        <input type="password" class="form-control" id="oldPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu mới</label>
+                        <input type="password" class="form-control" id="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Xác nhận mật khẩu mới</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                    </div>
+                    <div id="changePasswordMessage" class="mt-2"></div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Đổi mật khẩu</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -247,7 +244,6 @@
                         <li class="pb-2" th:each="category : ${categories}">
                             <a href="#" class="category-link d-flex justify-content-between text-decoration-none" th:attr="data-id=${category.id}">
                                 <span th:text="'📌 ' + ${category.name}"></span>
-<!--                                <span class="badge bg-secondary rounded-pill" th:text="${category.productCount != null ? category.productCount : 0}">0</span>-->
                             </a>
                         </li>
                     </ul>
@@ -292,7 +288,6 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="h4 mb-0">
                     <i class="fas fa-shoe-prints"></i> Danh sách sản phẩm
-<!--                    <span class="badge bg-secondary ms-2" id="productCount">0</span>-->
                 </h3>
                 <div class="dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">
@@ -325,18 +320,18 @@
 </div>
 
 <!-- Footer -->
-<footer class="bg-dark" id="tempaltemo_footer">
-    <div class="container">
+<footer class="bg-dark mt-5" id="tempaltemo_footer">
+    <div class="container py-5">
         <div class="row">
-            <div class="col-md-4 pt-5">
+            <div class="col-md-4">
                 <h2 class="h2 text-success border-bottom pb-3 border-light logo">Shoes Shop</h2>
                 <ul class="list-unstyled text-light footer-link-list">
-                    <li><i class="fas fa-map-marker-alt fa-fw"></i> 123 Consectetur at ligula 10660</li>
+                    <li><i class="fas fa-map-marker-alt fa-fw"></i> 123 Lê Lợi, Quận 1, TP.HCM</li>
                     <li><i class="fa fa-phone fa-fw"></i> <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a></li>
                     <li><i class="fa fa-envelope fa-fw"></i> <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a></li>
                 </ul>
             </div>
-            <div class="col-md-4 pt-5">
+            <div class="col-md-4">
                 <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
                 <ul class="list-unstyled text-light footer-link-list">
                     <li><a class="text-decoration-none" href="#">Luxury</a></li>
@@ -345,7 +340,7 @@
                     <li><a class="text-decoration-none" href="#">Women's Shoes</a></li>
                 </ul>
             </div>
-            <div class="col-md-4 pt-5">
+            <div class="col-md-4">
                 <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
                 <ul class="list-unstyled text-light footer-link-list">
                     <li><a class="text-decoration-none" th:href="@{/}">Home</a></li>
@@ -373,13 +368,9 @@
             </div>
         </div>
     </div>
-    <div class="w-100 bg-black py-3">
+    <div class="w-100 bg-black py-3 text-center">
         <div class="container">
-            <div class="row pt-2">
-                <div class="col-12">
-                    <p class="text-left text-light">Copyright &copy; 2024 Shoes Store | Designed by TemplateMo</p>
-                </div>
-            </div>
+            <p class="text-light mb-0">Copyright &copy; 2024 Shoes Store | Designed by TemplateMo</p>
         </div>
     </div>
 </footer>
@@ -399,6 +390,7 @@
     let pageSize = 12;
     let totalPages = 1;
     let allProducts = [];
+    let selectedSizes = {};
 
     function formatCurrency(amount) {
         return amount.toLocaleString('vi-VN') + ' ₫';
@@ -430,16 +422,39 @@
         }
     }
 
+    function attachSizeSelectorListeners() {
+        document.querySelectorAll('.size-selector').forEach(select => {
+            select.removeEventListener('change', select._listener);
+
+            const listener = function() {
+                const productId = this.dataset.productId;
+                const selectedSize = this.value;
+                if (selectedSize && selectedSize !== "") {
+                    selectedSizes[productId] = selectedSize;
+                    const addBtn = document.querySelector(`.add-to-cart[data-id='${productId}']`);
+                    if (addBtn) {
+                        addBtn.style.opacity = '1';
+                        addBtn.disabled = false;
+                    }
+                } else {
+                    delete selectedSizes[productId];
+                    const addBtn = document.querySelector(`.add-to-cart[data-id='${productId}']`);
+                    if (addBtn) {
+                        addBtn.style.opacity = '0.6';
+                    }
+                }
+            };
+
+            select.addEventListener('change', listener);
+            select._listener = listener;
+        });
+    }
+
     function renderProducts() {
         const container = document.getElementById("product-list");
         const start = (currentPage - 1) * pageSize;
         const end = start + pageSize;
         const pageProducts = allProducts.slice(start, end);
-        // const productCountSpan = document.getElementById("productCount");
-
-        // if (productCountSpan) {
-        //     productCountSpan.innerText = allProducts.length;
-        // }
 
         if (allProducts.length === 0) {
             container.innerHTML = `
@@ -477,10 +492,17 @@
                             </h6>
                             <div class="small text-muted mb-2">${genderIcon} ${product.gender === 'BOY' ? 'Nam' : product.gender === 'GIRL' ? 'Nữ' : 'Unisex'}</div>
                             <div class="text-danger fw-bold fs-5 mb-2">${formatCurrency(product.price)}</div>
-                            <div class="text-muted small">Còn: <span class="fw-bold">${product.stockQuantity}</span></div>
+                            <div class="text-muted small mb-2">Còn: <span class="fw-bold">${product.stockQuantity}</span></div>
+
+                            <select class="form-select form-select-sm size-selector mt-2" data-product-id="${product.id}" style="font-size: 12px; border-radius: 8px;" required>
+                                <option value="">-- Chọn size (theo tuổi bé) --</option>
+                                <option value="0-2">0-2 tuổi</option>
+                                <option value="3-5">3-5 tuổi</option>
+                                <option value="6-10">6-10 tuổi</option>
+                            </select>
                         </div>
                         <div class="card-footer bg-transparent border-0 text-center pb-3">
-                            <button class="btn btn-sm btn-outline-primary add-to-cart" data-id="${product.id}">
+                            <button class="btn btn-sm btn-outline-primary w-100 add-to-cart" data-id="${product.id}" ${product.stockQuantity <= 0 ? 'disabled' : ''}>
                                 <i class="fas fa-cart-plus"></i> Thêm vào giỏ
                             </button>
                         </div>
@@ -490,6 +512,7 @@
         }).join('');
 
         renderPagination();
+        attachSizeSelectorListeners();
     }
 
     function renderPagination() {
@@ -575,7 +598,6 @@
 
     function fetchProducts() {
         const url = `/api/products/filter?categoryId=${currentCategoryId}&gender=${currentGender}&sort=${currentSort}`;
-
         fetch(url)
             .then(res => res.json())
             .then(data => {
@@ -597,7 +619,89 @@
         fetchProducts();
     }
 
-    // Event listeners
+    function showLoginRequiredMessage() {
+        const existingModal = document.getElementById('loginRequiredModal');
+        if (existingModal) existingModal.remove();
+
+        const modalHtml = `
+            <div class="modal fade" id="loginRequiredModal" tabindex="-1" data-bs-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <h5 class="modal-title text-dark"><i class="fas fa-exclamation-triangle"></i> Yêu cầu đăng nhập</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <i class="fas fa-lock fa-3x text-warning mb-3"></i>
+                            <p class="fs-5">Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!</p>
+                            <p class="text-muted">Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục mua sắm.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <a href="/login" class="btn btn-primary px-4"><i class="fas fa-sign-in-alt"></i> Đăng nhập ngay</a>
+                            <a href="/register" class="btn btn-outline-secondary px-4"><i class="fas fa-user-plus"></i> Đăng ký</a>
+                            <button type="button" class="btn btn-link" data-bs-dismiss="modal">Để sau</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+        modal.show();
+        document.getElementById('loginRequiredModal').addEventListener('hidden.bs.modal', function() { this.remove(); });
+    }
+
+    function showSuccessMessage(message) {
+        const toastHtml = `
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+                <div class="toast align-items-center text-white bg-success border-0" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body"><i class="fas fa-check-circle me-2"></i> ${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+        `;
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) existingToast.closest('.position-fixed')?.remove();
+        document.body.insertAdjacentHTML('beforeend', toastHtml);
+        const toastElement = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+        setTimeout(() => toastElement.closest('.position-fixed')?.remove(), 3500);
+    }
+
+    function showErrorMessage(message) {
+        const toastHtml = `
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+                <div class="toast align-items-center text-white bg-danger border-0" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body"><i class="fas fa-exclamation-circle me-2"></i> ${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+        `;
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) existingToast.closest('.position-fixed')?.remove();
+        document.body.insertAdjacentHTML('beforeend', toastHtml);
+        const toastElement = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+        setTimeout(() => toastElement.closest('.position-fixed')?.remove(), 3500);
+    }
+
+    function updateCartCount() {
+        fetch('/cart/count')
+            .then(res => res.json())
+            .then(data => {
+                const cartBadge = document.querySelector('.nav-icon[href*="/cart"] .badge');
+                if (cartBadge) cartBadge.textContent = data.count || 0;
+            })
+            .catch(err => console.error('Lỗi cập nhật giỏ hàng:', err));
+    }
+
+    // Event Listeners
     document.querySelectorAll(".category-link").forEach(item => {
         item.addEventListener("click", function(e) {
             e.preventDefault();
@@ -625,30 +729,58 @@
         });
     });
 
-    // Add to cart
+    // Add to cart event
     document.getElementById("product-list")?.addEventListener("click", function(e) {
         const btn = e.target.closest(".add-to-cart");
-        if (btn) {
-            const productId = btn.dataset.id;
-            fetch('/cart/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId: parseInt(productId), quantity: 1 })
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert("Đã thêm sản phẩm vào giỏ hàng!");
-                    } else if (response.status === 401) {
-                        window.location.href = '/login';
-                    } else {
-                        alert("Có lỗi xảy ra!");
-                    }
-                })
-                .catch(err => console.error(err));
+        if (!btn) return;
+
+        const productId = btn.dataset.id;
+        const isLoggedIn = /*[[${session.loggedInUser != null}]]*/ false;
+
+        if (!isLoggedIn) {
+            showLoginRequiredMessage();
+            return;
         }
+
+        const sizeSelect = document.querySelector(`.size-selector[data-product-id='${productId}']`);
+        const selectedSize = sizeSelect ? sizeSelect.value : null;
+
+        if (!selectedSize || selectedSize === "") {
+            showErrorMessage("Vui lòng chọn size sản phẩm trước khi thêm vào giỏ!");
+            return;
+        }
+
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+        btn.disabled = true;
+
+        fetch('/cart/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId: parseInt(productId), quantity: 1, size: selectedSize })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage("Đã thêm sản phẩm vào giỏ hàng!");
+                    updateCartCount();
+                    if (sizeSelect) sizeSelect.value = "";
+                    delete selectedSizes[productId];
+                } else {
+                    showErrorMessage(data.message || "Có lỗi xảy ra!");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showErrorMessage("Có lỗi xảy ra!");
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
     });
 
-    // Change password modal
+    // Change password
     document.getElementById("changePasswordForm")?.addEventListener("submit", function(e) {
         e.preventDefault();
         const oldPassword = document.getElementById("oldPassword").value;
@@ -669,7 +801,7 @@
                         document.getElementById("changePasswordForm").reset();
                         const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
                         modal?.hide();
-                    }, 500);
+                    }, 1500);
                 } else {
                     messageEl.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
                 }
@@ -683,39 +815,6 @@
     });
     /*]]>*/
 </script>
-
-<!-- Change Password Modal -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-            </div>
-            <form id="changePasswordForm">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
-                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                    </div>
-                    <div id="changePasswordMessage" class="mt-2"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>

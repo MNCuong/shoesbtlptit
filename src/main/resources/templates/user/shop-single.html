@@ -48,6 +48,12 @@
         .star.selected {
             color: gold;
         }
+        .btn-size.active {
+            background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+            color: white !important;
+            border-color: #28a745 !important;
+            transform: scale(1.05);
+        }
     </style>
 
 </head>
@@ -305,18 +311,21 @@
                                     <ul class="list-inline pb-3">
                                         <li class="list-inline-item">Size :
                                         </li>
-                                        <li class="list-inline-item"><span class="btn btn-success btn-size"
-                                                                           data-size="38">38</span></li>
-                                        <li class="list-inline-item"><span class="btn btn-success btn-size"
-                                                                           data-size="39">39</span></li>
-                                        <li class="list-inline-item"><span class="btn btn-success btn-size"
-                                                                           data-size="40">40</span></li>
-                                        <li class="list-inline-item"><span class="btn btn-success btn-size"
-                                                                           data-size="41">41</span></li>
-                                        <li class="list-inline-item"><span class="btn btn-success btn-size"
-                                                                           data-size="42">42</span></li>
-                                        <li class="list-inline-item"><span class="btn btn-success btn-size"
-                                                                           data-size="43">43</span></li>
+                                        <li class="list-inline-item">
+    <span class="btn btn-outline-primary btn-size rounded-pill" data-size="0-2">
+        <i class="fas fa-baby-carriage me-1"></i> 0-2 tuổi
+    </span>
+                                        </li>
+                                        <li class="list-inline-item">
+    <span class="btn btn-outline-primary btn-size rounded-pill" data-size="3-5">
+        <i class="fas fa-child me-1"></i> 3-5 tuổi
+    </span>
+                                        </li>
+                                        <li class="list-inline-item">
+    <span class="btn btn-outline-primary btn-size rounded-pill" data-size="6-10">
+        <i class="fas fa-user-graduate me-1"></i> 6-10 tuổi
+    </span>
+                                        </li>
                                     </ul>
                                 </div>
                                 <!-- Chọn Số lượng -->
@@ -511,18 +520,11 @@
 
 <!-- Start Slider Script -->
 <script src="../js/slick.min.js"></script>
-<script>
-    document.querySelectorAll(".star").forEach(star => {
-        star.addEventListener("click", function () {
-            const rating = this.getAttribute("data-value");
-            document.getElementById("rating").value = rating;
-
-            document.querySelectorAll(".star").forEach(s => s.classList.remove("text-warning"));
-            for (let i = 0; i < rating; i++) {
-                document.querySelectorAll(".star")[i].classList.add("text-warning");
-            }
-        });
-    });
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let isLoggedIn = /*[[${user != null}]]*/ false;
+    let productStock = /*[[${product.stockQuantity}]]*/ 0;
+    /*]]>*/
 </script>
 
 <script>
@@ -533,7 +535,29 @@
     const btnMinus = document.getElementById("minus");
     const btnPlus = document.getElementById("plus");
 
+    // Kiểm tra nếu sản phẩm hết hàng
+    if (stockQuantity <= 0) {
+        // Disable nút thêm vào giỏ
+        const addToCartBtn = document.getElementById("addToCartButton");
+        if (addToCartBtn) {
+            addToCartBtn.disabled = true;
+            addToCartBtn.textContent = "Hết hàng";
+            addToCartBtn.classList.remove("btn-success");
+            addToCartBtn.classList.add("btn-secondary");
+        }
+
+        // Disable nút tăng số lượng
+        if (btnPlus) btnPlus.disabled = true;
+
+        // Hiển thị thông báo
+        stockLimitMessage.style.display = 'block';
+        stockLimitMessage.textContent = "❌ Sản phẩm đã hết hàng!";
+        stockLimitMessage.style.color = "red";
+    }
+
     btnPlus.addEventListener('click', function () {
+        if (stockQuantity <= 0) return;
+
         let currentQuantity = parseInt(varValue.textContent);
 
         if (currentQuantity < stockQuantity) {
@@ -546,6 +570,7 @@
 
         if (currentQuantity === stockQuantity) {
             stockLimitMessage.style.display = 'block';
+            stockLimitMessage.textContent = "⚠️ Đã đạt giới hạn số lượng còn.";
             btnPlus.disabled = true;
         }
     });
@@ -565,35 +590,51 @@
     let sizeRaw = null;
     document.querySelectorAll(".btn-size").forEach(function (button) {
         button.addEventListener("click", function () {
+            // Xóa active class khỏi tất cả
+            document.querySelectorAll(".btn-size").forEach(btn => {
+                btn.classList.remove("active");
+            });
+            // Thêm active class cho button được chọn
+            this.classList.add("active");
+
             const selectedSize = this.getAttribute("data-size");
             sizeRaw = selectedSize;
             console.log("size: " + sizeRaw);
         });
     });
 
-</script>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    let isLoggedIn = /*[[${user != null}]]*/ false;
-    /*]]>*/
-
-
+    // Thêm vào giỏ hàng
     document.getElementById("addToCartButton").addEventListener("click", function () {
+        // Kiểm tra đăng nhập
         if (!isLoggedIn) {
-            alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
-            window.location.href = "/login";
+            showLoginRequiredMessage();
+            return;
+        }
+
+        // Kiểm tra sản phẩm còn hàng
+        if (stockQuantity <= 0) {
+            showErrorMessage("❌ Sản phẩm này đã hết hàng! Vui lòng chọn sản phẩm khác.");
             return;
         }
 
         const productId = parseInt(document.getElementById("productId").value, 10);
         const quantity = parseInt(document.getElementById("quantity").value);
         const size = sizeRaw;
+
         console.log("productId: " + productId);
         console.log("quantity: " + quantity);
         console.log("size: " + size);
+        console.log("stock: " + stockQuantity);
 
+        // Kiểm tra chọn size
         if (!size) {
-            alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+            showErrorMessage("⚠️ Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+            return;
+        }
+
+        // Kiểm tra số lượng không vượt quá tồn kho
+        if (quantity > stockQuantity) {
+            showErrorMessage(`⚠️ Số lượng bạn chọn (${quantity}) vượt quá số lượng còn (${stockQuantity})!`);
             return;
         }
 
@@ -603,6 +644,12 @@
             size: size
         };
 
+        // Hiển thị loading
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+        btn.disabled = true;
+
         fetch('/cart/add', {
             method: 'POST',
             headers: {
@@ -610,77 +657,121 @@
             },
             body: JSON.stringify(cartItem)
         })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                window.location.href = "/cart";
+                if (data.success) {
+                    showSuccessMessage("✅ Đã thêm sản phẩm vào giỏ hàng!");
+                    setTimeout(() => {
+                        window.location.href = "/cart";
+                    }, 1000);
+                } else {
+                    showErrorMessage(data.message || "❌ Có lỗi xảy ra khi thêm vào giỏ hàng!");
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi thêm vào giỏ hàng!');
+                showErrorMessage("❌ Đã xảy ra lỗi, vui lòng thử lại sau!");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             });
     });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const stars = document.querySelectorAll('.star');
-        const ratingInput = document.getElementById('rating');
 
-        stars.forEach(star => {
-            star.addEventListener('click', function () {
-                const rating = this.getAttribute('data-value');
-                ratingInput.value = rating;
+    // Hàm hiển thị thông báo yêu cầu đăng nhập
+    function showLoginRequiredMessage() {
+        const modalHtml = `
+            <div class="modal fade" id="loginRequiredModal" tabindex="-1" data-bs-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <h5 class="modal-title text-dark">
+                                <i class="fas fa-exclamation-triangle"></i> Yêu cầu đăng nhập
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <i class="fas fa-lock fa-3x text-warning mb-3"></i>
+                            <p class="fs-5">Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!</p>
+                            <p class="text-muted">Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục mua sắm.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <a href="/login" class="btn btn-primary px-4">
+                                <i class="fas fa-sign-in-alt"></i> Đăng nhập ngay
+                            </a>
+                            <a href="/register" class="btn btn-outline-secondary px-4">
+                                <i class="fas fa-user-plus"></i> Đăng ký
+                            </a>
+                            <button type="button" class="btn btn-link" data-bs-dismiss="modal">Để sau</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
 
-                stars.forEach(s => {
-                    s.classList.remove('selected');
-                    if (s.getAttribute('data-value') <= rating) {
-                        s.classList.add('selected');
-                    }
-                });
-                console.log("Rating:", rating);
-            });
+        const existingModal = document.getElementById('loginRequiredModal');
+        if (existingModal) existingModal.remove();
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+        modal.show();
+
+        document.getElementById('loginRequiredModal').addEventListener('hidden.bs.modal', function() {
+            this.remove();
         });
-    });
+    }
+
+    // Hàm hiển thị thông báo thành công
+    function showSuccessMessage(message) {
+        const toastHtml = `
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+                <div class="toast align-items-center text-white bg-success border-0" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-check-circle me-2"></i> ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) existingToast.closest('.position-fixed')?.remove();
+
+        document.body.insertAdjacentHTML('beforeend', toastHtml);
+        const toastElement = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+
+        setTimeout(() => toastElement.closest('.position-fixed')?.remove(), 3500);
+    }
+
+    // Hàm hiển thị thông báo lỗi
+    function showErrorMessage(message) {
+        const toastHtml = `
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+                <div class="toast align-items-center text-white bg-danger border-0" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-exclamation-circle me-2"></i> ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) existingToast.closest('.position-fixed')?.remove();
+
+        document.body.insertAdjacentHTML('beforeend', toastHtml);
+        const toastElement = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+
+        setTimeout(() => toastElement.closest('.position-fixed')?.remove(), 3500);
+    }
 </script>
-
-
 </body>
-<script>
-    document.getElementById("changePasswordForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const oldPassword = document.getElementById("oldPassword").value;
-        const newPassword = document.getElementById("newPassword").value;
-        const confirmPassword = document.getElementById("confirmPassword").value;
-        const messageEl = document.getElementById("changePasswordMessage");
-
-        fetch('/api/change-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                oldPassword: oldPassword,
-                newPassword: newPassword,
-                confirmPassword: confirmPassword
-            })
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    messageEl.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                    setTimeout(() => {
-                        document.getElementById("changePasswordForm").reset();
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
-                        modal.hide();
-                    }, 500);
-                } else {
-                    messageEl.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                messageEl.innerHTML = `<div class="alert alert-danger">Có lỗi xảy ra, vui lòng thử lại.</div>`;
-            });
-    });
-</script>
 </html>

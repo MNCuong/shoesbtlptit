@@ -582,6 +582,153 @@
                 justify-content: center;
             }
         }
+        /* Quản lý đơn hàng */
+        #ordersTableBody td {
+            vertical-align: middle;
+        }
+
+        .status-select {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            width: 130px;
+        }
+
+        .btn-group .btn {
+            padding: 4px 8px;
+        }
+
+        #ordersTableBody .table {
+            margin-bottom: 0;
+        }
+
+        #ordersTableBody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+        /* Style cho select bị disabled */
+        .status-select:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Badge màu cho trạng thái cuối */
+        .status-badge-final {
+            background-color: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+        /* Search bar styles */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-group input {
+            padding: 10px 15px;
+            padding-right: 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .search-input-group input:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+            outline: none;
+        }
+
+        .search-input-group .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            pointer-events: none;
+        }
+
+        .search-input-group .clear-search {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #a0aec0;
+            display: none;
+        }
+
+        .search-input-group .clear-search:hover {
+            color: #e74a3b;
+        }
+
+        .search-stats {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-left: 10px;
+        }
+
+        .highlight {
+            background-color: #fff3cd;
+            padding: 0 2px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        /* Search highlight styles */
+        .highlight {
+            background-color: #fff3cd;
+            padding: 0 2px;
+            border-radius: 3px;
+            font-weight: 500;
+            color: #856404;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .clear-search {
+            display: none;
+            transition: all 0.2s ease;
+        }
+
+        .clear-search:hover {
+            color: #e74a3b !important;
+            transform: scale(1.1);
+        }
+
+        .search-stats {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        /* Đảm bảo bảng có thể tìm kiếm được */
+        #productTable tbody tr,
+        #categoryTable tbody tr,
+        #accountTable tbody tr,
+        #storeTable tbody tr,
+        #supplierTable tbody tr,
+        #employeeTable tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        #productTable tbody tr:hover,
+        #categoryTable tbody tr:hover,
+        #accountTable tbody tr:hover,
+        #storeTable tbody tr:hover,
+        #supplierTable tbody tr:hover,
+        #employeeTable tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
     </style>
 </head>
 
@@ -674,6 +821,12 @@
             <a href="#employees" class="nav-link" data-section="employees" data-tooltip="Quản lý nhân viên">
                 <i class="bi bi-people-fill"></i>
                 <span class="link-text ms-2">Quản lý nhân viên</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="#orders-management" class="nav-link" data-section="orders-management" data-tooltip="Quản lý đơn hàng">
+                <i class="bi bi-truck"></i>
+                <span class="link-text ms-2">Quản lý đơn hàng</span>
             </a>
         </div>
         <hr class="mx-3 opacity-25">
@@ -848,7 +1001,7 @@
                     <input type="text" class="form-control w-25" id="productSearch" placeholder="Tìm kiếm sản phẩm...">
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle" id="productTable">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -916,58 +1069,58 @@
     <section id="categories-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-tags"></i>Quản lý danh mục</h2>
-            <button class="btn btn-success" onclick="openCategoryModal('add')">
-                <i class="bi bi-plus-lg me-2"></i>Thêm danh mục
-            </button>
+            <div class="d-flex gap-2">
+                <div class="search-container">
+                    <div class="search-input-group">
+                        <input type="text" id="categorySearch" class="form-control" placeholder="🔍 Tìm kiếm danh mục..." style="width: 250px;">
+                        <span class="search-icon"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="openCategoryModal('add')">
+                    <i class="bi bi-plus-lg me-2"></i>Thêm danh mục
+                </button>
+            </div>
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <table class="table table-hover">
+                <table class="table table-hover" id="categoryTable">
                     <thead>
                     <tr>
                         <th>ID</th>
                         <th>Danh mục</th>
                         <th>Mô tả</th>
-                        <th>Năm sản xuất</th>
                         <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
                     </thead>
                     <tbody id="categoryTableBody">
                     <tr th:each="categori : ${categories}">
-                        <td th:text="${categori.id}"></td>
-                        <td th:text="${categori.name}"></td>
-                        <td th:text="${categori.description}"></td>
-                        <td th:text="${categori.establishedYear}"></td>
+                        <td th:text="${categori.id}">1</td>
+                        <td th:text="${categori.name}">Danh mục A</td>
+                        <td th:text="${categori.description}">Mô tả danh mục</td>
                         <td>
-                            <span th:text="${categori.active}"></span>
+                            <span th:if="${categori.active}" class="badge bg-success">Hoạt động</span>
+                            <span th:unless="${categori.active}" class="badge bg-danger">Không hoạt động</span>
                         </td>
                         <td>
-                            <!-- Edit -->
-                            <button class="btn btn-warning btn-sm btn-edit-category"
+                            <button class="btn btn-warning btn-sm btn-edit-category me-1"
                                     th:data-id="${categori.id}"
                                     th:data-name="${categori.name}"
                                     th:data-description="${categori.description}"
-                                    th:data-year="${categori.establishedYear}"
                                     th:data-active="${categori.active}">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
-
-                            <!-- Delete -->
-                            <!-- Delete - chỉ dùng button, không dùng <a> -->
                             <button class="btn btn-danger btn-sm btn-delete-category"
                                     th:data-id="${categori.id}">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
-
                     </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
-
     <!-- Lịch sử Xuất/Nhập -->
     <section id="history-section" class="admin-section d-none">
         <h2 class="section-title mb-4">
@@ -1095,13 +1248,21 @@
     <section id="account-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-people"></i>Quản lý tài khoản</h2>
-            <button class="btn btn-success" onclick="openAccountModal('add')">
-                <i class="bi bi-plus-lg me-2"></i>Thêm tài khoản
-            </button>
+            <div class="d-flex gap-2">
+                <div class="search-container">
+                    <div class="search-input-group">
+                        <input type="text" id="accountSearch" class="form-control" placeholder="🔍 Tìm kiếm tài khoản..." style="width: 250px;">
+                        <span class="search-icon"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="openAccountModal('add')">
+                    <i class="bi bi-plus-lg me-2"></i>Thêm tài khoản
+                </button>
+            </div>
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover align-middle"  id="accountTable">
                     <thead>
                     <tr>
                         <th>#</th>
@@ -1335,12 +1496,21 @@
     <section id="stores-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-shop"></i>Quản lý Cơ sở (Cửa hàng)</h2>
-            <button class="btn btn-success" onclick="openStoreModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm cơ sở
-            </button>
+            <div class="d-flex gap-2">
+                <div class="search-container">
+                    <div class="search-input-group">
+                        <input type="text" id="storeSearch" class="form-control" placeholder="🔍 Tìm kiếm cửa hàng..." style="width: 250px;">
+                        <span class="search-icon"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="openStoreModal('add')">
+                    <i class="bi bi-plus-lg me-2"></i>Thêm cơ sở
+                </button>
+            </div>
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover align-middle" id="storeTable">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -1384,11 +1554,20 @@
     <section id="suppliers-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-truck"></i>Quản lý Nhà phân phối</h2>
-            <button class="btn btn-success" onclick="openSupplierModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm nhà phân phối</button>
-        </div>
+            <div class="d-flex gap-2">
+                <div class="search-container">
+                    <div class="search-input-group">
+                        <input type="text" id="supplierSearch" class="form-control" placeholder="🔍 Tìm kiếm nhà phân phối..." style="width: 250px;">
+                        <span class="search-icon"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="openSupplierModal('add')">
+                    <i class="bi bi-plus-lg me-2"></i>Thêm nhà phân phối
+                </button>
+            </div>        </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover align-middle" id="supplierTable">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -1433,11 +1612,20 @@
     <section id="employees-section" class="admin-section d-none">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title m-0"><i class="bi bi-people"></i>Quản lý Nhân viên</h2>
-            <button class="btn btn-success" onclick="openEmployeeModal('add')"><i class="bi bi-plus-lg me-2"></i>Thêm nhân viên</button>
-        </div>
+            <div class="d-flex gap-2">
+                <div class="search-container">
+                    <div class="search-input-group">
+                        <input type="text" id="employeeSearch" class="form-control" placeholder="🔍 Tìm kiếm nhân viên..." style="width: 250px;">
+                        <span class="search-icon"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="openEmployeeModal('add')">
+                    <i class="bi bi-plus-lg me-2"></i>Thêm nhân viên
+                </button>
+            </div>        </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover align-middle" id="employeeTable">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -1485,6 +1673,96 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </section>
+    <!-- Quản lý đơn hàng Section -->
+    <section id="orders-management-section" class="admin-section d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h2 class="section-title m-0">
+                <i class="bi bi-truck"></i> Quản lý đơn hàng
+            </h2>
+            <div class="d-flex gap-2">
+                <select id="orderStatusFilter" class="form-select" style="width: 160px;" onchange="filterOrdersByStatus()">
+                    <option value="all">📋 Tất cả trạng thái</option>
+                    <option value="PENDING">🟡 Chờ xử lý</option>
+                    <option value="CONFIRMED">🔵 Đã xác nhận</option>
+                    <option value="SHIPPING">🚚 Đang giao hàng</option>
+                    <option value="DELIVERED">✅ Đã giao</option>
+                    <option value="CANCELLED">❌ Đã hủy</option>
+                </select>
+                <button class="btn btn-success" onclick="exportOrdersToExcel()">
+                    <i class="bi bi-file-excel"></i> Xuất Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Bộ lọc nâng cao -->
+        <!-- Bộ lọc nâng cao -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small">🔍 Tìm kiếm</label>
+                        <input type="text" class="form-control" id="searchOrder" placeholder="Mã đơn, khách hàng, SĐT...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold small">📅 Từ ngày</label>
+                        <input type="date" class="form-control" id="orderFromDate">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold small">📅 Đến ngày</label>
+                        <input type="date" class="form-control" id="orderToDate">
+                    </div>
+
+                    <div class="col-md-3 d-flex align-items-end gap-2">
+                        <button class="btn btn-primary flex-grow-1" onclick="applyFilters()">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Xóa bộ lọc">
+                            <i class="bi bi-eraser"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bảng đơn hàng -->
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Khách hàng</th>
+                            <th>Số điện thoại</th>
+                            <th>Địa chỉ</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th>Ngày đặt</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2 text-muted">Đang tải danh sách đơn hàng...</p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span id="ordersPaginationInfo" class="text-muted small"></span>
+                    </div>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0" id="ordersPagination"></ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </section>
@@ -1597,11 +1875,6 @@
                     <div class="mb-3">
                         <label class="form-label">Mô tả</label>
                         <textarea class="form-control" id="cateDescription" rows="3" placeholder="Nhập mô tả cho danh mục..."></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Năm thành lập</label>
-                        <input type="number" class="form-control" id="cateYear" placeholder="VD: 2020" min="1900" max="2030">
                     </div>
 
                     <div class="mb-3">
@@ -1833,7 +2106,30 @@
         </div>
     </div>
 </div>
+<!-- Quản lý đơn hàng Section -->
 
+<!-- Modal xem chi tiết đơn hàng -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" id="orderDetailModalHeader" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                <h5 class="modal-title">
+                    <i class="bi bi-receipt me-2"></i> Chi tiết đơn hàng
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="orderDetailBody">
+                <!-- Nội dung chi tiết sẽ load bằng JS -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="printOrder()">
+                    <i class="bi bi-printer"></i> In đơn hàng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1851,17 +2147,20 @@
 
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', async () => {
-        await loadAllData();
+        await loadAllData(); // Đợi dữ liệu tải xong
         initCharts();
         setupNavigation();
         setupForms();
+
+        setTimeout(() => {
+            initAllTableSearches();
+        }, 300);
 
         // Hide preloader
         setTimeout(() => {
             document.getElementById('preloader').style.display = 'none';
         }, 800);
     });
-
     async function loadAllData() {
         const prodRes = await fetch('/admin/products/all');
         if (prodRes.ok) {
@@ -2120,7 +2419,6 @@
             document.getElementById('categoryMode').value = 'add';
             document.getElementById('cateName').value = '';
             document.getElementById('cateDescription').value = '';
-            document.getElementById('cateYear').value = '';
             document.getElementById('cateActive').value = 'true';
         } else if (mode === 'edit' && id) {
             document.getElementById('categoryModalTitle').innerText = 'Sửa danh mục';
@@ -2128,7 +2426,6 @@
             document.getElementById('cateId').value = id;
             document.getElementById('cateName').value = name || '';
             document.getElementById('cateDescription').value = description || '';
-            document.getElementById('cateYear').value = establishedYear || '';
             document.getElementById('cateActive').value = active ? 'true' : 'false';
         }
 
@@ -2144,7 +2441,6 @@
         const id = document.getElementById('cateId').value;
         const name = document.getElementById('cateName').value;
         const description = document.getElementById('cateDescription').value;
-        const establishedYear = document.getElementById('cateYear').value;
         const active = document.getElementById('cateActive').value === 'true';
 
         if (!name.trim()) {
@@ -2155,7 +2451,6 @@
         const categoryData = {
             name: name,
             description: description,
-            establishedYear: establishedYear ? parseInt(establishedYear) : null,
             active: active
         };
 
@@ -3988,6 +4283,911 @@
             }
         });
     });
+    // ==================== QUẢN LÝ ĐƠN HÀNG ====================
+
+    let allOrders = [];
+    let currentOrdersPage = 1;
+    let ordersPerPage = 10;
+    let currentOrderStatus = 'all';
+
+    // Load danh sách đơn hàng
+    async function loadOrders() {
+        const tbody = document.getElementById('ordersTableBody');
+        tbody.innerHTML = `
+        <tr>
+            <td colspan="8" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted">Đang tải danh sách đơn hàng...</p>
+            </td>
+        </tr>
+    `;
+
+        try {
+            const response = await fetch('/admin/orders/all');
+            const data = await response.json();
+
+            if (data.success) {
+                allOrders = data.data || [];
+                renderOrdersTable();
+            } else {
+                showOrdersError(data.message || 'Không thể tải dữ liệu');
+            }
+        } catch (error) {
+            console.error('Lỗi tải đơn hàng:', error);
+            showOrdersError('Không thể kết nối đến server');
+        }
+    }
+
+    function showOrdersError(message) {
+        const tbody = document.getElementById('ordersTableBody');
+        tbody.innerHTML = `
+        <tr>
+            <td colspan="8" class="text-center text-danger py-5">
+                <i class="bi bi-exclamation-triangle fs-1"></i><br>
+                ${message}
+            </td>
+        </tr>
+    `;
+    }
+
+    // Lọc đơn hàng theo trạng thái
+    function filterOrdersByStatus() {
+        currentOrderStatus = document.getElementById('orderStatusFilter').value;
+        currentOrdersPage = 1;
+        renderOrdersTable();
+    }
+
+    // Tìm kiếm đơn hàng
+    function searchOrders() {
+        currentOrdersPage = 1;
+        renderOrdersTable();
+    }
+
+    // Render bảng đơn hàng
+    function renderOrdersTable() {
+        const searchTerm = document.getElementById('searchOrder')?.value.toLowerCase() || '';
+        const fromDate = document.getElementById('orderFromDate')?.value;
+        const toDate = document.getElementById('orderToDate')?.value;
+
+        let filteredOrders = [...allOrders];
+
+        // Lọc theo trạng thái
+        if (currentOrderStatus !== 'all') {
+            filteredOrders = filteredOrders.filter(order => order.status === currentOrderStatus);
+        }
+
+        // Lọc theo từ khóa
+        if (searchTerm) {
+            filteredOrders = filteredOrders.filter(order =>
+                (order.orderCode?.toLowerCase() || '').includes(searchTerm) ||
+                (order.fullName?.toLowerCase() || '').includes(searchTerm) ||
+                (order.phone || '').includes(searchTerm)
+            );
+        }
+
+        // Lọc theo ngày
+        if (fromDate) {
+            filteredOrders = filteredOrders.filter(order => {
+                if (!order.createdAt) return false;
+                return new Date(order.createdAt) >= new Date(fromDate);
+            });
+        }
+        if (toDate) {
+            filteredOrders = filteredOrders.filter(order => {
+                if (!order.createdAt) return false;
+                return new Date(order.createdAt) <= new Date(toDate + 'T23:59:59');
+            });
+        }
+
+        // Phân trang
+        const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+        const start = (currentOrdersPage - 1) * ordersPerPage;
+        const end = start + ordersPerPage;
+        const pageOrders = filteredOrders.slice(start, end);
+
+        // Cập nhật phân trang
+        document.getElementById('ordersPaginationInfo').innerHTML = `Hiển thị ${start + 1}-${Math.min(end, filteredOrders.length)} trên tổng số ${filteredOrders.length} đơn hàng`;
+
+        let paginationHtml = '';
+        if (totalPages > 1) {
+            paginationHtml += `<li class="page-item ${currentOrdersPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeOrdersPage(${currentOrdersPage - 1}); return false;">«</a>
+        </li>`;
+
+            let startPage = Math.max(1, currentOrdersPage - 2);
+            let endPage = Math.min(totalPages, currentOrdersPage + 2);
+
+            if (startPage > 1) {
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="changeOrdersPage(1); return false;">1</a></li>`;
+                if (startPage > 2) paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `<li class="page-item ${i === currentOrdersPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changeOrdersPage(${i}); return false;">${i}</a>
+            </li>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="changeOrdersPage(${totalPages}); return false;">${totalPages}</a></li>`;
+            }
+
+            paginationHtml += `<li class="page-item ${currentOrdersPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeOrdersPage(${currentOrdersPage + 1}); return false;">»</a>
+        </li>`;
+        }
+        document.getElementById('ordersPagination').innerHTML = paginationHtml;
+
+        // Render bảng
+        const tbody = document.getElementById('ordersTableBody');
+        if (pageOrders.length === 0) {
+            tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center text-muted py-5">
+                    <i class="bi bi-inbox fs-1"></i><br>
+                    Không có đơn hàng nào
+                </td>
+            </tr>
+        `;
+            return;
+        }
+
+        // 🔥 SỬA: Thêm disabled cho trạng thái DELIVERED và CANCELLED
+        tbody.innerHTML = pageOrders.map(order => {
+            const isFinalStatus = order.status === 'DELIVERED' || order.status === 'CANCELLED';
+            const isDisabled = isFinalStatus ? 'disabled' : '';
+
+            return `
+        <tr>
+            <td>
+                <strong>${order.orderCode || 'N/A'}</strong>
+                <br><small class="text-muted">ID: ${order.id}</small>
+            </td>
+            <td>${order.fullName || 'N/A'}</td>
+            <td>${order.phone || 'N/A'}</td>
+            <td>${order.address || 'N/A'}</td>
+            <td class="text-end fw-bold text-danger">${formatCurrency(order.totalAmount)}</div>
+            <td><small>${formatDate(order.createdAt)}</small></td>
+            <td>
+                <select class="form-select form-select-sm status-select" data-order-id="${order.id}" data-status="${order.status}" ${isDisabled} onchange="updateOrderStatus(${order.id}, this.value)">
+                    <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''} ${isDisabled && order.status !== 'PENDING' ? 'disabled' : ''}>🟡 Chờ xử lý</option>
+                    <option value="CONFIRMED" ${order.status === 'CONFIRMED' ? 'selected' : ''} ${isDisabled && order.status !== 'CONFIRMED' ? 'disabled' : ''}>🔵 Đã xác nhận</option>
+                    <option value="SHIPPING" ${order.status === 'SHIPPING' ? 'selected' : ''} ${isDisabled && order.status !== 'SHIPPING' ? 'disabled' : ''}>🚚 Đang giao</option>
+                    <option value="DELIVERED" ${order.status === 'DELIVERED' ? 'selected' : ''} ${isDisabled && order.status !== 'DELIVERED' ? 'disabled' : ''}>✅ Đã giao</option>
+                    <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''} ${isDisabled && order.status !== 'CANCELLED' ? 'disabled' : ''}>❌ Đã hủy</option>
+                </select>
+                ${isFinalStatus ? '<div class="small text-muted mt-1">🔒 Trạng thái cuối</div>' : ''}
+             </div>
+            <td class="text-center">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-info" onclick="viewOrderDetail(${order.id})" title="Xem chi tiết">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="printOrderById(${order.id})" title="In đơn hàng">
+                        <i class="bi bi-printer"></i>
+                    </button>
+                </div>
+            </div>
+        </tr>
+        `;
+        }).join('');
+    }
+    function changeOrdersPage(page) {
+        currentOrdersPage = page;
+        renderOrdersTable();
+    }
+
+    // Cập nhật trạng thái đơn hàng
+    // Cập nhật trạng thái đơn hàng
+    async function updateOrderStatus(orderId, newStatus) {
+        // Tìm order hiện tại
+        const currentOrder = allOrders.find(o => o.id === orderId);
+
+        // Kiểm tra nếu đơn hàng đã ở trạng thái cuối
+        if (currentOrder && (currentOrder.status === 'DELIVERED' || currentOrder.status === 'CANCELLED')) {
+            showToast('warning', 'Đơn hàng đã hoàn thành hoặc bị hủy, không thể thay đổi trạng thái!');
+            // Reset select về giá trị cũ
+            const select = document.querySelector(`.status-select[data-order-id="${orderId}"]`);
+            if (select) select.value = currentOrder.status;
+            return;
+        }
+
+        // Kiểm tra không cho phép chuyển từ trạng thái cuối
+        if (newStatus === 'DELIVERED' || newStatus === 'CANCELLED') {
+            // Cho phép chuyển sang trạng thái cuối
+            const confirmMsg = newStatus === 'DELIVERED' ?
+                'Xác nhận đơn hàng đã giao thành công? Hành động này không thể hoàn tác!' :
+                'Xác nhận hủy đơn hàng? Hành động này không thể hoàn tác!';
+
+            if (!confirm(confirmMsg)) {
+                const select = document.querySelector(`.status-select[data-order-id="${orderId}"]`);
+                if (select) select.value = currentOrder?.status || 'PENDING';
+                return;
+            }
+        }
+
+        try {
+            const response = await fetch(`/admin/orders/${orderId}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('success', `Đã cập nhật trạng thái đơn hàng thành: ${getStatusText(newStatus)}`);
+                loadOrders(); // Reload danh sách
+            } else {
+                showToast('error', data.message || 'Cập nhật thất bại');
+                const select = document.querySelector(`.status-select[data-order-id="${orderId}"]`);
+                if (select) select.value = select.getAttribute('data-status');
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            showToast('error', 'Có lỗi xảy ra khi cập nhật trạng thái');
+            const select = document.querySelector(`.status-select[data-order-id="${orderId}"]`);
+            if (select) select.value = select.getAttribute('data-status');
+        }
+    }
+    // Xem chi tiết đơn hàng
+    async function viewOrderDetail(orderId) {
+        try {
+            const modalBody = document.getElementById('orderDetailBody');
+            modalBody.innerHTML = `
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary"></div>
+                <p class="mt-3">Đang tải chi tiết đơn hàng...</p>
+            </div>
+        `;
+
+            const response = await fetch(`/admin/orders/${orderId}`);
+            const data = await response.json();
+
+            if (data.success) {
+                renderOrderDetailModal(data.data);
+                const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+                modal.show();
+            } else {
+                modalBody.innerHTML = `<div class="alert alert-danger m-3">${data.message}</div>`;
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            document.getElementById('orderDetailBody').innerHTML = `<div class="alert alert-danger m-3">Có lỗi xảy ra</div>`;
+        }
+    }
+
+    function renderOrderDetailModal(order) {
+        const modalBody = document.getElementById('orderDetailBody');
+
+        const itemsHtml = (order.orderDetails || []).map((item, index) => `
+        <div class="d-flex align-items-center border-bottom pb-3 mb-3">
+            <div class="me-3" style="width: 40px;">
+                <span class="badge bg-secondary rounded-pill">${index + 1}</span>
+            </div>
+            <img class="rounded me-3" src="${item.productImage || '/images/default-product.png'}"
+                 alt="${item.productName}" style="width: 60px; height: 60px; object-fit: cover;"
+                 onerror="this.src='/images/default-product.png'">
+            <div class="flex-grow-1">
+                <div class="fw-bold">${item.productName || 'N/A'}</div>
+                <div class="small text-muted">Size: ${item.size || '-'} | Giới tính: ${item.gender || '-'}</div>
+            </div>
+            <div class="text-end">
+                <div>${item.quantity} x ${formatCurrency(item.price)}</div>
+                <div class="fw-bold text-danger">${formatCurrency(item.totalPrice)}</div>
+            </div>
+        </div>
+    `).join('');
+
+        modalBody.innerHTML = `
+        <div class="container-fluid">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="bg-light p-3 rounded">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-info-circle"></i> THÔNG TIN ĐƠN HÀNG</h6>
+                        <table class="table table-sm">
+                            <tr><td style="width: 110px;"><strong>Mã đơn:</strong></td><td><span class="badge bg-secondary">${order.orderCode}</span></td></tr>
+                            <tr><td><strong>Ngày đặt:</strong></td><td>${formatDateTime(order.createdAt)}</td></tr>
+                            <tr><td><strong>Trạng thái:</strong></td><td><span class="badge bg-${getStatusColor(order.status)}">${getStatusText(order.status)}</span></td></tr>
+                            <tr><td><strong>Thanh toán:</strong></td><td>${order.paymentMethod === 'COD' ? '💰 COD' : '🏦 Chuyển khoản'}</td></tr>
+                            <tr><td><strong>Tổng tiền:</strong></td><td class="fw-bold text-danger fs-5">${formatCurrency(order.totalAmount)}</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-light p-3 rounded">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-person"></i> THÔNG TIN NGƯỜI NHẬN</h6>
+                        <table class="table table-sm">
+                            <tr><td style="width: 110px;"><strong>Họ tên:</strong></td><td>${order.fullName || 'N/A'}</td></tr>
+                            <tr><td><strong>SĐT:</strong></td><td>${order.phone || 'N/A'}</td></tr>
+                            <tr><td><strong>Địa chỉ:</strong></td><td>${order.address || 'N/A'}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <h6 class="fw-bold"><i class="bi bi-box-seam"></i> SẢN PHẨM ĐÃ ĐẶT</h6>
+                ${itemsHtml || '<div class="text-center text-muted py-3">Không có sản phẩm</div>'}
+            </div>
+        </div>
+    `;
+    }
+
+    function getStatusColor(status) {
+        const colors = {
+            'PENDING': 'warning',
+            'CONFIRMED': 'info',
+            'SHIPPING': 'primary',
+            'DELIVERED': 'success',
+            'CANCELLED': 'danger'
+        };
+        return colors[status] || 'secondary';
+    }
+
+    function getStatusText(status) {
+        const texts = {
+            'PENDING': 'Chờ xử lý',
+            'CONFIRMED': 'Đã xác nhận',
+            'SHIPPING': 'Đang giao hàng',
+            'DELIVERED': 'Đã giao',
+            'CANCELLED': 'Đã hủy'
+        };
+        return texts[status] || status;
+    }
+
+    function printOrderById(orderId) {
+        window.open(`/admin/orders/${orderId}/print`, '_blank');
+    }
+
+    function showToast(type, message) {
+        const toastHtml = `
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+            <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i> ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+    `;
+        document.body.insertAdjacentHTML('beforeend', toastHtml);
+        const toastEl = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+        setTimeout(() => toastEl?.closest('.position-fixed')?.remove(), 3000);
+    }
+
+    function exportOrdersToExcel() {
+        // Lấy dữ liệu đang hiển thị
+        const rows = document.querySelectorAll('#ordersTableBody tr');
+        const exportData = [];
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 6) {
+                exportData.push({
+                    'Mã đơn hàng': cells[0]?.innerText?.trim() || '',
+                    'Khách hàng': cells[1]?.innerText?.trim() || '',
+                    'Số điện thoại': cells[2]?.innerText?.trim() || '',
+                    'Địa chỉ': cells[3]?.innerText?.trim() || '',
+                    'Tổng tiền': cells[4]?.innerText?.trim() || '',
+                    'Ngày đặt': cells[5]?.innerText?.trim() || '',
+                    'Trạng thái': cells[6]?.querySelector('select')?.options[cells[6]?.querySelector('select')?.selectedIndex]?.text || ''
+                });
+            }
+        });
+
+        if (exportData.length === 0) {
+            showToast('error', 'Không có dữ liệu để xuất');
+            return;
+        }
+
+        // Tạo CSV
+        const headers = Object.keys(exportData[0]);
+        const csvRows = [headers.join(',')];
+        for (const row of exportData) {
+            const values = headers.map(header => {
+                let val = row[header];
+                if (typeof val === 'string') val = val.replace(/"/g, '""');
+                return `"${val}"`;
+            });
+            csvRows.push(values.join(','));
+        }
+
+        const blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', `don_hang_${new Date().toISOString().slice(0, 19)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showToast('success', 'Đã xuất file Excel thành công');
+    }
+
+    // Load orders khi mở section
+    document.querySelector('[data-section="orders-management"]')?.addEventListener('click', () => {
+        loadOrders();
+    });
+    // ==================== TÌM KIẾM & LỌC NÂNG CAO ====================
+
+    // Lưu các bộ lọc hiện tại
+    let currentFilters = {
+        status: 'all',
+        search: '',
+        fromDate: '',
+        toDate: ''
+    };
+
+    // Khởi tạo giá trị bộ lọc từ DOM
+    function initFilters() {
+        currentFilters.status = document.getElementById('orderStatusFilter')?.value || 'all';
+        currentFilters.search = document.getElementById('searchOrder')?.value || '';
+        currentFilters.fromDate = document.getElementById('orderFromDate')?.value || '';
+        currentFilters.toDate = document.getElementById('orderToDate')?.value || '';
+    }
+
+    // Lọc đơn hàng dựa trên tất cả bộ lọc
+    function filterOrders(orders) {
+        return orders.filter(order => {
+            // Lọc theo trạng thái
+            if (currentFilters.status !== 'all' && order.status !== currentFilters.status) {
+                return false;
+            }
+
+            // Lọc theo từ khóa tìm kiếm (mã đơn, tên KH, SĐT, địa chỉ)
+            if (currentFilters.search) {
+                const searchLower = currentFilters.search.toLowerCase();
+                const matchCode = (order.orderCode || '').toLowerCase().includes(searchLower);
+                const matchName = (order.fullName || '').toLowerCase().includes(searchLower);
+                const matchPhone = (order.phone || '').includes(searchLower);
+                const matchAddress = (order.address || '').toLowerCase().includes(searchLower);
+
+                if (!matchCode && !matchName && !matchPhone && !matchAddress) {
+                    return false;
+                }
+            }
+
+            // Lọc theo ngày bắt đầu
+            if (currentFilters.fromDate && order.createdAt) {
+                const orderDate = new Date(order.createdAt);
+                const fromDate = new Date(currentFilters.fromDate);
+                fromDate.setHours(0, 0, 0, 0);
+                if (orderDate < fromDate) return false;
+            }
+
+            // Lọc theo ngày kết thúc
+            if (currentFilters.toDate && order.createdAt) {
+                const orderDate = new Date(order.createdAt);
+                const toDate = new Date(currentFilters.toDate);
+                toDate.setHours(23, 59, 59, 999);
+                if (orderDate > toDate) return false;
+            }
+
+            return true;
+        });
+    }
+
+    // Áp dụng tất cả bộ lọc và render lại
+    function applyFilters() {
+        initFilters();
+        currentOrdersPage = 1;
+        renderOrdersTable();
+    }
+
+    // Lọc theo trạng thái (giữ nguyên hàm cũ nhưng cập nhật)
+    function filterOrdersByStatus() {
+        currentFilters.status = document.getElementById('orderStatusFilter').value;
+        currentOrdersPage = 1;
+        renderOrdersTable();
+    }
+
+    // Tìm kiếm (giữ nguyên)
+    function searchOrders() {
+        currentFilters.search = document.getElementById('searchOrder')?.value || '';
+        currentOrdersPage = 1;
+        renderOrdersTable();
+    }
+
+    // Thêm sự kiện tìm kiếm realtime (khi gõ)
+    function setupSearchRealtime() {
+        const searchInput = document.getElementById('searchOrder');
+        if (searchInput) {
+            let timeout = null;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    currentFilters.search = this.value;
+                    currentOrdersPage = 1;
+                    renderOrdersTable();
+                }, 500); // Debounce 500ms
+            });
+        }
+
+        // Lọc theo ngày
+        const fromDateInput = document.getElementById('orderFromDate');
+        const toDateInput = document.getElementById('orderToDate');
+
+        if (fromDateInput) {
+            fromDateInput.addEventListener('change', function() {
+                currentFilters.fromDate = this.value;
+                currentOrdersPage = 1;
+                renderOrdersTable();
+            });
+        }
+
+        if (toDateInput) {
+            toDateInput.addEventListener('change', function() {
+                currentFilters.toDate = this.value;
+                currentOrdersPage = 1;
+                renderOrdersTable();
+            });
+        }
+    }
+
+    // Reset tất cả bộ lọc
+    function resetFilters() {
+        // Reset các input
+        const statusSelect = document.getElementById('orderStatusFilter');
+        const searchInput = document.getElementById('searchOrder');
+        const fromDateInput = document.getElementById('orderFromDate');
+        const toDateInput = document.getElementById('orderToDate');
+
+        if (statusSelect) statusSelect.value = 'all';
+        if (searchInput) searchInput.value = '';
+        if (fromDateInput) fromDateInput.value = '';
+        if (toDateInput) toDateInput.value = '';
+
+        // Reset filters
+        currentFilters = {
+            status: 'all',
+            search: '',
+            fromDate: '',
+            toDate: ''
+        };
+        currentOrdersPage = 1;
+        renderOrdersTable();
+
+        showToast('info', 'Đã reset tất cả bộ lọc');
+    }
+
+    // Thêm button reset vào giao diện
+    function addResetButton() {
+        const filterContainer = document.querySelector('#orders-management-section .card-body .row');
+        if (filterContainer) {
+            // Kiểm tra xem đã có button reset chưa
+            if (!document.getElementById('resetFiltersBtn')) {
+                const resetCol = document.createElement('div');
+                resetCol.className = 'col-md-2';
+                resetCol.innerHTML = `
+                <label class="form-label fw-bold small">&nbsp;</label>
+                <button class="btn btn-outline-secondary w-100" id="resetFiltersBtn" onclick="resetFilters()">
+                    <i class="bi bi-eraser"></i> Xóa bộ lọc
+                </button>
+            `;
+                filterContainer.appendChild(resetCol);
+            }
+        }
+    }
+
+    // Cập nhật hàm renderOrdersTable để sử dụng bộ lọc
+    // (Sửa lại phần renderOrdersTable hiện có)
+    function renderOrdersTable() {
+        // Lấy dữ liệu từ bộ lọc
+        const status = currentFilters.status;
+        const searchTerm = currentFilters.search.toLowerCase();
+        const fromDate = currentFilters.fromDate;
+        const toDate = currentFilters.toDate;
+
+        let filteredOrders = [...allOrders];
+
+        // Lọc theo trạng thái
+        if (status !== 'all') {
+            filteredOrders = filteredOrders.filter(order => order.status === status);
+        }
+
+        // Lọc theo từ khóa
+        if (searchTerm) {
+            filteredOrders = filteredOrders.filter(order =>
+                (order.orderCode?.toLowerCase() || '').includes(searchTerm) ||
+                (order.fullName?.toLowerCase() || '').includes(searchTerm) ||
+                (order.phone || '').includes(searchTerm) ||
+                (order.address?.toLowerCase() || '').includes(searchTerm)
+            );
+        }
+
+        // Lọc theo ngày
+        if (fromDate) {
+            filteredOrders = filteredOrders.filter(order => {
+                if (!order.createdAt) return false;
+                return new Date(order.createdAt) >= new Date(fromDate);
+            });
+        }
+        if (toDate) {
+            filteredOrders = filteredOrders.filter(order => {
+                if (!order.createdAt) return false;
+                const endDate = new Date(toDate);
+                endDate.setHours(23, 59, 59, 999);
+                return new Date(order.createdAt) <= endDate;
+            });
+        }
+
+        // Cập nhật số lượng kết quả tìm kiếm
+        updateSearchResultCount(filteredOrders.length);
+
+        // Phân trang
+        const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+        const start = (currentOrdersPage - 1) * ordersPerPage;
+        const end = start + ordersPerPage;
+        const pageOrders = filteredOrders.slice(start, end);
+
+        // Cập nhật phân trang
+        const startNum = start + 1;
+        const endNum = Math.min(end, filteredOrders.length);
+        document.getElementById('ordersPaginationInfo').innerHTML = `Hiển thị ${startNum}-${endNum} trên tổng số ${filteredOrders.length} đơn hàng`;
+
+        let paginationHtml = '';
+        if (totalPages > 1) {
+            paginationHtml += `<li class="page-item ${currentOrdersPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeOrdersPage(${currentOrdersPage - 1}); return false;">«</a>
+        </li>`;
+
+            let startPage = Math.max(1, currentOrdersPage - 2);
+            let endPage = Math.min(totalPages, currentOrdersPage + 2);
+
+            if (startPage > 1) {
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="changeOrdersPage(1); return false;">1</a></li>`;
+                if (startPage > 2) paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `<li class="page-item ${i === currentOrdersPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changeOrdersPage(${i}); return false;">${i}</a>
+            </li>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="changeOrdersPage(${totalPages}); return false;">${totalPages}</a></li>`;
+            }
+
+            paginationHtml += `<li class="page-item ${currentOrdersPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeOrdersPage(${currentOrdersPage + 1}); return false;">»</a>
+        </li>`;
+        }
+        document.getElementById('ordersPagination').innerHTML = paginationHtml;
+
+        // Render bảng
+        const tbody = document.getElementById('ordersTableBody');
+        if (pageOrders.length === 0) {
+            tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center py-5">
+                    <i class="bi bi-inbox fs-1"></i><br>
+                    <span class="text-muted">Không tìm thấy đơn hàng nào</span>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="resetFilters()">
+                            <i class="bi bi-eraser"></i> Xóa bộ lọc
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+            return;
+        }
+
+        tbody.innerHTML = pageOrders.map(order => {
+            const isFinalStatus = order.status === 'DELIVERED' || order.status === 'CANCELLED';
+            const isDisabled = isFinalStatus ? 'disabled' : '';
+
+            // Highlight từ khóa tìm kiếm
+            let displayName = order.fullName || 'N/A';
+            let displayPhone = order.phone || 'N/A';
+            let displayAddress = order.address || 'N/A';
+
+            if (searchTerm) {
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                displayName = displayName.replace(regex, '<mark class="bg-warning">$1</mark>');
+                displayPhone = displayPhone.replace(regex, '<mark class="bg-warning">$1</mark>');
+                displayAddress = displayAddress.replace(regex, '<mark class="bg-warning">$1</mark>');
+            }
+
+            return `
+        <tr>
+            <td>
+                <strong>${order.orderCode || 'N/A'}</strong>
+                <br><small class="text-muted">ID: ${order.id}</small>
+            </td>
+            <td class="search-highlight">${displayName}</td>
+            <td class="search-highlight">${displayPhone}</td>
+            <td class="search-highlight">${displayAddress}</td>
+            <td class="text-end fw-bold text-danger">${formatCurrency(order.totalAmount)}</td>
+            <td><small>${formatDate(order.createdAt)}</small></td>
+            <td>
+                <select class="form-select form-select-sm status-select" data-order-id="${order.id}" data-status="${order.status}" ${isDisabled} onchange="updateOrderStatus(${order.id}, this.value)">
+                    <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''} ${isDisabled && order.status !== 'PENDING' ? 'disabled' : ''}>🟡 Chờ xử lý</option>
+                    <option value="CONFIRMED" ${order.status === 'CONFIRMED' ? 'selected' : ''} ${isDisabled && order.status !== 'CONFIRMED' ? 'disabled' : ''}>🔵 Đã xác nhận</option>
+                    <option value="SHIPPING" ${order.status === 'SHIPPING' ? 'selected' : ''} ${isDisabled && order.status !== 'SHIPPING' ? 'disabled' : ''}>🚚 Đang giao</option>
+                    <option value="DELIVERED" ${order.status === 'DELIVERED' ? 'selected' : ''} ${isDisabled && order.status !== 'DELIVERED' ? 'disabled' : ''}>✅ Đã giao</option>
+                    <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''} ${isDisabled && order.status !== 'CANCELLED' ? 'disabled' : ''}>❌ Đã hủy</option>
+                </select>
+                ${isFinalStatus ? '<div class="small text-muted mt-1">🔒 Trạng thái cuối</div>' : ''}
+             </div>
+            <td class="text-center">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-info" onclick="viewOrderDetail(${order.id})" title="Xem chi tiết">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="printOrderById(${order.id})" title="In đơn hàng">
+                        <i class="bi bi-printer"></i>
+                    </button>
+                </div>
+            </div>
+        </tr>
+        `;
+        }).join('');
+    }
+
+    // Cập nhật hiển thị số lượng kết quả
+    function updateSearchResultCount(count) {
+        const resultInfo = document.getElementById('ordersPaginationInfo');
+        if (resultInfo) {
+            const currentInfo = resultInfo.innerHTML;
+            // Thêm badge số lượng kết quả
+            const badgeHtml = `<span class="badge bg-info ms-2">${count} kết quả</span>`;
+            if (count !== allOrders.length) {
+                if (!resultInfo.innerHTML.includes('kết quả')) {
+                    resultInfo.innerHTML = currentInfo + badgeHtml;
+                }
+            }
+        }
+    }
+
+    // Thêm CSS cho highlight tìm kiếm
+    const searchHighlightStyle = document.createElement('style');
+    searchHighlightStyle.textContent = `
+    .search-highlight mark {
+        background-color: #fff3cd;
+        padding: 0 2px;
+        border-radius: 3px;
+        font-weight: bold;
+    }
+`;
+    document.head.appendChild(searchHighlightStyle);
+
+    // Cập nhật sự kiện khi DOM loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initFilters();
+        setupSearchRealtime();
+        addResetButton();
+    });
+    // Khởi tạo tìm kiếm cho từng bảng - CẢI TIẾN
+    function initAllTableSearches() {
+        // Danh sách các bảng cần khởi tạo tìm kiếm
+        const tables = [
+            { tableId: 'productTable', inputId: 'productSearch', columns: [2, 3, 4] },
+            { tableId: 'categoryTable', inputId: 'categorySearch', columns: [1, 2] },
+            { tableId: 'accountTable', inputId: 'accountSearch', columns: [1, 2, 4] },
+            { tableId: 'storeTable', inputId: 'storeSearch', columns: [1, 2, 3] },
+            { tableId: 'supplierTable', inputId: 'supplierSearch', columns: [1, 2, 3, 4, 5] },
+            { tableId: 'employeeTable', inputId: 'employeeSearch', columns: [2, 3, 4, 5] }
+        ];
+
+        tables.forEach(config => {
+            const table = document.getElementById(config.tableId);
+            const searchInput = document.getElementById(config.inputId);
+
+            if (!table || !searchInput) return;
+
+            // Xóa sự kiện cũ nếu có
+            const newInput = searchInput.cloneNode(true);
+            searchInput.parentNode.replaceChild(newInput, searchInput);
+
+            let timeout = null;
+            newInput.addEventListener('input', function(e) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    performSearch(config.tableId, this.value, config.columns);
+                }, 300);
+            });
+
+            // Thêm nút clear nếu chưa có
+            addClearButtonForSearch(config.inputId, config.tableId, config.columns);
+        });
+    }
+
+    // Hàm thực hiện tìm kiếm
+    // Hàm thực hiện tìm kiếm - ĐÃ BỎ HIGHLIGHT
+    function performSearch(tableId, searchTerm, columns) {
+        const table = document.getElementById(tableId);
+        const tbody = table?.querySelector('tbody');
+        if (!tbody) return;
+
+        const rows = tbody.querySelectorAll('tr');
+        if (!rows.length) return;
+
+        let visibleCount = 0;
+        searchTerm = searchTerm.toLowerCase().trim();
+
+        rows.forEach(row => {
+            let textToSearch = '';
+            if (columns && columns.length > 0) {
+                columns.forEach(colIndex => {
+                    const cell = row.cells[colIndex];
+                    if (cell) {
+                        // Lấy text thuần để tìm kiếm
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = cell.innerHTML;
+                        textToSearch += ' ' + (tempDiv.textContent || tempDiv.innerText || '');
+                    }
+                });
+            } else {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = row.innerHTML;
+                textToSearch = tempDiv.textContent || tempDiv.innerText;
+            }
+
+            const isMatch = searchTerm === '' || textToSearch.toLowerCase().includes(searchTerm);
+            row.style.display = isMatch ? '' : 'none';
+            if (isMatch) visibleCount++;
+
+            // ========== ĐÃ XÓA PHẦN HIGHLIGHT ==========
+            // Không cần thay đổi nội dung HTML nữa
+        });
+
+        // Cập nhật thông báo kết quả
+        const statsEl = document.getElementById(`${tableId}-search-stats`);
+        if (statsEl) {
+            statsEl.innerHTML = `🔍 Tìm thấy ${visibleCount}/${rows.length} kết quả`;
+            statsEl.style.color = visibleCount === 0 ? '#e74a3b' : '#718096';
+        }
+    }
+    // Thêm nút clear và thông báo kết quả cho từng ô tìm kiếm
+    function addClearButtonForSearch(inputId, tableId, columns) {
+        const inputElement = document.getElementById(inputId);
+        if (!inputElement) return;
+
+        // Tìm container cha
+        const container = inputElement.closest('.search-container') || inputElement.parentElement;
+        if (!container) return;
+
+        // Kiểm tra đã có nút clear chưa
+        if (container.querySelector('.clear-search')) return;
+
+        // Thêm icon clear
+        const clearSpan = document.createElement('span');
+        clearSpan.className = 'clear-search';
+        clearSpan.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
+        clearSpan.style.cssText = 'position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #a0aec0; z-index: 10;';
+        clearSpan.onclick = function() {
+            inputElement.value = '';
+            performSearch(tableId, '', columns);
+            inputElement.focus();
+        };
+
+        // Thêm span thống kê
+        const statsSpan = document.createElement('span');
+        statsSpan.id = `${tableId}-search-stats`;
+        statsSpan.className = 'search-stats ms-2';
+        statsSpan.innerHTML = '';
+
+        container.style.position = 'relative';
+        container.appendChild(clearSpan);
+        inputElement.parentNode.insertBefore(statsSpan, inputElement.nextSibling);
+
+        // Ẩn/hiện nút clear
+        inputElement.addEventListener('input', function() {
+            clearSpan.style.display = this.value ? 'block' : 'none';
+        });
+        clearSpan.style.display = inputElement.value ? 'block' : 'none';
+    }
+
+
 </script>
 </body>
 </html>
