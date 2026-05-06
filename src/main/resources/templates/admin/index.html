@@ -729,6 +729,52 @@
         #employeeTable tbody tr:hover {
             background-color: rgba(78, 115, 223, 0.05);
         }
+        /* Chart container styles */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            min-height: 280px;
+            max-height: 350px;
+        }
+
+        .chart-container canvas {
+            max-height: 280px;
+            width: 100% !important;
+        }
+
+        /* Tùy chỉnh kích thước biểu đồ dashboard */
+        #mainRevenueChart {
+            max-height: 280px;
+            width: 100%;
+        }
+
+        #detailedChart {
+            max-height: 250px;
+            width: 100%;
+        }
+
+        #inventoryChart {
+            max-height: 280px;
+            width: 100%;
+        }
+
+        /* Card body padding cho chart */
+        .card-body .chart-wrapper {
+            padding: 10px 0;
+        }
+
+        /* Responsive cho mobile */
+        @media (max-width: 768px) {
+            .chart-container {
+                min-height: 220px;
+            }
+
+            #mainRevenueChart,
+            #detailedChart,
+            #inventoryChart {
+                max-height: 200px;
+            }
+        }
     </style>
 </head>
 
@@ -938,20 +984,38 @@
     <!-- Statistics Section -->
     <section id="statistics-section" class="admin-section d-none">
         <h2 class="section-title"><i class="bi bi-graph-up"></i>Báo cáo & Thống kê</h2>
-        <div class="card shadow-sm">
+
+        <!-- Tab Thống kê -->
+        <ul class="nav nav-pills mb-4" style="gap: 10px;">
+            <li class="nav-item">
+                <button class="nav-link active" onclick="showStatisticsTab('revenue')"
+                        style="background: #4e73df; color: white; border-radius: 30px; padding: 8px 24px;">
+                    <i class="bi bi-cash-stack"></i> Doanh thu
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" onclick="showStatisticsTab('inventory')"
+                        style="background: #1cc88a; color: white; border-radius: 30px; padding: 8px 24px;">
+                    <i class="bi bi-arrow-left-right"></i> Nhập - Xuất kho
+                </button>
+            </li>
+        </ul>
+
+        <!-- Card Thống kê Doanh thu -->
+        <div id="revenueStatsPanel" class="card shadow-sm">
             <div class="card-body">
-                <div class="row g-3 mb-4">
+                <div class="row g-2 mb-3">
                     <div class="col-md-3">
-                        <label class="form-label">Lọc theo</label>
-                        <select class="form-select" id="statFilterType">
+                        <label class="form-label small">Lọc theo</label>
+                        <select class="form-select form-select-sm" id="statFilterType">
                             <option value="month">Theo tháng</option>
                             <option value="quarter">Theo quý</option>
                             <option value="year">Theo năm</option>
                         </select>
                     </div>
                     <div class="col-md-3" id="statMonthGroup">
-                        <label class="form-label">Tháng</label>
-                        <select class="form-select" id="statMonthSelect">
+                        <label class="form-label small">Tháng</label>
+                        <select class="form-select form-select-sm" id="statMonthSelect">
                             <option value="1">Tháng 1</option>
                             <option value="2">Tháng 2</option>
                             <option value="3">Tháng 3</option>
@@ -967,22 +1031,68 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Năm</label>
-                        <select class="form-select" id="statYearSelect">
+                        <label class="form-label small">Năm</label>
+                        <select class="form-select form-select-sm" id="statYearSelect">
                             <option value="2024">2024</option>
                             <option value="2025">2025</option>
-                            <option value="2026">2026</option>
+                            <option value="2026" selected>2026</option>
                         </select>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
-                        <button class="btn btn-primary w-100" id="btnViewStats">Xem báo cáo</button>
+                        <button class="btn btn-primary w-100" id="btnViewStats">
+                            <i class="bi bi-search"></i> Xem
+                        </button>
                     </div>
                 </div>
-                <div class="alert alert-primary d-flex justify-content-between align-items-center">
-                    <span>Tổng doanh thu kỳ này:</span>
-                    <strong id="statTotalRevenue" style="font-size: 1.5rem;">0đ</strong>
+
+                <div class="alert alert-primary py-2 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="small"><i class="bi bi-currency-dollar"></i> Tổng doanh thu:</span>
+                    <strong id="statTotalRevenue" style="font-size: 1.2rem;">0đ</strong>
                 </div>
-                <canvas id="detailedChart" height="150"></canvas>
+
+                <div class="chart-container">
+                    <canvas id="detailedChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Thống kê Nhập - Xuất kho -->
+        <div id="inventoryStatsPanel" class="card shadow-sm" style="display: none;">
+            <div class="card-body">
+                <div class="row g-2 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small">Chọn năm</label>
+                        <select class="form-select form-select-sm" id="inventoryYearSelect">
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026" selected>2026</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="btnViewInventoryStats">
+                            <i class="bi bi-search"></i> Xem
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="alert alert-success py-2 mb-0 d-flex justify-content-between align-items-center">
+                            <span class="small"><i class="bi bi-box-arrow-in-down"></i> Tổng nhập:</span>
+                            <strong id="statTotalImport" style="font-size: 1.1rem;">0đ</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-danger py-2 mb-0 d-flex justify-content-between align-items-center">
+                            <span class="small"><i class="bi bi-box-arrow-up"></i> Tổng xuất:</span>
+                            <strong id="statTotalExport" style="font-size: 1.1rem;">0đ</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="inventoryChart" height="280"></canvas>
+                </div>
             </div>
         </div>
     </section>
@@ -2151,6 +2261,7 @@
         initCharts();
         setupNavigation();
         setupForms();
+        await loadDashboardData();
 
         setTimeout(() => {
             initAllTableSearches();
@@ -2211,39 +2322,22 @@
         });
     }
 
-    // --- CHARTS ---
-    // function initCharts() {
-    //     const ctxMain = document.getElementById('mainRevenueChart').getContext('2d');
-    //     revenueChart = new Chart(ctxMain, {
-    //         type: 'line',
-    //         data: {
-    //             labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
-    //             datasets: [{
-    //                 label: 'Doanh thu (Triệu VNĐ)',
-    //                 data: [45, 52, 48, 70, 65, 85],
-    //                 borderColor: '#4e73df',
-    //                 backgroundColor: 'rgba(78, 115, 223, 0.05)',
-    //                 fill: true,
-    //                 tension: 0.3
-    //             }]
-    //         },
-    //         options: {maintainAspectRatio: false}
-    //     });
-    //
-    //     const ctxDetail = document.getElementById('detailedChart').getContext('2d');
-    //     detailedChart = new Chart(ctxDetail, {
-    //         type: 'bar',
-    //         data: {
-    //             labels: ['Cơ sở Q1', 'Cơ sở Q7', 'Cơ sở Thủ Đức', 'Cơ sở Bình Thạnh'],
-    //             datasets: [{
-    //                 label: 'Doanh thu theo cơ sở',
-    //                 data: [120, 95, 80, 110],
-    //                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
-    //             }]
-    //         }
-    //     });
-    // }
+    function initCharts() {
+        // Khởi tạo biểu đồ trống, sẽ được cập nhật sau khi có dữ liệu
+        const ctxMain = document.getElementById('mainRevenueChart').getContext('2d');
+        revenueChart = new Chart(ctxMain, {
+            type: 'line',
+            data: { labels: [], datasets: [] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
 
+        const ctxDetail = document.getElementById('detailedChart').getContext('2d');
+        detailedChart = new Chart(ctxDetail, {
+            type: 'bar',
+            data: { labels: [], datasets: [] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
     // --- MODAL LOGIC ---
     // Preview ảnh khi chọn file từ máy tính
     document.getElementById('prodImage').addEventListener('change', function (e) {
@@ -5141,7 +5235,6 @@
             statsEl.style.color = visibleCount === 0 ? '#e74a3b' : '#718096';
         }
     }
-    // Thêm nút clear và thông báo kết quả cho từng ô tìm kiếm
     function addClearButtonForSearch(inputId, tableId, columns) {
         const inputElement = document.getElementById(inputId);
         if (!inputElement) return;
@@ -5180,7 +5273,223 @@
         });
         clearSpan.style.display = inputElement.value ? 'block' : 'none';
     }
+    // ==================== DASHBOARD & THỐNG KÊ ====================
 
+    // Biến cờ để tránh gọi nhiều lần
+    let isDashboardLoading = false;
+    let dashboardLoaded = false;
+    let chartInitialized = false;
+
+    // Hàm tải toàn bộ dữ liệu Dashboard
+    async function loadDashboardData() {
+        if (dashboardLoaded || isDashboardLoading) {
+            console.log('Dashboard đã được load, bỏ qua...');
+            return;
+        }
+
+        isDashboardLoading = true;
+        console.log('Bắt đầu load dashboard...');
+
+        try {
+            // 1. Tải thống kê tổng quan
+            const statsRes = await fetch('/admin/api/dashboard/stats');
+            if (statsRes.ok) {
+                const stats = await statsRes.json();
+                document.getElementById('dash-revenue').innerHTML = formatCurrency(stats.monthlyRevenue || 0);
+                document.getElementById('dash-orders').innerHTML = stats.totalOrders || 0;
+                document.getElementById('dash-account').innerHTML = stats.newAccountsThisMonth || 0;
+                document.getElementById('dash-stores').innerHTML = stats.totalStores || 0;
+            } else {
+                console.error('Lỗi tải thống kê:', statsRes.status);
+                setDefaultDashboardValues();
+            }
+
+            // 2. Tải biểu đồ doanh thu 12 tháng
+            await loadRevenueChart();
+
+            // 3. Tải danh sách đơn hàng gần đây
+            await loadRecentOrders();
+
+            dashboardLoaded = true;
+            console.log('Dashboard load hoàn tất');
+
+        } catch (error) {
+            console.error('Lỗi tải dashboard:', error);
+            setDefaultDashboardValues();
+            loadMockChartData();
+            loadMockRecentOrders();
+        } finally {
+            isDashboardLoading = false;
+        }
+    }
+
+    // Giá trị mặc định nếu API lỗi
+    function setDefaultDashboardValues() {
+        document.getElementById('dash-revenue').innerHTML = formatCurrency(0);
+        document.getElementById('dash-orders').innerHTML = '0';
+        document.getElementById('dash-account').innerHTML = '0';
+        document.getElementById('dash-stores').innerHTML = '0';
+    }
+
+    // Tải biểu đồ doanh thu
+    async function loadRevenueChart() {
+        try {
+            const response = await fetch('/admin/api/dashboard/revenue-by-month');
+            if (response.ok) {
+                const data = await response.json();
+                renderRevenueChart(data.labels || getDefaultMonths(), data.values || getDefaultValues());
+            } else {
+                loadMockChartData();
+            }
+        } catch (error) {
+            console.error('Lỗi tải biểu đồ:', error);
+            loadMockChartData();
+        }
+    }
+
+    // Lấy danh sách 12 tháng gần nhất
+    function getDefaultMonths() {
+        const months = [];
+        const now = new Date();
+        for (let i = 11; i >= 0; i--) {
+            const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            months.push(`Tháng ${date.getMonth() + 1}/${date.getFullYear()}`);
+        }
+        return months;
+    }
+
+    function getDefaultValues() {
+        return Array(12).fill(0);
+    }
+
+    // Vẽ biểu đồ doanh thu
+    function renderRevenueChart(labels, values) {
+        const ctx = document.getElementById('mainRevenueChart').getContext('2d');
+
+        if (revenueChart) {
+            revenueChart.destroy();
+        }
+
+        revenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: values,
+                    borderColor: '#4e73df',
+                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#4e73df',
+                    pointBorderColor: '#fff',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: (value) => formatCurrency(value)
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Dữ liệu mẫu cho biểu đồ (khi API chưa có)
+    function loadMockChartData() {
+        const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+        const values = [45000000, 52000000, 48000000, 70000000, 65000000, 85000000, 92000000, 88000000, 95000000, 102000000, 110000000, 125000000];
+        renderRevenueChart(months, values);
+    }
+
+    // Tải đơn hàng gần đây
+    async function loadRecentOrders() {
+        try {
+            const response = await fetch('/admin/api/dashboard/orders/recent?limit=5');
+            if (response.ok) {
+                const orders = await response.json();
+                renderRecentOrders(orders);
+            } else {
+                loadMockRecentOrders();
+            }
+        } catch (error) {
+            console.error('Lỗi tải đơn hàng gần đây:', error);
+            loadMockRecentOrders();
+        }
+    }
+
+    // Render danh sách đơn hàng gần đây
+    function renderRecentOrders(orders) {
+        const container = document.getElementById('recent-orders-list');
+        if (!container) return;
+
+        if (!orders || orders.length === 0) {
+            container.innerHTML = '<div class="list-group-item text-center text-muted">📭 Chưa có đơn hàng nào</div>';
+            return;
+        }
+
+        container.innerHTML = orders.map(order => `
+        <div class="list-group-item list-group-item-action border-0 border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <strong class="text-primary">${order.orderCode || '#' + order.id}</strong>
+                    <div class="small text-muted mt-1">
+                        <i class="bi bi-person"></i> ${order.customerName || order.fullName || 'Khách lẻ'}
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="fw-bold text-danger">${formatCurrency(order.totalAmount)}</div>
+                    <span class="badge ${getStatusBadgeClass(order.status)} mt-1">${getStatusText(order.status)}</span>
+                </div>
+            </div>
+            <div class="small text-muted mt-2">
+                <i class="bi bi-calendar3"></i> ${formatDate(order.createdAt)}
+            </div>
+        </div>
+    `).join('');
+    }
+
+
+    // Lấy class badge theo trạng thái
+    function getStatusBadgeClass(status) {
+        const classes = {
+            'PENDING': 'bg-warning text-dark',
+            'CONFIRMED': 'bg-info',
+            'PROCESSING': 'bg-secondary',
+            'SHIPPING': 'bg-primary',
+            'DELIVERED': 'bg-success',
+            'CANCELLED': 'bg-danger'
+        };
+        return classes[status] || 'bg-secondary';
+    }
+
+    // Format tiền tệ (đã có formatCurrency, bổ sung thêm formatCurrency nếu chưa có)
+    function formatCurrency(amount) {
+        if (!amount && amount !== 0) return '0đ';
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    }
+
+    // Format ngày tháng
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleString('vi-VN');
+    }
 
 </script>
 </body>
