@@ -2187,12 +2187,6 @@
         return map[status] || status;
     }
 
-    function updateDashboardStats() {
-        document.getElementById('dash-revenue').innerText = formatVND(125000000);
-        document.getElementById('dash-orders').innerText = orders.length;
-        document.getElementById('dash-account').innerText = users.length;
-        document.getElementById('dash-stores').innerText = stores.length;
-    }
 
     function updateSelects() {
         const sel = document.getElementById('prodCategory');
@@ -2218,37 +2212,37 @@
     }
 
     // --- CHARTS ---
-    function initCharts() {
-        const ctxMain = document.getElementById('mainRevenueChart').getContext('2d');
-        revenueChart = new Chart(ctxMain, {
-            type: 'line',
-            data: {
-                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
-                datasets: [{
-                    label: 'Doanh thu (Triệu VNĐ)',
-                    data: [45, 52, 48, 70, 65, 85],
-                    borderColor: '#4e73df',
-                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {maintainAspectRatio: false}
-        });
-
-        const ctxDetail = document.getElementById('detailedChart').getContext('2d');
-        detailedChart = new Chart(ctxDetail, {
-            type: 'bar',
-            data: {
-                labels: ['Cơ sở Q1', 'Cơ sở Q7', 'Cơ sở Thủ Đức', 'Cơ sở Bình Thạnh'],
-                datasets: [{
-                    label: 'Doanh thu theo cơ sở',
-                    data: [120, 95, 80, 110],
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
-                }]
-            }
-        });
-    }
+    // function initCharts() {
+    //     const ctxMain = document.getElementById('mainRevenueChart').getContext('2d');
+    //     revenueChart = new Chart(ctxMain, {
+    //         type: 'line',
+    //         data: {
+    //             labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
+    //             datasets: [{
+    //                 label: 'Doanh thu (Triệu VNĐ)',
+    //                 data: [45, 52, 48, 70, 65, 85],
+    //                 borderColor: '#4e73df',
+    //                 backgroundColor: 'rgba(78, 115, 223, 0.05)',
+    //                 fill: true,
+    //                 tension: 0.3
+    //             }]
+    //         },
+    //         options: {maintainAspectRatio: false}
+    //     });
+    //
+    //     const ctxDetail = document.getElementById('detailedChart').getContext('2d');
+    //     detailedChart = new Chart(ctxDetail, {
+    //         type: 'bar',
+    //         data: {
+    //             labels: ['Cơ sở Q1', 'Cơ sở Q7', 'Cơ sở Thủ Đức', 'Cơ sở Bình Thạnh'],
+    //             datasets: [{
+    //                 label: 'Doanh thu theo cơ sở',
+    //                 data: [120, 95, 80, 110],
+    //                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
+    //             }]
+    //         }
+    //     });
+    // }
 
     // --- MODAL LOGIC ---
     // Preview ảnh khi chọn file từ máy tính
