@@ -815,7 +815,7 @@
                 <span class="link-text ms-2">Dashboard</span>
             </a>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" th:if="${session.loggedInUser.role == 'ADMIN'}">
             <a href="#statistics" class="nav-link" data-section="statistics" data-tooltip="Thống kê">
                 <i class="bi bi-graph-up"></i>
                 <span class="link-text ms-2">Thống kê</span>
@@ -863,7 +863,7 @@
                 <span class="link-text ms-2">Nhà phân phối</span>
             </a>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" th:if="${session.loggedInUser.role == 'ADMIN'}">
             <a href="#employees" class="nav-link" data-section="employees" data-tooltip="Quản lý nhân viên">
                 <i class="bi bi-people-fill"></i>
                 <span class="link-text ms-2">Quản lý nhân viên</span>
@@ -2253,7 +2253,6 @@
     let stores = [];
     let deleteTarget = {type: '', id: null};
     let revenueChart = null;
-    let detailedChart = null;
 
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', async () => {
@@ -2262,7 +2261,10 @@
         setupNavigation();
         setupForms();
         await loadDashboardData();
-
+        initStatistics();
+        setTimeout(() => {
+            initAllTableSearches();
+        }, 300);
         setTimeout(() => {
             initAllTableSearches();
         }, 300);
@@ -2331,13 +2333,7 @@
             options: { responsive: true, maintainAspectRatio: false }
         });
 
-        const ctxDetail = document.getElementById('detailedChart').getContext('2d');
-        detailedChart = new Chart(ctxDetail, {
-            type: 'bar',
-            data: { labels: [], datasets: [] },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
+     }
     // --- MODAL LOGIC ---
     // Preview ảnh khi chọn file từ máy tính
     document.getElementById('prodImage').addEventListener('change', function (e) {
@@ -2888,8 +2884,13 @@
     });
 
     // Xử lý submit form account
-    document.getElementById('accountForm').addEventListener('submit', (e) => {
+    // Xử lý submit form account
+    document.getElementById('accountForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // Xóa thông báo lỗi cũ (nếu có)
+        const existingError = document.getElementById('formError');
+        if (existingError) existingError.remove();
 
         const accountId = document.getElementById('accountId').value;
         const accountData = {
@@ -2899,7 +2900,6 @@
             role: document.getElementById('accountRole').value
         };
 
-        // Chỉ thêm password vào data nếu có nhập (khi thêm mới hoặc đổi mật khẩu)
         const password = document.getElementById('accountPassword').value;
         if (password && password.trim() !== '') {
             accountData.password = password;
@@ -2908,32 +2908,76 @@
         const isUpdate = accountId && accountId !== '';
         const url = isUpdate ? `/api/users/update/${accountId}` : '/api/users/add';
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(accountData)
-        })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else if (response.ok) {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('accountModal'));
-                    modal.hide();
-                    document.getElementById('accountForm').reset();
-                    alert(isUpdate ? 'Cập nhật tài khoản thành công!' : 'Thêm tài khoản thành công!');
-                    location.reload();
-                } else {
-                    throw new Error('Lỗi khi lưu dữ liệu');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra: ' + error.message);
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(accountData)
             });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Thành công
+                const modal = bootstrap.Modal.getInstance(document.getElementById('accountModal'));
+                modal.hide();
+                document.getElementById('accountForm').reset();
+                alert(data.message);
+                location.reload();
+            } else {
+                // LỖI: hiển thị thông báo từ server
+                showError(data.error || 'Có lỗi xảy ra!');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('Lỗi kết nối đến server!');
+        }
     });
 
+    // Hàm hiển thị lỗi
+    function showError(message) {
+        // Tạo div thông báo lỗi
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'formError';
+        errorDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+        errorDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+        // Chèn vào form
+        const form = document.getElementById('accountForm');
+        form.insertBefore(errorDiv, form.firstChild);
+
+        // Tự động xóa sau 5 giây
+        setTimeout(() => {
+            const error = document.getElementById('formError');
+            if (error) error.remove();
+        }, 5000);
+    }
+
+    // Hàm hiển thị lỗi cho từng field cụ thể
+    function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const existingError = field.parentElement.querySelector('.field-error');
+        if (existingError) existingError.remove();
+
+        const errorSpan = document.createElement('span');
+        errorSpan.className = 'field-error text-danger small mt-1';
+        errorSpan.style.display = 'block';
+        errorSpan.innerHTML = message;
+
+        field.parentElement.appendChild(errorSpan);
+
+        // Xóa lỗi khi user bắt đầu nhập lại
+        field.addEventListener('input', () => {
+            const error = field.parentElement.querySelector('.field-error');
+            if (error) error.remove();
+        });
+
+    }
     // Chuyển tab
     function switchTab(type) {
         if (type === 'import') {
@@ -5490,7 +5534,451 @@
         const date = new Date(dateString);
         return date.toLocaleString('vi-VN');
     }
+    // ==================== THỐNG KÊ THỰC TẾ ====================
 
+    // Biến lưu chart instances
+    let detailedChart = null;
+    let inventoryChart = null;
+    let currentStatsType = 'revenue';
+
+    // Khởi tạo thống kê
+    function initStatistics() {
+        // Gán sự kiện cho nút xem thống kê
+        const btnViewStats = document.getElementById('btnViewStats');
+        const btnViewInventoryStats = document.getElementById('btnViewInventoryStats');
+
+        if (btnViewStats) {
+            btnViewStats.addEventListener('click', () => loadRevenueStatistics());
+        }
+
+        if (btnViewInventoryStats) {
+            btnViewInventoryStats.addEventListener('click', () => loadInventoryStatistics());
+        }
+
+        // Gán sự kiện cho thay đổi loại lọc
+        const filterType = document.getElementById('statFilterType');
+        const monthGroup = document.getElementById('statMonthGroup');
+
+        if (filterType) {
+            filterType.addEventListener('change', function() {
+                if (monthGroup) {
+                    monthGroup.style.display = this.value === 'quarter' ? 'none' : 'block';
+                }
+            });
+        }
+
+        // Load dữ liệu mặc định (tháng hiện tại)
+        loadRevenueStatistics();
+    }
+
+    // Lấy giá trị năm hiện tại
+    function getCurrentYear() {
+        return new Date().getFullYear();
+    }
+
+    // Lấy tháng hiện tại
+    function getCurrentMonth() {
+        return new Date().getMonth() + 1;
+    }
+
+    // Tải thống kê doanh thu
+    async function loadRevenueStatistics() {
+        try {
+            const type = document.getElementById('statFilterType')?.value || 'month';
+            const yearSelect = document.getElementById('statYearSelect');
+            const monthSelect = document.getElementById('statMonthSelect');
+
+            const year = yearSelect ? parseInt(yearSelect.value) : getCurrentYear();
+
+            let url = `/admin/api/statistics/revenue?type=${type}&year=${year}`;
+
+            if (type === 'month') {
+                const month = monthSelect ? parseInt(monthSelect.value) : getCurrentMonth();
+                url += `&month=${month}`;
+            } else if (type === 'quarter') {
+                const quarter = getCurrentQuarter();
+                url += `&quarter=${quarter}`;
+            }
+
+            console.log('Calling API:', url);
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Revenue data:', data);
+
+            renderRevenueStatistics(data);
+
+        } catch (error) {
+            console.error('Lỗi tải thống kê doanh thu:', error);
+            showStatisticsError('Không thể tải dữ liệu doanh thu');
+        }
+    }
+
+    // Lấy quý hiện tại
+    function getCurrentQuarter() {
+        const month = getCurrentMonth();
+        return Math.ceil(month / 3);
+    }
+
+    // Render thống kê doanh thu
+    function renderRevenueStatistics(data) {
+        // Cập nhật tổng doanh thu
+        const totalRevenueEl = document.getElementById('statTotalRevenue');
+        if (totalRevenueEl && data.totalRevenue !== undefined) {
+            totalRevenueEl.innerHTML = formatCurrency(data.totalRevenue);
+        }
+
+        // Vẽ biểu đồ
+        if (detailedChart) {
+            detailedChart.destroy();
+        }
+
+        const ctx = document.getElementById('detailedChart');
+        if (!ctx) return;
+
+        const labels = data.labels || data.categories || [];
+        const values = data.values || data.data || [];
+
+        // Nếu không có dữ liệu từ API, tạo dữ liệu mẫu
+        let chartLabels = labels;
+        let chartData = values;
+
+        if (chartLabels.length === 0) {
+            // Tạo dữ liệu mẫu cho loại thống kê
+            const type = document.getElementById('statFilterType')?.value || 'month';
+
+            if (type === 'month') {
+                chartLabels = ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'];
+                chartData = [0, 0, 0, 0];
+            } else if (type === 'quarter') {
+                chartLabels = ['Tháng 1', 'Tháng 2', 'Tháng 3'];
+                chartData = [0, 0, 0];
+            } else {
+                chartLabels = ['Q1', 'Q2', 'Q3', 'Q4'];
+                chartData = [0, 0, 0, 0];
+            }
+        }
+
+        detailedChart = new Chart(ctx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: chartData,
+                    backgroundColor: '#4e73df',
+                    borderRadius: 8,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => formatCurrency(context.raw)
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: (value) => formatCurrency(value)
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Tải thống kê nhập xuất kho
+    async function loadInventoryStatistics() {
+        try {
+            const yearSelect = document.getElementById('inventoryYearSelect');
+            const year = yearSelect ? parseInt(yearSelect.value) : new Date().getFullYear();
+
+            // Hiển thị loading
+            const chartContainer = document.querySelector('#inventoryStatsPanel .chart-container');
+            if (chartContainer) {
+                chartContainer.style.opacity = '0.5';
+            }
+
+            const url = `/admin/api/statistics/inventory?year=${year}`;
+            console.log('Calling inventory API:', url);
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Inventory data nhận được:', data);
+
+            // Đảm bảo data có cấu trúc đúng
+            if (!data.monthlyData && (data.importData || data.values)) {
+                // Chuyển đổi format nếu cần
+                console.log('Đang chuyển đổi format dữ liệu...');
+            }
+
+            renderInventoryStatistics(data);
+
+            // Ẩn loading
+            if (chartContainer) {
+                chartContainer.style.opacity = '1';
+            }
+
+        } catch (error) {
+            console.error('Lỗi tải thống kê nhập xuất:', error);
+            showStatisticsError('Không thể tải dữ liệu nhập xuất kho');
+
+            // Vẽ biểu đồ mẫu để kiểm tra
+            drawMockInventoryChart();
+        }
+    }
+    function drawMockInventoryChart() {
+        const canvas = document.getElementById('inventoryChart');
+        if (!canvas) return;
+
+        if (window.inventoryChartInstance) {
+            window.inventoryChartInstance.destroy();
+        }
+
+        const ctx = canvas.getContext('2d');
+        const months = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+        const mockImport = [10, 20, 15, 30, 25, 40, 35, 45, 50, 55, 60, 70].map(v => v * 1000000);
+        const mockExport = [8, 18, 12, 25, 22, 35, 30, 40, 45, 50, 55, 65].map(v => v * 1000000);
+
+        window.inventoryChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    { label: 'Nhập kho (mẫu)', data: mockImport, borderColor: '#1cc88a', backgroundColor: 'rgba(28,200,138,0.1)', fill: true, tension: 0.3 },
+                    { label: 'Xuất kho (mẫu)', data: mockExport, borderColor: '#e74a3b', backgroundColor: 'rgba(231,74,59,0.1)', fill: true, tension: 0.3 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { ticks: { callback: v => formatCurrency(v) } } }
+            }
+        });
+    }
+
+    // Render thống kê nhập xuất kho
+    function renderInventoryStatistics(data) {
+        console.log("=== RENDER INVENTORY STATISTICS ===");
+        console.log("Data nhận được:", data);
+
+        // Cập nhật tổng nhập/xuất
+        const totalImportEl = document.getElementById('statTotalImport');
+        const totalExportEl = document.getElementById('statTotalExport');
+
+        let totalImport = data.totalImport || 0;
+        let totalExport = data.totalExport || 0;
+
+        // Đảm bảo là số
+        if (typeof totalImport === 'string') totalImport = parseFloat(totalImport);
+        if (typeof totalExport === 'string') totalExport = parseFloat(totalExport);
+
+        if (totalImportEl) totalImportEl.innerHTML = formatCurrency(totalImport);
+        if (totalExportEl) totalExportEl.innerHTML = formatCurrency(totalExport);
+
+        // Lấy dữ liệu monthly
+        let monthlyData = data.monthlyData || data.monthlyDataList || [];
+
+        // Nếu monthlyData rỗng, thử lấy từ các trường khác
+        if (monthlyData.length === 0 && data.importData && data.exportData) {
+            // Trường hợp data trả về dạng importData, exportData riêng
+            const months = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+            monthlyData = months.map((month, index) => ({
+                month: month,
+                totalImport: data.importData[index] || 0,
+                totalExport: data.exportData[index] || 0
+            }));
+        }
+
+        console.log("Monthly data sau xử lý:", monthlyData);
+
+        // Chuẩn bị dữ liệu cho biểu đồ
+        const labels = monthlyData.map(item => item.month || `Tháng ${item.monthIndex || (monthlyData.indexOf(item) + 1)}`);
+        const importValues = monthlyData.map(item => {
+            let val = item.totalImport || item.importAmount || 0;
+            if (typeof val === 'string') val = parseFloat(val);
+            return val;
+        });
+        const exportValues = monthlyData.map(item => {
+            let val = item.totalExport || item.exportAmount || 0;
+            if (typeof val === 'string') val = parseFloat(val);
+            return val;
+        });
+
+        console.log("Labels:", labels);
+        console.log("Import values:", importValues);
+        console.log("Export values:", exportValues);
+
+        // Hủy biểu đồ cũ nếu tồn tại
+        if (window.inventoryChartInstance) {
+            window.inventoryChartInstance.destroy();
+            window.inventoryChartInstance = null;
+        }
+
+        // Lấy canvas context
+        const canvas = document.getElementById('inventoryChart');
+        if (!canvas) {
+            console.error("Không tìm thấy canvas inventoryChart");
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+
+        // Tạo biểu đồ mới
+        window.inventoryChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Nhập kho',
+                        data: importValues,
+                        borderColor: '#1cc88a',
+                        backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: '#1cc88a',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Xuất kho',
+                        data: exportValues,
+                        borderColor: '#e74a3b',
+                        backgroundColor: 'rgba(231, 74, 59, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: '#e74a3b',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: { size: 12, weight: 'bold' },
+                            usePointStyle: true,
+                            boxWidth: 10
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw;
+                                return label + ': ' + formatCurrency(value);
+                            }
+                        },
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        padding: 10
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        borderJoin: 'round'
+                    }
+                }
+            }
+        });
+
+        console.log("Biểu đồ đã được vẽ thành công!");
+    }
+    // Hiển thị lỗi thống kê
+    function showStatisticsError(message) {
+        // Hiển thị thông báo lỗi trong các panel thống kê
+        const errorHtml = `
+        <div class="alert alert-danger text-center py-4">
+            <i class="bi bi-exclamation-triangle fs-2"></i>
+            <p class="mb-0 mt-2">${message}</p>
+            <button class="btn btn-sm btn-outline-danger mt-2" onclick="loadRevenueStatistics()">
+                <i class="bi bi-arrow-repeat"></i> Thử lại
+            </button>
+        </div>
+    `;
+
+        const chartContainer = document.querySelector('#revenueStatsPanel .chart-container');
+        if (chartContainer && currentStatsType === 'revenue') {
+            const oldCanvas = document.getElementById('detailedChart');
+            if (oldCanvas && !oldCanvas.style.display === 'none') {
+                // Không thay thế canvas, chỉ log lỗi
+                console.error(message);
+            }
+        }
+    }
+
+    // Chuyển tab thống kê (giữ nguyên nhưng cập nhật)
+    function showStatisticsTab(tab) {
+        currentStatsType = tab;
+        const revenuePanel = document.getElementById('revenueStatsPanel');
+        const inventoryPanel = document.getElementById('inventoryStatsPanel');
+
+        const btns = document.querySelectorAll('#statistics-section .nav-pills .nav-link');
+
+        if (tab === 'revenue') {
+            if (revenuePanel) revenuePanel.style.display = 'block';
+            if (inventoryPanel) inventoryPanel.style.display = 'none';
+            if (btns[0]) btns[0].classList.add('active');
+            if (btns[1]) btns[1].classList.remove('active');
+
+            // Tải lại dữ liệu doanh thu
+            loadRevenueStatistics();
+        } else {
+            if (revenuePanel) revenuePanel.style.display = 'none';
+            if (inventoryPanel) inventoryPanel.style.display = 'block';
+            if (btns[0]) btns[0].classList.remove('active');
+            if (btns[1]) btns[1].classList.add('active');
+
+            // Tải lại dữ liệu nhập xuất
+            loadInventoryStatistics();
+        }
+    }
 </script>
 </body>
 </html>

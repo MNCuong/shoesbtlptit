@@ -1,4 +1,3 @@
-// dto/StatisticsDTO.java
 package com.example.shoes_store.dto;
 
 import lombok.AllArgsConstructor;
@@ -13,5 +12,5 @@ import java.util.List;
 public class StatisticsDTO {
     private BigDecimal totalRevenue;
     private List<String> labels;
-    private List<BigDecimal> revenueByStore;
+    private List<BigDecimal> values;
 }

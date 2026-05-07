@@ -309,7 +309,17 @@ public class UserController {
     }
 
     @PostMapping("/api/users/add")
-    public String addUser(@RequestBody AccountDTO accountDTO) {
+    public ResponseEntity<?> addUser(@RequestBody AccountDTO accountDTO) {
+        // Kiểm tra username đã tồn tại chưa
+        if (userRepo.existsByUsername(accountDTO.getUsername())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Username đã tồn tại!"));
+        }
+
+        // Kiểm tra email đã tồn tại chưa (nếu cần)
+        if (userRepo.existsByEmail(accountDTO.getEmail())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email đã tồn tại!"));
+        }
+
         User user = new User();
         user.setUsername(accountDTO.getUsername());
         user.setPassword(accountDTO.getPassword());
@@ -319,21 +329,39 @@ public class UserController {
         user.setCart(null);
         user.setPhone("");
         userRepo.save(user);
-        return "redirect:/admin/home";
+
+        return ResponseEntity.ok(Map.of("message", "Thêm user thành công!"));
     }
 
     @PostMapping("/api/users/update/{id}")
-    public String updateUser(@PathVariable Long id, @RequestBody AccountDTO accountDTO) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody AccountDTO accountDTO) {
         User user = userService.getUserById(id);
+
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User không tồn tại!"));
+        }
+
+        // Kiểm tra username đã tồn tại cho user khác
+        User existingUser = userRepo.findByUsername(accountDTO.getUsername());
+        if (existingUser != null && !existingUser.getId().equals(id)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Username đã tồn tại!"));
+        }
+
+        // Kiểm tra email đã tồn tại cho user khác
+        User existingEmail = userRepo.findByEmail(accountDTO.getEmail()).get();
+        if (existingEmail != null && !existingEmail.getId().equals(id)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email đã tồn tại!"));
+        }
+
         user.setUsername(accountDTO.getUsername());
         user.setPassword(accountDTO.getPassword());
         user.setRole(accountDTO.getRole());
         user.setEmail(accountDTO.getEmail());
         user.setFullname(accountDTO.getFullname());
         userRepo.save(user);
-        return "redirect:/admin/home";
-    }
 
+        return ResponseEntity.ok(Map.of("message", "Cập nhật user thành công!"));
+    }
     @DeleteMapping("/api/users/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
         userRepo.deleteById(id);

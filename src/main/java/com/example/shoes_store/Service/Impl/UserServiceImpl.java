@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(User user) {
-        user.setRole("CUSTOMER");
+        user.setRole("USER");
         user.setCreatedAt(LocalDateTime.now());
         return userRepo.save(user);
     }

@@ -18,11 +18,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // 🔥 THÊM METHOD NÀY
     List<Order> findAllByOrderByCreatedAtDesc();
 
-    @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.createdAt BETWEEN :start AND :end AND o.status = :status")
-    BigDecimal sumTotalAmountByDateRangeAndStatus(@Param("start") LocalDateTime start,
-                                            @Param("end") LocalDateTime end,
-                                            @Param("status") String status);
-
 
     @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.createdAt BETWEEN :start AND :end AND o.status = 'DELIVERED'")
     BigDecimal sumTotalAmountByDateRangeAndStatus(@Param("start") LocalDateTime start,
@@ -48,5 +43,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "GROUP BY s.id, s.name", nativeQuery = true)
     List<Object[]> getRevenueByStore(@Param("start") LocalDateTime start,
                                      @Param("end") LocalDateTime end);
+
+
+    // Thêm method này vào OrderRepository
+    @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.createdAt BETWEEN :startDate AND :endDate AND o.status = :status")
+    BigDecimal sumTotalAmountByDateRangeAndStatus(@Param("startDate") LocalDateTime startDate,
+                                                  @Param("endDate") LocalDateTime endDate,
+                                                  @Param("status") String status);
 
 }

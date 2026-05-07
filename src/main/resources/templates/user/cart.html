@@ -348,11 +348,11 @@
                     <i class="fa fa-fw fa-search text-dark mr-2"></i>
                 </a>
 
-                <div th:if="${session.loggedInUser != null}">
+                <div th:if="${user != null}">
                     <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                         <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
-                              th:text="${session.cartItemQuantity != null ? session.cartItemQuantity : 0}">0</span>
+                              th:text="${cartItemQuantity}"></span>
                     </a>
 
                     <a class="nav-icon position-relative text-decoration-none" href="#" id="dropdownMenuButton"

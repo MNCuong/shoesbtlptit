@@ -217,10 +217,11 @@
                     <i class="fa fa-fw fa-search text-dark mr-2"></i>
                 </a>
 
-                <div th:if="${session.loggedInUser != null}">
+                <div th:if="${user != null}">
                     <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark" th:text="${session.cartItemQuantity != null ? session.cartItemQuantity : 0}"></span>
+                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
+                              th:text="${cartItemQuantity}"></span>
                     </a>
 
                     <a class="nav-icon position-relative text-decoration-none" href="#" id="dropdownMenuButton"
@@ -528,26 +529,29 @@
 <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="changePasswordModalLabel">
-                    <i class="fas fa-key me-2"></i> Đổi Mật Khẩu
-                </h5>
+                <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
+
             <form id="changePasswordForm">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
                         <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Mật khẩu mới</label>
                         <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                     </div>
+
                     <div id="changePasswordMessage" class="mt-2"></div>
                 </div>
                 <div class="modal-footer">
@@ -555,6 +559,8 @@
                     <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
                 </div>
             </form>
+
+
         </div>
     </div>
 </div>
