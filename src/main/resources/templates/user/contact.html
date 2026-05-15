@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
-    <title>Shoes Store</title>
+    <title>Liên Hệ - Fashion Shop</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Liên hệ với Fashion Shop - cửa hàng thời trang trẻ em uy tín, chất lượng">
 
     <link rel="apple-touch-icon" href="../img/apple-icon.png">
     <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
@@ -22,17 +23,10 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
           crossorigin=""/>
-    <!--
-
-    TemplateMo 559 Shoes Shop
-
-    https://templatemo.com/tm-559-Shoes-shop
-
-    -->
 </head>
 
 <body>
-<!-- Start Top Nav -->
+<!-- Header giữ nguyên -->
 <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
     <div class="container text-light">
         <div class="w-100 d-flex justify-content-between">
@@ -55,101 +49,76 @@
         </div>
     </div>
 </nav>
-<!-- Close Top Nav -->
 
-
-<!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-light shadow">
     <div class="container d-flex justify-content-between align-items-center">
-
-        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/home}">
-            Shoes
+        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/}">
+            Fashion
         </a>
-
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
+        <div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between"
              id="templatemo_main_nav">
             <div class="flex-fill">
                 <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Trang chủ </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/about}">Về chúng tôi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/shop}">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/about}">Về chúng tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/shop}">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/contact}">Liên hệ</a></li>
                 </ul>
             </div>
             <div class="navbar align-self-center d-flex">
                 <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
+                        <input type="text" class="form-control" id="inputMobileSearch" placeholder="Tìm kiếm...">
                         <div class="input-group-text">
                             <i class="fa fa-fw fa-search"></i>
                         </div>
                     </div>
                 </div>
-                <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
-                   data-bs-target="#templatemo_search">
+                <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                     <i class="fa fa-fw fa-search text-dark mr-2"></i>
                 </a>
-
                 <div th:if="${user != null}">
                     <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                         <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
                               th:text="${cartItemQuantity}"></span>
                     </a>
-
                     <a class="nav-icon position-relative text-decoration-none" href="#" id="dropdownMenuButton"
                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
                     </a>
-
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" th:href="@{/update-use}">Thông tin cá nhân</a>
                         <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Đổi mật khẩu</a>
                         <a class="dropdown-item" th:href="@{/order}">Thông tin đơn hàng</a>
                         <a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a>
                     </div>
-                    <!-- Modal -->
                     <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
+                                    <h5 class="modal-title">Đổi Mật Khẩu</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                                 </div>
-
                                 <form id="changePasswordForm">
                                     <div class="modal-body">
                                         <div class="mb-3">
                                             <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
                                             <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
                                         </div>
-
                                         <div class="mb-3">
                                             <label for="newPassword" class="form-label">Mật khẩu mới</label>
                                             <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                                         </div>
-
                                         <div class="mb-3">
                                             <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
                                             <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                                         </div>
-
                                         <div id="changePasswordMessage" class="mt-2"></div>
                                     </div>
                                     <div class="modal-footer">
@@ -157,37 +126,27 @@
                                         <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
                                     </div>
                                 </form>
-
-
                             </div>
                         </div>
                     </div>
                 </div>
-                </div>
-
                 <div th:unless="${user != null}">
-                    <a href="/login">Đăng nhập</a>|
-                    <a href="/register">Đăng ký</a>
-
+                    <a href="/login">Đăng nhập</a> | <a href="/register">Đăng ký</a>
                 </div>
-
             </div>
         </div>
-
     </div>
 </nav>
-<!-- Close Header -->
 
-<!-- Modal -->
-<div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
+<!-- Modal tìm kiếm -->
+<div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="w-100 pt-1 mb-5 text-right">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action="" method="get" class="modal-content modal-body border-0 p-0">
             <div class="input-group mb-2">
-                <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Tìm kiếm sản phẩm...">
                 <button type="submit" class="input-group-text bg-success text-light">
                     <i class="fa fa-fw fa-search text-white"></i>
                 </button>
@@ -196,110 +155,217 @@
     </div>
 </div>
 
+<!-- ==================== PHẦN NỘI DUNG CHÍNH - ĐÃ LÀM CHUYÊN NGHIỆP ==================== -->
 
-<!-- Start Content Page -->
-<div class="container-fluid bg-light py-5">
-    <div class="col-md-6 m-auto text-center">
-        <h1 class="h1"> Liên hệ với chúng tôi
-        </h1>
-        <p>
-            Chúng tôi luôn sẵn sàng lắng nghe bạn!
-            Nếu bạn có bất kỳ thắc mắc nào về sản phẩm, đơn hàng, hoặc cần tư vấn chọn giày phù hợp – đừng ngần ngại
-            liên hệ với đội ngũ của Shoes Store.
-        </p>
+<!-- Breadcrumb -->
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-success">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Liên hệ</li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Hero Section -->
+<div class="container-fluid bg-success py-5 text-white" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
+    <div class="col-md-8 m-auto text-center">
+        <h1 class="display-4 fw-bold mb-3">Liên Hệ Với Chúng Tôi</h1>
+        <p class="lead mb-0">Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn 24/7</p>
     </div>
 </div>
 
-<!-- Start Map -->
-<div id="mapid" style="width: 100%; height: 300px;"></div>
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-        crossorigin=""></script>
-<!-- Ena Map -->
-
-<!-- Start Contact -->
+<!-- Thông tin liên hệ + Form -->
 <div class="container py-5">
-    <div class="row py-5">
-        <form class="col-md-9 m-auto" method="post" role="form">
-            <div class="row">
-                <div class="form-group col-md-6 mb-3">
-                    <label for="inputname">Họ và tên</label>
-                    <input type="text" class="form-control mt-1" id="name" name="name" placeholder="Nhập họ và tên">
+    <div class="row g-5">
+
+        <!-- Cột trái: Thông tin liên hệ -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h3 class="h4 fw-bold mb-4"><i class="fas fa-map-marker-alt text-success me-2"></i> Thông Tin Cửa Hàng</h3>
+
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-map-marker-alt text-success fa-lg"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="fw-bold mb-1">Địa chỉ</h5>
+                            <p class="text-muted mb-0">123 Đường Láng, Quận Đống Đa, Hà Nội</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-phone-alt text-success fa-lg"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="fw-bold mb-1">Hotline</h5>
+                            <p class="text-muted mb-0">1900 1234 (8h00 - 21h00 hàng ngày)</p>
+                            <p class="text-muted mb-0">0987 654 321 (Tư vấn qua Zalo)</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-envelope text-success fa-lg"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="fw-bold mb-1">Email</h5>
+                            <p class="text-muted mb-0">cskh@fashionshop.vn</p>
+                            <p class="text-muted mb-0">hoptac@fashionshop.vn</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-clock text-success fa-lg"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="fw-bold mb-1">Giờ làm việc</h5>
+                            <p class="text-muted mb-0">Thứ 2 - Thứ 7: 8:00 - 21:00</p>
+                            <p class="text-muted mb-0">Chủ nhật: 9:00 - 18:00</p>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <h5 class="fw-bold mb-3">Kết nối với chúng tôi</h5>
+                    <div>
+                        <a href="#" class="btn btn-outline-success rounded-circle me-2" style="width: 40px; height: 40px; padding: 8px 0;"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-outline-success rounded-circle me-2" style="width: 40px; height: 40px; padding: 8px 0;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="btn btn-outline-success rounded-circle me-2" style="width: 40px; height: 40px; padding: 8px 0;"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="btn btn-outline-success rounded-circle me-2" style="width: 40px; height: 40px; padding: 8px 0;"><i class="fab fa-tiktok"></i></a>
+                    </div>
                 </div>
-                <div class="form-group col-md-6 mb-3">
-                    <label for="inputemail">Email</label>
-                    <input type="email" class="form-control mt-1" id="email" name="email" placeholder="Nhập email">
+            </div>
+        </div>
+
+        <!-- Cột phải: Form liên hệ -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h3 class="h4 fw-bold mb-4"><i class="fas fa-paper-plane text-success me-2"></i> Gửi Tin Nhắn Cho Chúng Tôi</h3>
+                    <p class="text-muted mb-4">Mọi thắc mắc, góp ý hoặc yêu cầu hỗ trợ, vui lòng điền thông tin dưới đây. Chúng tôi sẽ phản hồi trong vòng 24 giờ.</p>
+
+                    <form method="post" role="form" id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label fw-bold">Họ và tên <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-lg" id="name" name="name" placeholder="Nguyễn Văn A" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="example@email.com" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label fw-bold">Số điện thoại</label>
+                            <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="0987 654 321">
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label fw-bold">Tiêu đề <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-lg" id="subject" name="subject" placeholder="Vấn đề cần hỗ trợ" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label fw-bold">Tin nhắn <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="message" name="message" placeholder="Nhập nội dung chi tiết..." rows="6" required></textarea>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col text-end">
+                                <button type="submit" class="btn btn-success btn-lg px-5 py-2 rounded-pill">
+                                    <i class="fas fa-paper-plane me-2"></i> Gửi Tin Nhắn
+                                </button>
+                            </div>
+                        </div>
+                        <div id="formMessage" class="mt-3"></div>
+                    </form>
                 </div>
             </div>
-            <div class="mb-3">
-                <label for="inputsubject">Tiêu đề</label>
-                <input type="text" class="form-control mt-1" id="subject" name="subject" placeholder="Nhập tiêu đề">
-            </div>
-            <div class="mb-3">
-                <label for="inputmessage">Tin nhắn</label>
-                <textarea class="form-control mt-1" id="message" name="message" placeholder="Tin nhắn"
-                          rows="8"></textarea>
-            </div>
-            <div class="row">
-                <div class="col text-end mt-2">
-                    <button type="button" th:href="@{/contact}" class="btn btn-success btn-lg px-3">Gửi tin nhắn</button>
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-<!-- End Contact -->
 
+<!-- Bản đồ -->
+<div class="container-fluid px-0 mt-4">
+    <div id="mapid" style="width: 100%; height: 400px;"></div>
+</div>
 
-<!-- Start Footer -->
+<!-- FAQ nhỏ -->
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Câu Hỏi Thường Gặp</h2>
+        <p class="text-muted">Những thắc mắc phổ biến của khách hàng</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="bg-light p-4 rounded-4 h-100">
+                <h5 class="fw-bold text-success"><i class="fas fa-truck me-2"></i> Giao hàng mất bao lâu?</h5>
+                <p class="text-muted mt-2 mb-0">Thông thường từ 2-5 ngày tùy khu vực. Nội thành Hà Nội/TP.HCM có thể nhận sau 1-2 ngày.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="bg-light p-4 rounded-4 h-100">
+                <h5 class="fw-bold text-success"><i class="fas fa-exchange-alt me-2"></i> Chính sách đổi trả thế nào?</h5>
+                <p class="text-muted mt-2 mb-0">Đổi trả miễn phí trong vòng 7 ngày nếu sản phẩm có lỗi từ nhà sản xuất.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="bg-light p-4 rounded-4 h-100">
+                <h5 class="fw-bold text-success"><i class="fas fa-shield-alt me-2"></i> Hàng có đảm bảo an toàn cho trẻ không?</h5>
+                <p class="text-muted mt-2 mb-0">100% sản phẩm từ chất liệu cotton, vải an toàn, không gây kích ứng da trẻ.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="bg-light p-4 rounded-4 h-100">
+                <h5 class="fw-bold text-success"><i class="fas fa-credit-card me-2"></i> Các hình thức thanh toán?</h5>
+                <p class="text-muted mt-2 mb-0">Thanh toán khi nhận hàng (COD), chuyển khoản ngân hàng, ví Momo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer giữ nguyên -->
 <footer class="bg-dark" id="tempaltemo_footer">
     <div class="container">
         <div class="row">
-
             <div class="col-md-4 pt-5">
-                <h2 class="h2 text-success border-bottom pb-3 border-light logo">Shoes Shop</h2>
+                <h2 class="h2 text-success border-bottom pb-3 border-light logo">FASHION Shop</h2>
                 <ul class="list-unstyled text-light footer-link-list">
-                    <li>
-                        <i class="fas fa-map-marker-alt fa-fw"></i>
-                        123 Consectetur at ligula 10660
-                    </li>
-                    <li>
-                        <i class="fa fa-phone fa-fw"></i>
-                        <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
-                    </li>
-                    <li>
-                        <i class="fa fa-envelope fa-fw"></i>
-                        <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a>
-                    </li>
+                    <li><i class="fas fa-map-marker-alt fa-fw"></i> 123 Consectetur at ligula 10660</li>
+                    <li><i class="fa fa-phone fa-fw"></i> <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a></li>
+                    <li><i class="fa fa-envelope fa-fw"></i> <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a></li>
                 </ul>
             </div>
-
             <div class="col-md-4 pt-5">
-                <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
+                <h2 class="h2 text-light border-bottom pb-3 border-light">Danh Mục Sản Phẩm</h2>
                 <ul class="list-unstyled text-light footer-link-list">
-                    <li><a class="text-decoration-none" href="#">Luxury</a></li>
-                    <li><a class="text-decoration-none" href="#">Sport Wear</a></li>
-                    <li><a class="text-decoration-none" href="#">Men's Shoes</a></li>
-                    <li><a class="text-decoration-none" href="#">Women's Shoes</a></li>
-                    <li><a class="text-decoration-none" href="#">Popular Dress</a></li>
-                    <li><a class="text-decoration-none" href="#">Gym Accessories</a></li>
-                    <li><a class="text-decoration-none" href="#">Sport Shoes</a></li>
+                    <li><a class="text-decoration-none" href="#">Quần Áo Bé Trai</a></li>
+                    <li><a class="text-decoration-none" href="#">Quần Áo Bé Gái</a></li>
+                    <li><a class="text-decoration-none" href="#">Đồ Sơ Sinh</a></li>
+                    <li><a class="text-decoration-none" href="#">Đồ Ngủ Cho Bé</a></li>
+                    <li><a class="text-decoration-none" href="#">Phụ Kiện Trẻ Em</a></li>
                 </ul>
             </div>
-
             <div class="col-md-4 pt-5">
-                <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
+                <h2 class="h2 text-light border-bottom pb-3 border-light">Thông Tin Hỗ Trợ</h2>
                 <ul class="list-unstyled text-light footer-link-list">
-                    <li><a class="text-decoration-none" href="#">Home</a></li>
-                    <li><a class="text-decoration-none" href="#">About Us</a></li>
-                    <li><a class="text-decoration-none" href="#">Shop Locations</a></li>
-                    <li><a class="text-decoration-none" href="#">FAQs</a></li>
-                    <li><a class="text-decoration-none" href="#">Contact</a></li>
+                    <li><a class="text-decoration-none" href="#">Trang Chủ</a></li>
+                    <li><a class="text-decoration-none" href="#">Về Chúng Tôi</a></li>
+                    <li><a class="text-decoration-none" href="#">Hệ Thống Cửa Hàng</a></li>
+                    <li><a class="text-decoration-none" href="#">Câu Hỏi Thường Gặp</a></li>
+                    <li><a class="text-decoration-none" href="#">Liên Hệ</a></li>
                 </ul>
             </div>
-
         </div>
-
         <div class="row text-light mb-4">
             <div class="col-12 mb-3">
                 <div class="w-100 my-3 border-top border-light"></div>
@@ -307,77 +373,72 @@
             <div class="col-auto me-auto">
                 <ul class="list-inline text-left footer-icons">
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="http://facebook.com/"><i
-                                class="fab fa-facebook-f fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="http://facebook.com/"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/"><i
-                                class="fab fa-instagram fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i
-                                class="fab fa-twitter fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.linkedin.com/"><i
-                                class="fab fa-linkedin fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://www.linkedin.com/"><i class="fab fa-linkedin fa-lg fa-fw"></i></a>
                     </li>
                 </ul>
             </div>
             <div class="col-auto">
                 <label class="sr-only" for="subscribeEmail">Email address</label>
                 <div class="input-group mb-2">
-                    <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
-                           placeholder="Email address">
+                    <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email address">
                     <div class="input-group-text btn-success text-light">Subscribe</div>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="w-100 bg-black py-3">
         <div class="container">
             <div class="row pt-2">
                 <div class="col-12">
                     <p class="text-left text-light">
-                        Copyright &copy; 2021 Company Name
-                        | Designed by <a rel="sponsored" href="https://templatemo.com" target="_blank">TemplateMo</a>
+                        Copyright &copy; 2021 Company Name | Designed by <a rel="sponsored" href="https://templatemo.com" target="_blank">TemplateMo</a>
                     </p>
                 </div>
             </div>
         </div>
     </div>
-
 </footer>
-<!-- End Footer -->
 
-<!-- Start Script -->
 <script src="../js/jquery-1.11.0.min.js"></script>
 <script src="../js/jquery-migrate-1.2.1.min.js"></script>
 <script src="../js/bootstrap.bundle.min.js"></script>
 <script src="../js/templatemo.js"></script>
 <script src="../js/custom.js"></script>
-<!-- End Script -->
-</body>
-<script>
-    document.getElementById("changePasswordForm").addEventListener("submit", function (e) {
-        e.preventDefault();
 
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+<script>
+    // Leaflet Map
+    var mymap = L.map('mapid').setView([21.0285, 105.8542], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mymap);
+    L.marker([21.0285, 105.8542]).addTo(mymap)
+        .bindPopup('<b>FASHION Shop</b><br>123 Đường Láng, Hà Nội')
+        .openPopup();
+
+    // Form submit
+    document.getElementById("changePasswordForm")?.addEventListener("submit", function(e) {
+        e.preventDefault();
         const oldPassword = document.getElementById("oldPassword").value;
         const newPassword = document.getElementById("newPassword").value;
         const confirmPassword = document.getElementById("confirmPassword").value;
         const messageEl = document.getElementById("changePasswordMessage");
-
         fetch('/api/change-password', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                oldPassword: oldPassword,
-                newPassword: newPassword,
-                confirmPassword: confirmPassword
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldPassword, newPassword, confirmPassword })
         })
             .then(res => res.json())
             .then(data => {
@@ -385,17 +446,23 @@
                     messageEl.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
                     setTimeout(() => {
                         document.getElementById("changePasswordForm").reset();
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
-                        modal.hide();
+                        bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
                     }, 500);
                 } else {
                     messageEl.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
                 }
             })
-            .catch(err => {
-                console.error(err);
-                messageEl.innerHTML = `<div class="alert alert-danger">Có lỗi xảy ra, vui lòng thử lại.</div>`;
-            });
+            .catch(() => messageEl.innerHTML = `<div class="alert alert-danger">Có lỗi xảy ra, vui lòng thử lại.</div>`);
+    });
+
+    document.getElementById("contactForm")?.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const msgDiv = document.getElementById("formMessage");
+        msgDiv.innerHTML = `<div class="alert alert-success">✓ Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất.</div>`;
+        this.reset();
+        setTimeout(() => msgDiv.innerHTML = "", 3000);
     });
 </script>
+
+</body>
 </html>

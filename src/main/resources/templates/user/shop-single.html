@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Shoes Store</title>
+    <title>Fashion Shop</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -89,8 +89,8 @@
 <nav class="navbar navbar-expand-lg navbar-light shadow">
     <div class="container d-flex justify-content-between align-items-center">
 
-        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/home}">
-            Shoes
+        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/}">
+            Fashion
         </a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
@@ -104,7 +104,7 @@
             <div class="flex-fill">
                 <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/home}">Trang chủ </a>
+                        <a class="nav-link" th:href="@{/}">Trang chủ </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/about}">Về chúng tôi</a>
@@ -192,7 +192,7 @@
                 </div>
 
                 <div th:unless="${user != null}">
-                    <a href="/login">Đăng nhập</a>|
+                    <a href="/login">Đăng nhập </a>|
                     <a href="/register">Đăng ký</a>
 
                 </div>
@@ -260,108 +260,107 @@
             <div class="col-lg-7 mt-5">
                 <div class="card">
                     <div class="card-body">
-                        <h1 class="h2" th:text="${product.name}"></h1>
-                        <p class="h3 py-2" th:text="${product.price} + ' VND'"></p>
+                        <!-- Tên sản phẩm -->
+                        <h1 class="h2 fw-bold" th:text="${product.name}">Áo Thun Bé Trai</h1>
+
+                        <!-- Giá sản phẩm -->
+                        <p class="h3 py-2 text-danger fw-bold" th:text="${product.price} + ' VND'">199.000 VND</p>
+
+                        <!-- Đánh giá sao (đã comment sẵn, có thể bỏ comment sau) -->
+                        <!--
                         <p class="py-2">
                             <span th:each="i : ${#numbers.sequence(1,5)}">
-                                <i th:class="(
-                                     ${averageRating == null || averageRating >= i} ? 'fa-solid fa-star text-warning' :
-                                      (${averageRating >= i - 0.5} ? 'fa-solid fa-star-half-stroke text-warning' : 'fa-regular fa-star')
-                                    )">
+                                <i th:class="(${averageRating == null || averageRating >= i} ? 'fa-solid fa-star text-warning' :
+                                              (${averageRating >= i - 0.5} ? 'fa-solid fa-star-half-stroke text-warning' : 'fa-regular fa-star'))">
                                 </i>
                             </span>
-                            <span class="list-inline-item text-dark"
-                                  th:text="'Rating ' + (${averageRating != null} ? ${averageRating} : 5.0)">
-</span>
+                            <span class="list-inline-item text-dark" th:text="'Đánh giá ' + (${averageRating != null} ? ${averageRating} : 5.0) + '/5'"></span>
                         </p>
+                        -->
 
-
-                        <ul class="list-inline">
+                        <!-- Thương hiệu / Danh mục -->
+                        <ul class="list-inline mb-3">
+                            <li class="list-inline-item fw-bold">Danh mục:</li>
                             <li class="list-inline-item">
-                                <h6>Brand:</h6>
-                            </li>
-                            <li class="list-inline-item">
-                                <p class="text-muted"><strong th:text="${category.name}"></strong></p>
-                            </li>
-                        </ul>
-
-                        <h6>Mô tả:</h6>
-                        <p th:text=" ${product.description}"></p>
-
-                        <ul class="list-inline">
-                            <li class="list-inline-item">
-                                <h6>Số lượng còn :</h6>
-                            </li>
-                            <li class="list-inline-item">
-                                <p class="text"><strong id="stockQuantity"
-                                                              th:text="${product.stockQuantity}"></strong></p>
+                                <span class="badge bg-secondary fs-6" th:text="${category.name}">Thời trang bé trai</span>
                             </li>
                         </ul>
 
-                        <h6>Đặc trưng:</h6>
-                        <ul class="list-unstyled pb-3">
-                            <p th:text=" ${product.features}"></p>
+                        <!-- Mô tả sản phẩm -->
+                        <h6 class="fw-bold mt-3">Mô tả:</h6>
+                        <p class="text-muted" th:text="${product.description}">Chất liệu cotton mềm mại, thấm hút mồ hôi tốt.</p>
 
+                        <!-- Số lượng còn -->
+                        <ul class="list-inline mt-3">
+                            <li class="list-inline-item fw-bold">Số lượng còn:</li>
+                            <li class="list-inline-item">
+                                <span class="badge bg-success fs-6" id="stockQuantity" th:text="${product.stockQuantity}">50</span>
+                            </li>
                         </ul>
 
-                        <form action="" method="GET">
-                            <input type="hidden" name="product-title" value="Activewear">
-                            <div class="row">
-                                <div class="col-auto">
-                                    <ul class="list-inline pb-3">
-                                        <li class="list-inline-item">Size :
-                                        </li>
-                                        <li class="list-inline-item">
-    <span class="btn btn-outline-primary btn-size rounded-pill" data-size="0-2">
-        <i class="fas fa-baby-carriage me-1"></i> 0-2 tuổi
-    </span>
-                                        </li>
-                                        <li class="list-inline-item">
-    <span class="btn btn-outline-primary btn-size rounded-pill" data-size="3-5">
-        <i class="fas fa-child me-1"></i> 3-5 tuổi
-    </span>
-                                        </li>
-                                        <li class="list-inline-item">
-    <span class="btn btn-outline-primary btn-size rounded-pill" data-size="6-10">
-        <i class="fas fa-user-graduate me-1"></i> 6-10 tuổi
-    </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <!-- Chọn Số lượng -->
-                                <div class="col-auto">
-                                    <ul class="list-inline pb-3">
-                                        <li class="list-inline-item text-right">
-                                            Số lượng
-                                            <input type="hidden" name="product-quanity" id="quantity" value="1">
-                                            <input type="hidden" name="product-productId" id="productId"
-                                                   th:value="${product.id}">
-                                        </li>
-                                        <li class="list-inline-item"><span class="btn btn-success" id="minus">-</span>
-                                        </li>
-                                        <li class="list-inline-item"><span class="badge bg-secondary"
-                                                                           id="var-value">1</span></li>
-                                        <li class="list-inline-item"><span class="btn btn-success" id="plus">+</span>
-                                        </li>
-                                    </ul>
-                                    <div id="stock-limit-message" class="text-danger" style="display:none;">
-                                        Đã đạt giới hạn số lượng còn.
+                        <!-- Đặc trưng sản phẩm -->
+                        <h6 class="fw-bold mt-3">Đặc trưng:</h6>
+                        <div class="alert alert-light border rounded-3 p-3" th:text="${product.features}">
+                            ✔️ Co giãn 4 chiều<br>
+                            ✔️ An toàn cho da nhạy cảm<br>
+                            ✔️ Giặt máy không phai màu
+                        </div>
+
+                        <!-- Form chọn size + số lượng -->
+                        <form action="" method="GET" class="mt-4">
+                            <input type="hidden" name="product-title" th:value="${product.name}">
+
+                            <!-- Chọn size theo độ tuổi -->
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="fw-bold mb-2">Chọn size theo tuổi:</label>
+                                    <div class="d-flex flex-wrap gap-2">
+                    <span class="btn btn-outline-primary btn-size rounded-pill" data-size="0-2">
+                        <i class="fas fa-baby-carriage me-1"></i> 0-2 tuổi
+                    </span>
+                                        <span class="btn btn-outline-primary btn-size rounded-pill" data-size="3-5">
+                        <i class="fas fa-child me-1"></i> 3-5 tuổi
+                    </span>
+                                        <span class="btn btn-outline-primary btn-size rounded-pill" data-size="6-10">
+                        <i class="fas fa-user-graduate me-1"></i> 6-10 tuổi
+                    </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row pb-3">
 
+                            <!-- Chọn số lượng -->
+                            <div class="row mb-3 align-items-center">
                                 <div class="col-auto">
-                                    <button type="button" class="btn btn-success btn-lg" id="addToCartButton">Thêm vào
-                                        giỏ hàng
+                                    <label class="fw-bold">Số lượng:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle" id="minus">−</button>
+                                        <span class="badge bg-dark fs-5 px-3 py-2" id="var-value">1</span>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle" id="plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <div id="stock-limit-message" class="text-danger small" style="display:none;">
+                                        ⚠️ Đã đạt giới hạn số lượng còn trong kho.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hidden fields -->
+                            <input type="hidden" name="product-quanity" id="quantity" value="1">
+                            <input type="hidden" name="product-productId" id="productId" th:value="${product.id}">
+
+                            <!-- Nút thêm giỏ hàng -->
+                            <div class="row mt-3">
+                                <div class="col-auto">
+                                    <button type="button" id="addToCartButton" class="btn btn-success btn-lg px-5 py-2 rounded-pill shadow-sm">
+                                        <i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ hàng
                                     </button>
                                 </div>
-
                             </div>
                         </form>
-
-                    </div>
-                </div>
+                    </div>                </div>
             </div>
         </div>
     </div>
@@ -416,7 +415,7 @@
         <div class="row">
 
             <div class="col-md-4 pt-5">
-                <h2 class="h2 text-success border-bottom pb-3 border-light logo">Shoes Shop</h2>
+                <h2 class="h2 text-success border-bottom pb-3 border-light logo">FASHION Shop</h2>
                 <ul class="list-unstyled text-light footer-link-list">
                     <li>
                         <i class="fas fa-map-marker-alt fa-fw"></i>
@@ -434,26 +433,24 @@
             </div>
 
             <div class="col-md-4 pt-5">
-                <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
+                <h2 class="h2 text-light border-bottom pb-3 border-light">Danh Mục Sản Phẩm</h2>
                 <ul class="list-unstyled text-light footer-link-list">
-                    <li><a class="text-decoration-none" href="#">Luxury</a></li>
-                    <li><a class="text-decoration-none" href="#">Sport Wear</a></li>
-                    <li><a class="text-decoration-none" href="#">Men's Shoes</a></li>
-                    <li><a class="text-decoration-none" href="#">Women's Shoes</a></li>
-                    <li><a class="text-decoration-none" href="#">Popular Dress</a></li>
-                    <li><a class="text-decoration-none" href="#">Gym Accessories</a></li>
-                    <li><a class="text-decoration-none" href="#">Sport Shoes</a></li>
+                    <li><a class="text-decoration-none" href="#">Quần Áo Bé Trai</a></li>
+                    <li><a class="text-decoration-none" href="#">Quần Áo Bé Gái</a></li>
+                    <li><a class="text-decoration-none" href="#">Đồ Sơ Sinh</a></li>
+                    <li><a class="text-decoration-none" href="#">Đồ Ngủ Cho Bé</a></li>
+                    <li><a class="text-decoration-none" href="#">Phụ Kiện Trẻ Em</a></li>
                 </ul>
             </div>
 
             <div class="col-md-4 pt-5">
-                <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
+                <h2 class="h2 text-light border-bottom pb-3 border-light">Thông Tin Hỗ Trợ</h2>
                 <ul class="list-unstyled text-light footer-link-list">
-                    <li><a class="text-decoration-none" href="#">Home</a></li>
-                    <li><a class="text-decoration-none" href="#">About Us</a></li>
-                    <li><a class="text-decoration-none" href="#">Shop Locations</a></li>
-                    <li><a class="text-decoration-none" href="#">FAQs</a></li>
-                    <li><a class="text-decoration-none" href="#">Contact</a></li>
+                    <li><a class="text-decoration-none" href="#">Trang Chủ</a></li>
+                    <li><a class="text-decoration-none" href="#">Về Chúng Tôi</a></li>
+                    <li><a class="text-decoration-none" href="#">Hệ Thống Cửa Hàng</a></li>
+                    <li><a class="text-decoration-none" href="#">Câu Hỏi Thường Gặp</a></li>
+                    <li><a class="text-decoration-none" href="#">Liên Hệ</a></li>
                 </ul>
             </div>
 
@@ -466,28 +463,23 @@
             <div class="col-auto me-auto">
                 <ul class="list-inline text-left footer-icons">
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="http://facebook.com/"><i
-                                class="fab fa-facebook-f fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="http://facebook.com/"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/"><i
-                                class="fab fa-instagram fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i
-                                class="fab fa-twitter fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
                     </li>
                     <li class="list-inline-item border border-light rounded-circle text-center">
-                        <a class="text-light text-decoration-none" target="_blank" href="https://www.linkedin.com/"><i
-                                class="fab fa-linkedin fa-lg fa-fw"></i></a>
+                        <a class="text-light text-decoration-none" target="_blank" href="https://www.linkedin.com/"><i class="fab fa-linkedin fa-lg fa-fw"></i></a>
                     </li>
                 </ul>
             </div>
             <div class="col-auto">
                 <label class="sr-only" for="subscribeEmail">Email address</label>
                 <div class="input-group mb-2">
-                    <input type="text" class="form-control bg-dark border-light" id="subscribeEmail"
-                           placeholder="Email address">
+                    <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email address">
                     <div class="input-group-text btn-success text-light">Subscribe</div>
                 </div>
             </div>
