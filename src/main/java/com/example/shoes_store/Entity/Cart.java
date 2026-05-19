@@ -26,6 +26,9 @@ public class Cart {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "payment_transaction_id")
+    private PaymentTransaction paymentTransaction;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<CartItem> items = new ArrayList<>();

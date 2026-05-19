@@ -501,6 +501,7 @@
 </section>
 
 <!-- Shipping Info Modal -->
+<!-- Shipping Info Modal -->
 <div class="modal fade" id="shippingInfoModal" tabindex="-1" aria-labelledby="shippingInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4">
@@ -534,9 +535,10 @@
                         <label class="form-label fw-bold">Phương thức thanh toán</label>
                         <select class="form-select" id="typePay">
                             <option value="COD">Thanh toán khi nhận hàng (COD)</option>
-                            <option value="BANKING">Chuyển khoản ngân hàng</option>
+                            <option value="VNPAY">Chuyển khoản qua VNPay</option>
                         </select>
                     </div>
+                    <input type="hidden" id="totalAmount" th:value="${totalAmount}">
                     <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
                         <i class="fas fa-check-circle me-2"></i> Xác nhận đặt hàng
                     </button>
@@ -545,7 +547,6 @@
         </div>
     </div>
 </div>
-
 <!-- Change Password Modal -->
 <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -794,29 +795,87 @@
 
     document.getElementById("shipping-form")?.addEventListener("submit", function(e) {
         e.preventDefault();
-        fetch('/order/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                fullName: document.getElementById("fullName").value,
-                address: document.getElementById("address").value,
-                phone: document.getElementById("phone").value,
-                paymentMethod: document.getElementById("typePay").value
+        const paymentMethod = document.getElementById("typePay").value;
+        const fullName = document.getElementById("fullName").value;
+        const address = document.getElementById("address").value;
+        const phone = document.getElementById("phone").value;
+        const totalAmount = document.getElementById("totalAmount")?.value || 0;
+
+        // Validate thông tin
+        if (!fullName || !address || !phone) {
+            alert("Vui lòng nhập đầy đủ thông tin giao hàng!");
+            return;
+        }
+        // Nếu thanh toán bằng VNPay
+        if (paymentMethod === "VNPAY") {
+            // Tạo đơn hàng trước để có orderId
+            fetch('/order/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fullName: fullName,
+                    address: address,
+                    phone: phone,
+                    paymentMethod: "VNPAY"
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Đặt hàng thành công!");
-                    window.location.href = "/order";
-                } else {
-                    alert(data.message || "Đặt hàng thất bại!");
-                }
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Sau khi tạo đơn hàng thành công, gọi API thanh toán VNPay
+                        return fetch('/api/vnpay/create-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                orderId: data.orderId,
+                                amount: totalAmount,
+                                orderInfo: "Thanh toan don hang #" + data.orderId
+                            })
+                        });
+                    } else {
+                        throw new Error(data.message || "Tạo đơn hàng thất bại");
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.paymentUrl) {
+                        // Chuyển hướng sang trang thanh toán VNPay
+                        window.location.href = data.paymentUrl;
+                    } else {
+                        alert("Không thể tạo link thanh toán VNPay");
+                    }
+                })
+                .catch(error => {
+                    console.error("Lỗi:", error);
+                    alert(error.message || "Có lỗi xảy ra khi xử lý thanh toán!");
+                });
+        }
+        // Nếu thanh toán COD
+        else {
+            fetch('/order/create', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    fullName: document.getElementById("fullName").value,
+                    address: document.getElementById("address").value,
+                    phone: document.getElementById("phone").value,
+                    paymentMethod: document.getElementById("typePay").value
+                })
             })
-            .catch(error => {
-                console.error("Lỗi:", error);
-                alert("Có lỗi xảy ra!");
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Đặt hàng thành công!");
+                        window.location.href = "/order";
+                    } else {
+                        alert(data.message || "Đặt hàng thất bại!");
+                    }
+                })
+                .catch(error => {
+                    console.error("Lỗi:", error);
+                    alert("Có lỗi xảy ra!");
+                });
+        }
     });
 
     document.getElementById("changePasswordForm")?.addEventListener("submit", function(e) {

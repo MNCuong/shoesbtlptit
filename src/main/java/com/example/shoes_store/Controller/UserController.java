@@ -69,7 +69,10 @@ public class UserController {
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("user", user);
     }
-
+    @GetMapping("/chat")
+    public String chatPage() {
+        return "Chatbot";
+    }
     @GetMapping("")
     public String homePage() {
         return "/user/index";
