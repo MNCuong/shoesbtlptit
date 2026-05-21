@@ -775,6 +775,124 @@
                 max-height: 200px;
             }
         }
+        /* Top Products Container - Giới hạn chiều cao + scroll */
+        .top-products-container {
+            max-height: 480px;  /* Giới hạn chiều cao tối đa */
+            overflow-y: auto;   /* Thêm thanh cuộn dọc */
+            overflow-x: hidden;
+        }
+
+        /* Tùy chỉnh thanh cuộn đẹp hơn */
+        .top-products-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .top-products-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .top-products-container::-webkit-scrollbar-thumb {
+            background: #4e73df;
+            border-radius: 10px;
+        }
+
+        .top-products-container::-webkit-scrollbar-thumb:hover {
+            background: #224abe;
+        }
+
+        /* Mỗi item sản phẩm */
+        .top-product-item {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .top-product-item:last-child {
+            border-bottom: none;
+        }
+
+        .top-product-item:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+            transform: translateX(3px);
+        }
+
+        /* Cố định kích thước ảnh */
+        .top-product-img {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        /* Responsive cho mobile */
+        @media (max-width: 768px) {
+            .top-products-container {
+                max-height: 360px;
+            }
+        }
+        /* Top Products Styles */
+        .top-product-item {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .top-product-item:hover {
+            background-color: rgba(78, 115, 223, 0.05);
+            transform: translateX(3px);
+        }
+
+        .top-product-rank {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA000); color: white; }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #808080); color: white; }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); color: white; }
+        .rank-other { background: #e9ecef; color: #6c757d; }
+
+        .top-product-img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .top-product-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .top-product-sold {
+            font-size: 0.75rem;
+            color: #e74a3b;
+            font-weight: 600;
+        }
+
+        .top-product-revenue {
+            font-size: 0.75rem;
+            color: #1cc88a;
+            font-weight: 500;
+        }
+
+        .progress {
+            height: 4px;
+            border-radius: 2px;
+        }
     </style>
 </head>
 
@@ -960,20 +1078,63 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-8">
-                <div class="card shadow-sm">
-                    <div class="card-header">Biểu đồ doanh thu</div>
+            <div class="col-lg-7 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header">
+                        <i class="bi bi-graph-up me-2"></i> Biểu đồ doanh thu 12 tháng
+                    </div>
                     <div class="card-body">
-                        <canvas id="mainRevenueChart" height="300"></canvas>
+                        <canvas id="mainRevenueChart" height="280"></canvas>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <!-- Cột bên phải: Top sản phẩm bán chạy -->
+            <div class="col-lg-5 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-trophy-fill text-warning me-2"></i>
+                            <span>🏆 TOP SẢN PHẨM BÁN CHẠY THÁNG NÀY</span>
+                        </div>
+                        <div>
+<!--                            <span class="badge bg-primary rounded-pill me-2" id="topProductCount">0</span>-->
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="topProductMonthDropdown" data-bs-toggle="dropdown">
+                                    <span id="selectedMonthYear">Tháng hiện tại</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" id="monthSelectDropdown" style="max-height: 300px; overflow-y: auto;">
+                                    <!-- Sẽ được populate bằng JS -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 👇 THÊM CONTAINER CÓ SCROLL VÀO ĐÂY 👇 -->
+                    <div class="card-body p-0">
+                        <div id="topProductsList" class="top-products-container list-group list-group-flush">
+                            <div class="list-group-item text-center text-muted py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2">Đang tải dữ liệu...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> Dựa trên số lượng đã bán (Không bao gồm đơn hủy)
+                        </small>
+                    </div>
+                </div>
+            </div>        </div>
+
+        <!-- Đơn hàng mới nhất (giữ nguyên) -->
+        <div class="row">
+            <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header">Đơn hàng mới nhất</div>
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush" id="recent-orders-list">
-                            <!-- JS will populate -->
+                            <!-- JS sẽ populate -->
                         </div>
                     </div>
                 </div>
@@ -5978,6 +6139,251 @@
             // Tải lại dữ liệu nhập xuất
             loadInventoryStatistics();
         }
+    }
+    // ==================== TOP SELLING PRODUCTS ====================
+
+    let currentTopProducts = [];
+
+    // Hàm load top sản phẩm bán chạy
+    async function loadTopSellingProducts(month, year) {
+        const container = document.getElementById('topProductsList');
+        if (!container) return;
+
+        // Hiển thị loading
+        container.innerHTML = `
+        <div class="list-group-item text-center text-muted py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Đang tải dữ liệu...</p>
+        </div>
+    `;
+
+        try {
+            let url = '/admin/api/dashboard/top-products?limit=10';
+            if (month && year) {
+                url += `&month=${month}&year=${year}`;
+            } else {
+                const now = new Date();
+                url += `&month=${now.getMonth() + 1}&year=${now.getFullYear()}`;
+            }
+
+            const response = await fetch(url);
+            if (response.ok) {
+                const products = await response.json();
+                currentTopProducts = products;
+                renderTopProducts(products);
+            } else {
+                throw new Error('Không thể tải dữ liệu');
+            }
+        } catch (error) {
+            console.error('Lỗi tải top sản phẩm:', error);
+            container.innerHTML = `
+            <div class="list-group-item text-center text-danger py-5">
+                <i class="bi bi-exclamation-triangle fs-2"></i>
+                <p class="mt-2">Có lỗi xảy ra khi tải dữ liệu</p>
+                <button class="btn btn-sm btn-outline-danger mt-2" onclick="loadTopSellingProducts()">
+                    <i class="bi bi-arrow-repeat"></i> Thử lại
+                </button>
+            </div>
+        `;
+        }
+    }
+
+    // Render danh sách top sản phẩm
+    // Render danh sách top sản phẩm
+    function renderTopProducts(products) {
+        const container = document.getElementById('topProductsList');
+        if (!container) return;
+
+        // Cập nhật số lượng hiển thị
+        const countSpan = document.getElementById('topProductCount');
+        if (countSpan) {
+            countSpan.innerHTML = products.length;
+        }
+
+        if (!products || products.length === 0) {
+            container.innerHTML = `
+            <div class="list-group-item text-center text-muted py-5">
+                <i class="bi bi-box-seam fs-2"></i>
+                <p class="mt-2">Chưa có dữ liệu bán hàng trong tháng này</p>
+            </div>
+        `;
+            return;
+        }
+
+        // Tìm số lượng tối đa để tính % progress
+        const maxQuantity = Math.max(...products.map(p => p.totalQuantity));
+
+        container.innerHTML = products.map((product, index) => {
+            const rank = index + 1;
+            let rankClass = 'rank-other';
+            let rankIcon = '';
+
+            if (rank === 1) {
+                rankClass = 'rank-1';
+                rankIcon = '🥇';
+            } else if (rank === 2) {
+                rankClass = 'rank-2';
+                rankIcon = '🥈';
+            } else if (rank === 3) {
+                rankClass = 'rank-3';
+                rankIcon = '🥉';
+            } else {
+                rankIcon = rank;
+            }
+
+            const percentWidth = maxQuantity > 0 ? (product.totalQuantity / maxQuantity) * 100 : 0;
+
+            return `
+            <div class="list-group-item list-group-item-action top-product-item p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="top-product-rank ${rankClass} text-center">
+                        ${typeof rankIcon === 'number' ? rankIcon : rankIcon}
+                    </div>
+                    <img class="top-product-img"
+                         src="${product.imageUrl || '/images/default-product.png'}"
+                         alt="${escapeHtml(product.productName)}"
+                         onerror="this.src='/images/default-product.png'">
+                    <div class="flex-grow-1 min-width-0">
+                        <div class="top-product-name" title="${escapeHtml(product.productName)}">
+                            ${escapeHtml(product.productName)}
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-1 flex-wrap gap-2">
+                            <div class="top-product-sold">
+                                <i class="bi bi-cart-check"></i> Đã bán: ${product.totalQuantity}
+                            </div>
+                            <div class="top-product-revenue">
+                                <i class="bi bi-currency-dollar"></i> ${formatCurrency(product.totalRevenue)}
+                            </div>
+                        </div>
+                        <div class="progress mt-2" style="height: 4px;">
+                            <div class="progress-bar bg-success"
+                                 role="progressbar"
+                                 style="width: ${percentWidth}%"
+                                 aria-valuenow="${product.totalQuantity}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="${maxQuantity}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        }).join('');
+    }
+    // Khởi tạo dropdown chọn tháng cho top products
+    function initTopProductMonthSelector() {
+        const dropdown = document.getElementById('monthSelectDropdown');
+        if (!dropdown) return;
+
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1;
+
+        dropdown.innerHTML = '';
+
+        // Tạo các tháng trong năm hiện tại và năm trước
+        const years = [currentYear, currentYear - 1];
+
+        for (const year of years) {
+            const yearHeader = document.createElement('li');
+            yearHeader.innerHTML = `<h6 class="dropdown-header text-primary">Năm ${year}</h6>`;
+            dropdown.appendChild(yearHeader);
+
+            for (let month = 12; month >= 1; month--) {
+                // Chỉ hiển thị tháng <= tháng hiện tại nếu là năm hiện tại
+                if (year === currentYear && month > currentMonth) continue;
+
+                const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                    'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.className = 'dropdown-item';
+                link.href = '#';
+                link.innerHTML = `${monthNames[month-1]} / ${year}`;
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    const selectedSpan = document.getElementById('selectedMonthYear');
+                    if (selectedSpan) {
+                        selectedSpan.innerHTML = `${monthNames[month-1]} ${year}`;
+                    }
+                    loadTopSellingProducts(month, year);
+                };
+                listItem.appendChild(link);
+                dropdown.appendChild(listItem);
+            }
+
+            if (year === currentYear) {
+                // Thêm separator
+                const divider = document.createElement('li');
+                divider.innerHTML = '<hr class="dropdown-divider">';
+                dropdown.appendChild(divider);
+            }
+        }
+    }
+
+    // Cập nhật hàm loadDashboardData để gọi thêm top products
+    async function loadDashboardData() {
+        if (dashboardLoaded || isDashboardLoading) {
+            console.log('Dashboard đã được load, bỏ qua...');
+            return;
+        }
+
+        isDashboardLoading = true;
+        console.log('Bắt đầu load dashboard...');
+
+        try {
+            // 1. Tải thống kê tổng quan
+            const statsRes = await fetch('/admin/api/dashboard/stats');
+            if (statsRes.ok) {
+                const stats = await statsRes.json();
+                document.getElementById('dash-revenue').innerHTML = formatCurrency(stats.monthlyRevenue || 0);
+                document.getElementById('dash-orders').innerHTML = stats.totalOrders || 0;
+                document.getElementById('dash-account').innerHTML = stats.newAccountsThisMonth || 0;
+                document.getElementById('dash-stores').innerHTML = stats.totalStores || 0;
+            } else {
+                console.error('Lỗi tải thống kê:', statsRes.status);
+                setDefaultDashboardValues();
+            }
+
+            // 2. Tải biểu đồ doanh thu 12 tháng
+            await loadRevenueChart();
+
+            // 3. Tải danh sách đơn hàng gần đây
+            await loadRecentOrders();
+
+            // 4. Tải top sản phẩm bán chạy
+            await loadTopSellingProducts();
+
+            // 5. Khởi tạo dropdown chọn tháng
+            initTopProductMonthSelector();
+
+            dashboardLoaded = true;
+            console.log('Dashboard load hoàn tất');
+
+        } catch (error) {
+            console.error('Lỗi tải dashboard:', error);
+            setDefaultDashboardValues();
+            loadMockChartData();
+            loadMockRecentOrders();
+            loadMockTopProducts();
+        } finally {
+            isDashboardLoading = false;
+        }
+    }
+
+    // Dữ liệu mock cho top products (khi API chưa có)
+    function loadMockTopProducts() {
+        const mockProducts = [
+            { productId: 1, productName: "Áo thun Baby Cotton", imageUrl: null, totalQuantity: 245, totalRevenue: 36750000 },
+            { productId: 2, productName: "Quần jeans bé gái", imageUrl: null, totalQuantity: 189, totalRevenue: 47250000 },
+            { productId: 3, productName: "Đầm công chúa", imageUrl: null, totalQuantity: 156, totalRevenue: 54600000 },
+            { productId: 4, productName: "Áo khoác gió", imageUrl: null, totalQuantity: 134, totalRevenue: 40200000 },
+            { productId: 5, productName: "Bộ thể thao trẻ em", imageUrl: null, totalQuantity: 112, totalRevenue: 39200000 },
+            { productId: 6, productName: "Quần short Unisex", imageUrl: null, totalQuantity: 98, totalRevenue: 14700000 },
+            { productId: 7, productName: "Váy hoa mùa hè", imageUrl: null, totalQuantity: 87, totalRevenue: 26100000 },
+            { productId: 8, productName: "Áo sơ mi nam", imageUrl: null, totalQuantity: 76, totalRevenue: 22800000 }
+        ];
+        renderTopProducts(mockProducts);
     }
 </script>
 </body>
