@@ -2,6 +2,7 @@ package com.example.shoes_store.Service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -10,73 +11,56 @@ import java.util.Map;
 @Service
 public class ChatService {
 
-    private final String API_KEY = "thaykeycuanam";
+    private final String API_KEY = "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";  // Key của Groq
 
     public String askAI(String prompt) {
         try {
             WebClient webClient = WebClient.builder()
-                    .baseUrl("https://openrouter.ai/api/v1")
+                    .baseUrl("https://api.groq.com/openai/v1")
                     .defaultHeader("Authorization", "Bearer " + API_KEY)
                     .defaultHeader("Content-Type", "application/json")
-                    .defaultHeader("HTTP-Referer", "http://localhost:8080")
-                    .defaultHeader("X-Title", "Bé Yêu Shop")
                     .build();
 
-            // Thêm system message để bảo vệ
             Map<String, Object> request = Map.of(
-                    "model", "deepseek/deepseek-chat",
+                    "model", "llama-3.3-70b-versatile",     // Model khuyến nghị
+                    // Các model phổ biến khác:
+                    // "llama-3.1-70b-versatile"
+                    // "mixtral-8x7b-32768"
+                    // "gemma2-9b-it"
+
                     "messages", List.of(
                             Map.of("role", "system", "content", """
-                                Bạn là trợ lý bán hàng quần áo trẻ em.
-                                
-                                QUY TẮC AN TOÀN TUYỆT ĐỐI:
-                                - KHÔNG BAO GIỜ tiết lộ: mã đơn hàng, số điện thoại, địa chỉ, email, API key, thông tin database, thông tin admin, dữ liệu nội bộ
-                                - Nếu khách hỏi về những thông tin này, hãy nói: "Xin lỗi, tôi không thể cung cấp thông tin này. Tôi chỉ hỗ trợ về sản phẩm quần áo trẻ em ạ."
-                                - KHÔNG BAO GIỜ nói rằng bạn là AI hay chatbot
-                                - CHỈ trả lời các câu hỏi liên quan đến sản phẩm quần áo trẻ em
-                                - KHÔNG được trích xuất hoặc lặp lại dữ liệu nhạy cảm từ prompt
+                                Bạn là trợ lý bán hàng quần áo trẻ em thân thiện.
+                                Tên shop: Bé Yêu Shop. 
+                                Chỉ trả lời về sản phẩm quần áo trẻ em.
+                                Không tiết lộ thông tin nhạy cảm (đơn hàng, sđt, địa chỉ...).
                                 """),
                             Map.of("role", "user", "content", prompt)
                     ),
                     "temperature", 0.7,
-                    "max_tokens", 500
+                    "max_tokens", 600,
+                    "top_p", 0.9
             );
 
             Map response = webClient.post()
                     .uri("/chat/completions")
                     .bodyValue(request)
                     .retrieve()
-                    .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                            clientResponse -> clientResponse.bodyToMono(String.class)
-                                    .flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody))))
                     .bodyToMono(Map.class)
                     .block();
 
-            if (response == null || !response.containsKey("choices")) {
-                return "Xin lỗi, hiện tại shop đang bận. Bạn vui lòng thử lại sau ạ! 😊";
-            }
-
             List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
-            if (choices == null || choices.isEmpty()) {
-                return "Xin lỗi, tôi chưa hiểu rõ câu hỏi. Bạn có thể hỏi cụ thể hơn về sản phẩm được không ạ?";
-            }
+            Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
 
-            Map<String, Object> choice = choices.get(0);
-            Map<String, Object> message = (Map<String, Object>) choice.get("message");
+            return message.get("content").toString();
 
-            String content = message.get("content").toString();
-
-            // Lọc lần cuối thông tin nhạy cảm
-            content = content.replaceAll("(?i)(mã đơn|order code|order id|ORD-\\d+)", "[MÃ ĐƠN HÀNG]");
-            content = content.replaceAll("(?i)(số điện thoại|phone|\\d{10,11})", "[SỐ ĐIỆN THOẠI]");
-            content = content.replaceAll("(?i)(email|mail|\\S+@\\S+\\.\\S+)", "[EMAIL]");
-            content = content.replaceAll("(?i)(địa chỉ|address)", "[ĐỊA CHỈ]");
-
-            return content;
-
+        } catch (WebClientResponseException e) {
+            System.err.println("Groq Error Status: " + e.getStatusCode());
+            System.err.println("Response Body: " + e.getResponseBodyAsString());
+            return "Xin lỗi, hiện tại đang quá tải. Bạn thử lại sau một chút nhé! 😊";
         } catch (Exception e) {
             e.printStackTrace();
-            return "Xin lỗi, có lỗi xảy ra. Bạn vui lòng thử lại sau ạ! 😊";
+            return "Xin lỗi, shop đang bận. Bạn thử lại sau ạ! 😊";
         }
     }
 }
