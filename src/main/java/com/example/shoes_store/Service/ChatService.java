@@ -1,5 +1,6 @@
 package com.example.shoes_store.Service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -11,7 +12,8 @@ import java.util.Map;
 @Service
 public class ChatService {
 
-    private final String API_KEY = "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";  // Key của Groq
+    @Value("${API_KEY}")
+    private static String API_KEY;
 
     public String askAI(String prompt) {
         try {
