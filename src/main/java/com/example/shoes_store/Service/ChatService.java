@@ -10,7 +10,7 @@ import java.util.Map;
 @Service
 public class ChatService {
 
-    private final String API_KEY = "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";
+    private final String API_KEY = "thaykeycuanam";
 
     public String askAI(String prompt) {
         try {
