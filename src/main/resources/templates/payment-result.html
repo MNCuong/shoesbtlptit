@@ -13,7 +13,473 @@
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/templatemo.css">
     <link rel="stylesheet" href="../css/custom.css">
+    <!DOCTYPE html>
+    <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
+    <head>
+        <title>Kết Quả Thanh Toán - Fashion Shop</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="/img/apple-icon.png">
+        <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/templatemo.css">
+        <link rel="stylesheet" href="/css/custom.css">
+
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+        <link rel="stylesheet" href="/css/fontawesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+        <style>
+            .payment-result-card {
+                max-width: 600px;
+                margin: 40px auto;
+                border-radius: 20px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
+
+            .payment-header {
+                padding: 40px 20px;
+                text-align: center;
+            }
+
+            .payment-header.success {
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            }
+
+            .payment-header.failed {
+                background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            }
+
+            .payment-header.pending {
+                background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            }
+
+            .payment-icon {
+                font-size: 80px;
+                color: white;
+                margin-bottom: 20px;
+            }
+
+            .payment-title {
+                color: white;
+                font-size: 32px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .payment-subtitle {
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 16px;
+            }
+
+            .payment-body {
+                padding: 30px;
+                background: white;
+            }
+
+            .info-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 12px 0;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .info-label {
+                font-weight: 600;
+                color: #666;
+            }
+
+            .info-value {
+                color: #333;
+                font-weight: 500;
+            }
+
+            .info-value.amount {
+                color: #28a745;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .action-buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                margin-top: 30px;
+                flex-wrap: wrap;
+            }
+
+            .btn-custom {
+                padding: 12px 24px;
+                border-radius: 50px;
+                font-weight: 600;
+                transition: all 0.3s;
+            }
+
+            .btn-custom:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .countdown {
+                text-align: center;
+                margin-top: 20px;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 10px;
+            }
+
+            .countdown-timer {
+                font-size: 24px;
+                font-weight: bold;
+                color: #28a745;
+            }
+        </style>
+    </head>
+
+    <body>
+
+    <!-- Top Nav -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
+        <div class="container text-light">
+            <div class="w-100 d-flex justify-content-between">
+                <div>
+                    <i class="fa fa-envelope mx-2"></i>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">info@company.com</a>
+                    <i class="fa fa-phone mx-2"></i>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
+                </div>
+                <div>
+                    <a class="text-light" href="https://fb.com/templatemo" target="_blank"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://twitter.com/" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin fa-sm fa-fw"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/}">Fashion</a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between"
+                 id="templatemo_main_nav">
+                <div class="flex-fill">
+                    <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+                        <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/about}">Về chúng tôi</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/shop}">Sản phẩm</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="navbar align-self-center d-flex">
+                    <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
+                            <div class="input-group-text">
+                                <i class="fa fa-fw fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
+                        <i class="fa fa-fw fa-search text-dark mr-2"></i>
+                    </a>
+
+                    <div th:if="${session.loggedInUser != null}">
+                        <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
+                            <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                            <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
+                                  th:text="${session.cartItemQuantity != null ? session.cartItemQuantity : 0}">0</span>
+                        </a>
+
+                        <a class="nav-icon position-relative text-decoration-none" href="#" id="dropdownMenuButton"
+                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-fw fa-user text-dark mr-3"></i>
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" th:href="@{/update-user}">Thông tin cá nhân</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Đổi mật khẩu</a>
+                            <a class="dropdown-item" th:href="@{/order}">Đơn hàng của tôi</a>
+                            <a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a>
+                        </div>
+                    </div>
+
+                    <div th:unless="${session.loggedInUser != null}">
+                        <a href="/login">Đăng nhập </a>|
+                        <a href="/register" >Đăng ký</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Tìm kiếm sản phẩm...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <form id="changePasswordForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
+                            <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <div id="changePasswordMessage" class="mt-2"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== NỘI DUNG KẾT QUẢ THANH TOÁN ==================== -->
+    <div class="container py-5">
+        <div class="payment-result-card">
+            <!-- Header theo trạng thái -->
+            <div class="payment-header" th:classappend="${status == 'success'} ? 'success' : (${status == 'failed'} ? 'failed' : 'pending')">
+                <div class="payment-icon">
+                    <i th:if="${status == 'success'}" class="fas fa-check-circle"></i>
+                    <i th:if="${status == 'failed'}" class="fas fa-times-circle"></i>
+                    <i th:if="${status == 'pending'}" class="fas fa-clock"></i>
+                    <i th:if="${status == null}" class="fas fa-credit-card"></i>
+                </div>
+                <div class="payment-title" th:text="${title}">Kết Quả Thanh Toán</div>
+                <div class="payment-subtitle" th:text="${message}">Cảm ơn bạn đã mua sắm tại Fashion Shop</div>
+            </div>
+
+            <!-- Body chi tiết -->
+            <div class="payment-body">
+                <div class="info-row">
+                    <span class="info-label">Mã đơn hàng:</span>
+                    <span class="info-value" th:text="${orderCode}">ORD-1734567890123</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Số tiền:</span>
+                    <span class="info-value amount" th:text="${amount} + 'đ'">250,000đ</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Phương thức:</span>
+                    <span class="info-value">Thanh toán qua VNPay</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Thời gian:</span>
+                    <span class="info-value" th:text="${transactionTime}">15:30:25 - 19/05/2024</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Mã giao dịch:</span>
+                    <span class="info-value" th:text="${transactionNo}">VNPAY123456789</span>
+                </div>
+
+                <div th:if="${status == 'success'}" class="alert alert-success mt-4">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Thanh toán thành công!</strong> Đơn hàng của bạn đã được xác nhận.
+                </div>
+
+                <div th:if="${status == 'failed'}" class="alert alert-danger mt-4">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Thanh toán thất bại!</strong>
+                    <span th:text="${errorMessage}">Giao dịch không thành công.</span>
+                </div>
+
+                <div th:if="${status == 'success'}" class="countdown">
+                    <span>⏰ Tự động chuyển về trang đơn hàng sau</span>
+                    <div class="countdown-timer" id="countdown">10</div>
+                    <span>giây</span>
+                </div>
+
+                <div class="action-buttons">
+                    <a th:if="${status == 'success'}" th:href="@{/order}" class="btn btn-success btn-custom">
+                        <i class="fas fa-box me-2"></i>Xem đơn hàng
+                    </a>
+                    <a th:if="${status == 'failed'}" th:href="@{/cart}" class="btn btn-warning btn-custom">
+                        <i class="fas fa-shopping-cart me-2"></i>Thử lại
+                    </a>
+                    <a th:href="@{/shop}" class="btn btn-outline-secondary btn-custom">
+                        <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
+                    </a>
+                    <a th:href="@{/}" class="btn btn-outline-primary btn-custom">
+                        <i class="fas fa-home me-2"></i>Về trang chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark" id="tempaltemo_footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 pt-5">
+                    <h2 class="h2 text-success border-bottom pb-3 border-light logo">FASHION Shop</h2>
+                    <ul class="list-unstyled text-light footer-link-list">
+                        <li><i class="fas fa-map-marker-alt fa-fw"></i> 123 Đường Láng, Quận Đống Đa, Hà Nội</li>
+                        <li><i class="fa fa-phone fa-fw"></i> <a class="text-decoration-none" href="tel:19001234">1900 1234</a></li>
+                        <li><i class="fa fa-envelope fa-fw"></i> <a class="text-decoration-none" href="mailto:cskh@fashionshop.vn">cskh@fashionshop.vn</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 pt-5">
+                    <h2 class="h2 text-light border-bottom pb-3 border-light">Danh Mục Sản Phẩm</h2>
+                    <ul class="list-unstyled text-light footer-link-list">
+                        <li><a class="text-decoration-none" href="#">Quần Áo Bé Trai</a></li>
+                        <li><a class="text-decoration-none" href="#">Quần Áo Bé Gái</a></li>
+                        <li><a class="text-decoration-none" href="#">Đồ Sơ Sinh</a></li>
+                        <li><a class="text-decoration-none" href="#">Đồ Ngủ Cho Bé</a></li>
+                        <li><a class="text-decoration-none" href="#">Phụ Kiện Trẻ Em</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 pt-5">
+                    <h2 class="h2 text-light border-bottom pb-3 border-light">Thông Tin Hỗ Trợ</h2>
+                    <ul class="list-unstyled text-light footer-link-list">
+                        <li><a class="text-decoration-none" th:href="@{/}">Trang Chủ</a></li>
+                        <li><a class="text-decoration-none" th:href="@{/about}">Về Chúng Tôi</a></li>
+                        <li><a class="text-decoration-none" href="#">Hệ Thống Cửa Hàng</a></li>
+                        <li><a class="text-decoration-none" href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a class="text-decoration-none" th:href="@{/contact}">Liên Hệ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row text-light mb-4">
+                <div class="col-12 mb-3">
+                    <div class="w-100 my-3 border-top border-light"></div>
+                </div>
+                <div class="col-auto me-auto">
+                    <ul class="list-inline text-left footer-icons">
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="http://facebook.com/"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://www.instagram.com/"><i class="fab fa-instagram fa-lg fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://twitter.com/"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item border border-light rounded-circle text-center">
+                            <a class="text-light text-decoration-none" target="_blank" href="https://www.linkedin.com/"><i class="fab fa-linkedin fa-lg fa-fw"></i></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-auto">
+                    <label class="sr-only" for="subscribeEmail">Email address</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control bg-dark border-light" id="subscribeEmail" placeholder="Email address">
+                        <div class="input-group-text btn-success text-light">Subscribe</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 bg-black py-3">
+            <div class="container">
+                <div class="row pt-2">
+                    <div class="col-12">
+                        <p class="text-left text-light">
+                            Copyright &copy; 2024 Fashion Shop | Designed by <a rel="sponsored" href="https://templatemo.com" target="_blank">TemplateMo</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/jquery-1.11.0.min.js"></script>
+    <script src="/js/jquery-migrate-1.2.1.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/templatemo.js"></script>
+    <script src="/js/custom.js"></script>
+
+    <script>
+        // Countdown tự động chuyển hướng
+        var status = [[${status}]];
+        if (status === 'success') {
+            var seconds = 10;
+            var countdownEl = document.getElementById('countdown');
+            var timer = setInterval(function() {
+                seconds--;
+                if (countdownEl) countdownEl.textContent = seconds;
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    window.location.href = '/order';
+                }
+            }, 1000);
+        }
+
+        // Change password
+        document.getElementById("changePasswordForm")?.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const oldPassword = document.getElementById("oldPassword").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const messageEl = document.getElementById("changePasswordMessage");
+
+            fetch('/api/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ oldPassword, newPassword, confirmPassword })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        messageEl.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                        setTimeout(() => {
+                            document.getElementById("changePasswordForm").reset();
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+                            modal?.hide();
+                        }, 1500);
+                    } else {
+                        messageEl.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    }
+                })
+                .catch(err => messageEl.innerHTML = `<div class="alert alert-danger">Có lỗi xảy ra!</div>`);
+        });
+    </script>
+
+    <iframe src="/chat" style="position: fixed; bottom: 0; right: 0; width: 400px; height: 600px; border: none; z-index: 9999;"></iframe>
+
+    </body>
+    </html>
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <link rel="stylesheet" href="../css/fontawesome.min.css">
@@ -127,63 +593,51 @@
 
 <body>
 
-<!-- Top Nav (giống trang about) -->
+<!-- Top Nav -->
 <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
     <div class="container text-light">
         <div class="w-100 d-flex justify-content-between">
             <div>
                 <i class="fa fa-envelope mx-2"></i>
-                <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">cskh@fashionshop.vn</a>
+                <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">info@company.com</a>
                 <i class="fa fa-phone mx-2"></i>
-                <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">1900 1234</a>
+                <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
             </div>
             <div>
-                <a class="text-light" href="https://fb.com/templatemo" target="_blank" rel="sponsored"><i
-                        class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://www.instagram.com/" target="_blank"><i
-                        class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://twitter.com/" target="_blank"><i
-                        class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
-                <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i
-                        class="fab fa-linkedin fa-sm fa-fw"></i></a>
+                <a class="text-light" href="https://fb.com/templatemo" target="_blank"><i class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://twitter.com/" target="_blank"><i class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin fa-sm fa-fw"></i></a>
             </div>
         </div>
     </div>
 </nav>
 
-<!-- Header Nav -->
+<!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-light shadow">
     <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/}">
-            Fashion Shop
-        </a>
+        <a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/}">Fashion</a>
+
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between"
              id="templatemo_main_nav">
             <div class="flex-fill">
                 <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Trang chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/about}">Về chúng tôi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/shop}">Sản phẩm</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/about}">Về chúng tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/shop}">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Liên hệ</a></li>
                 </ul>
             </div>
             <div class="navbar align-self-center d-flex">
                 <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="inputMobileSearch" placeholder="Tìm kiếm...">
+                        <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
                         <div class="input-group-text">
                             <i class="fa fa-fw fa-search"></i>
                         </div>
@@ -192,29 +646,37 @@
                 <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                     <i class="fa fa-fw fa-search text-dark mr-2"></i>
                 </a>
-                <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
-                    <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                </a>
-                <div th:if="${user != null}">
+
+                <div th:if="${session.loggedInUser != null}">
+                    <a class="nav-icon position-relative text-decoration-none" th:href="@{/cart}">
+                        <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
+                              th:text="${session.cartItemQuantity != null ? session.cartItemQuantity : 0}">0</span>
+                    </a>
+
                     <a class="nav-icon position-relative text-decoration-none" href="#" id="dropdownMenuButton"
                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
                     </a>
+
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" th:href="@{/update-use}">Thông tin cá nhân</a>
-                        <a class="dropdown-item" th:href="@{/order}">Thông tin đơn hàng</a>
+                        <a class="dropdown-item" th:href="@{/update-user}">Thông tin cá nhân</a>
+                        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Đổi mật khẩu</a>
+                        <a class="dropdown-item" th:href="@{/order}">Đơn hàng của tôi</a>
                         <a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a>
                     </div>
                 </div>
-                <div th:unless="${user != null}">
-                    <a href="/login">Đăng nhập</a> | <a href="/register">Đăng ký</a>
+
+                <div th:unless="${session.loggedInUser != null}">
+                    <a href="/login">Đăng nhập </a>|
+                    <a href="/register" >Đăng ký</a>
                 </div>
             </div>
         </div>
     </div>
 </nav>
 
-<!-- Modal tìm kiếm -->
+<!-- Search Modal -->
 <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="w-100 pt-1 mb-5 text-right">
@@ -228,6 +690,46 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+
+            <form id="changePasswordForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
+                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+
+                    <div id="changePasswordMessage" class="mt-2"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                </div>
+            </form>
+
+
+        </div>
     </div>
 </div>
 
@@ -255,8 +757,7 @@
             </div>
             <div class="info-row">
                 <span class="info-label">Số tiền:</span>
-                <span class="info-value amount" th:text="${#numbers.formatDecimal(amount, 0, 'COMMA') + 'đ'}">250,000đ</span>
-            </div>
+                <span class="info-value amount" th:text="${amount} + 'đ'">250,000đ</span>            </div>
             <div class="info-row">
                 <span class="info-label">Phương thức:</span>
                 <span class="info-value">Thanh toán qua VNPay</span>

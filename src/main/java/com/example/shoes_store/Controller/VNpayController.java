@@ -35,7 +35,7 @@ public class VNpayController {
 //        log.info("getVNPayResponse: {}", fullUrl);
 //        return ResponseEntity.success(paymentService.saveTransaction(params));
 //    }
-@GetMapping("/vnpay-payment-result")
+@GetMapping("/callback/payment-result")
 public String paymentResult(HttpServletRequest request, Model model) {
 
     // Lấy các tham số từ VNPay trả về

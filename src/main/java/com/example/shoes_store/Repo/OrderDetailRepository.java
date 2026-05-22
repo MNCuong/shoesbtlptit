@@ -21,4 +21,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
             "GROUP BY p.id, p.name, p.imageUrl " +
             "ORDER BY SUM(od.quantity) DESC")
     List<Object[]> findTopSellingProductsByMonth(@Param("month") int month, @Param("year") int year);
+
+    void deleteByProductId(Long productId);
 }

@@ -1,6 +1,7 @@
 package com.example.shoes_store.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -15,10 +16,12 @@ public class ImportReceiptDetail {
 
     @ManyToOne
     @JoinColumn(name = "import_receipt_id")
+    @JsonIgnore
     private ImportReceipt importReceipt;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonIgnore
     private Product product;
 
     private Integer quantity;

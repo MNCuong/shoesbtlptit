@@ -3,8 +3,7 @@ package com.example.shoes_store.Service.Impl;
 
 import com.example.shoes_store.Entity.Category;
 import com.example.shoes_store.Entity.Product;
-import com.example.shoes_store.Repo.CategoryRepo;
-import com.example.shoes_store.Repo.ProductRepo;
+import com.example.shoes_store.Repo.*;
 import com.example.shoes_store.Service.ProductService;
 import com.example.shoes_store.dto.ProductDTO;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -29,6 +29,18 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepo productRepo;
     @Autowired
     private CategoryRepo categoryRepo;
+    @Autowired
+    private ExportReceiptDetailRepo exportReceiptDetailRepo;
+
+    @Autowired
+    private ImportReceiptDetailRepo importReceiptDetailRepo;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepo;
+
+    @Autowired
+    private CartItemRepository cartItemRepo;
+
     @Value("${upload.path}")
     private String uploadPath;
     @Override
@@ -69,10 +81,44 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long id) {
-        productRepo.deleteById(id);
-    }
+        // 1. Xóa export_receipt_details (QUAN TRỌNG NHẤT)
+        try {
+            exportReceiptDetailRepo.deleteByProductId(id);
+            log.info("Đã xóa export_receipt_details cho product ID: {}", id);
+        } catch (Exception e) {
+            log.warn("Không có export_receipt_details cho product ID: {}", id);
+        }
 
+        // 2. Xóa import_receipt_details
+        try {
+            importReceiptDetailRepo.deleteByProductId(id);
+            log.info("Đã xóa import_receipt_details cho product ID: {}", id);
+        } catch (Exception e) {
+            log.warn("Không có import_receipt_details cho product ID: {}", id);
+        }
+
+        // 3. Xóa order_details
+        try {
+            orderDetailRepo.deleteByProductId(id);
+            log.info("Đã xóa order_details cho product ID: {}", id);
+        } catch (Exception e) {
+            log.warn("Không có order_details cho product ID: {}", id);
+        }
+
+        // 4. Xóa cart_items
+        try {
+            cartItemRepo.deleteByProductId(id);
+            log.info("Đã xóa cart_items cho product ID: {}", id);
+        } catch (Exception e) {
+            log.warn("Không có cart_items cho product ID: {}", id);
+        }
+
+        // 5. Cuối cùng xóa sản phẩm
+        productRepo.deleteById(id);
+        log.info("Đã xóa sản phẩm ID: {}", id);
+    }
     @Override
     public Optional<Product> getProductById(Long id) {
         return productRepo.findById(id);
