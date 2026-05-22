@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/api/vnpay")
 public class VNpayController {
     @Autowired
@@ -117,6 +118,7 @@ public String paymentResult(HttpServletRequest request, Model model) {
 
 
     @PostMapping("/create-payment")
+    @ResponseBody  // Thêm annotation này vì method trả về JSON
     public ResponseEntity<?> createPayment(@RequestBody Map<String, Object> request,
                                            HttpServletRequest httpRequest) {
         try {
